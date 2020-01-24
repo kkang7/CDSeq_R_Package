@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1578588597299.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3874650547",
+    "id" : "BB6E1B52",
+    "lastKnownWriteTime" : 1578600295,
+    "last_content_update" : 1578600295992,
+    "path" : "~/Documents/CDSeq/src/GibbsSampler.cpp",
+    "project_path" : "src/GibbsSampler.cpp",
+    "properties" : {
+        "cursorPosition" : "57,3",
+        "scrollLine" : "42",
+        "source_window_id" : ""
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "cpp"
+}

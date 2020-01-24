@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1578582574745.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "60CEF45F",
+    "lastKnownWriteTime" : 1578589189,
+    "last_content_update" : 1578589189097,
+    "path" : "~/Documents/CDSeqRpackage_104/Demo.R",
+    "project_path" : "../CDSeqRpackage_104/Demo.R",
+    "properties" : {
+        "cursorPosition" : "55,0",
+        "scrollLine" : "49",
+        "source_window_id" : "wzwdmi9cjge1t"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

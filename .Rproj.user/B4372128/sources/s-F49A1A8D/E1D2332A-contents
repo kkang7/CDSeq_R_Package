@@ -1,0 +1,65 @@
+# data processing and filtering
+
+# save the data from MATLAB
+GTEx_data <- readMat('GTEx_data_V8.mat')
+GTEx_sample_ID_all <- GTEx_data$GTEx.sampleID.all
+GTEx_sample_IDs <- GTEx_data$GTEx.sampleIDs
+GTEx_sample_tissue <- GTEx_data$GTEx.sample.tissue
+GTEx_RNAseq_lung <- GTEx_data$GTEx.RNAseq.lung
+GTEx_sample_ID_lung <- GTEx_data$GTEx.sample.ID.lung
+GTEx_sample_ID_lung_common <- GTEx_data$GTEx.sample.lung.ID.common
+GTEx_sample_lung_index <- GTEx_data$GTEx.sample.lung.index
+GTEx_sample_lung_index_anno <- GTEx_data$GTEx.sample.lung.index.anno
+GTEx_RNAseq_blood <- GTEx_data$GTEx.RNAseq.blood
+GTEx_sample_ID_blood <- GTEx_data$GTEx.sample.ID.blood
+GTEx_sample_blood_ID_common <- GTEx_data$GTEx.sample.blood.ID.common
+GTEx_sample_blood_index <- GTEx_data$GTEx.sample.blood.index
+GTEx_sample_blood_index_anno <- GTEx_data$GTEx.sample.blood.index.anno
+GTEx_gene_names <- GTEx_data$GTEx.gene.names
+GTEx_gene_names_original <- GTEx_data$GTEx.gene.names.original
+GTEx_RNAseq_blood_gl <- GTEx_data$GTEx.RNAseq.blood.gl
+GTEx_RNAseq_lung_gl <- GTEx_data$GTEx.RNAseq.lung.gl
+GTEx_gene_length <-GTEx_data$GTEx.gene.length
+GTEx_gene_names_common <- GTEx_data$GTEx.gene.names.common
+##
+save(GTEx_data,file = 'GTEx_data.RData')
+save(GTEx_gene_names,GTEx_gene_names_original,GTEx_RNAseq_blood,GTEx_RNAseq_lung,GTEx_sample_blood_ID_common,GTEx_sample_blood_index,
+     GTEx_sample_blood_index_anno,GTEx_sample_ID_all,GTEx_sample_ID_blood,GTEx_sample_ID_lung,GTEx_sample_ID_lung_common,
+     GTEx_RNAseq_blood_gl,GTEx_RNAseq_lung_gl,GTEx_gene_length,GTEx_gene_names_common,
+     GTEx_sample_IDs,GTEx_sample_lung_index,GTEx_sample_lung_index_anno,GTEx_sample_tissue,file = 'GTEx_lung_blood.RData')
+
+
+#======= (this is the older version of gene name and gene length)======
+# gene name and gene length 
+gene_name_and_gene_length <- readMat('GENE_NAME_AND_LENGTH.mat')
+gene_name <- unlist(gene_name_and_gene_length$GENE.NAME.LIST)
+gene_length <- unlist(gene_name_and_gene_length$GENE.NAME.LENGTH)
+save(gene_length,gene_name,file = 'GENE_NAME_and_LENGTH.RData')
+# get the gene length
+GTEx_gene_names_common <- intersect(GTEx_gene_names,gene_name)
+gtex_gene_name_idx <- match(GTEx_gene_names_common,GTEx_gene_names)
+gtex_gene_length_idx <- match(GTEx_gene_names_common, gene_name)
+GTEx_gene_length <- gene_length[gtex_gene_length_idx]
+GTEx_gene_names_2 <- GTEx_gene_names[gtex_gene_name_idx]
+#======= (this is the older version of gene name and gene length)======
+
+
+# filter GTEx lung data
+read_counts_threshold <- 1000
+tmp_idx <- which(rowSums(GTEx_RNAseq_lung_gl)>read_counts_threshold)
+GTEx_RNAseq_lung_gl_filtered <- GTEx_RNAseq_lung_gl[tmp_idx,]
+GTEx_gene_names_lung_filtered <- GTEx_gene_names_common[tmp_idx]
+GTEx_gene_length_lung_filtered <- GTEx_gene_length[tmp_idx]
+
+save(read_counts_threshold,tmp_idx,GTEx_RNAseq_lung_gl_filtered,GTEx_gene_names_lung_filtered,GTEx_gene_length_lung_filtered,file = 'GTEx_lung.RData')
+
+# filter GTEx blood data
+read_counts_threshold <- 1000
+tmp_idx <- which(rowSums(GTEx_RNAseq_blood_gl)>read_counts_threshold)
+GTEx_RNAseq_blood_gl_filtered <- GTEx_RNAseq_blood_gl[tmp_idx,]
+GTEx_gene_names_blood_filtered <- GTEx_gene_names_common[tmp_idx]
+GTEx_gene_length_blood_filtered <- GTEx_gene_length[tmp_idx]
+
+save(read_counts_threshold,tmp_idx,GTEx_RNAseq_blood_gl_filtered,GTEx_gene_names_blood_filtered,GTEx_gene_length_blood_filtered,file = 'GTEx_blood.RData')
+
+

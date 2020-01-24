@@ -1,0 +1,23 @@
+{
+    "args" : [
+        "-isystem",
+        "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include",
+        "-I/Library/Developer/CommandLineTools/usr/lib/clang/11.0.0/include",
+        "-I/usr/local/include",
+        "-I/Library/Developer/CommandLineTools/usr/bin/../include/c++/v1",
+        "-I/Library/Developer/CommandLineTools/usr/lib/clang/11.0.0/include",
+        "-I/Library/Developer/CommandLineTools/usr/include",
+        "-I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include",
+        "-std=gnu++11",
+        "-I/Library/Frameworks/R.framework/Resources/include",
+        "-DNDEBUG",
+        "-isysroot",
+        "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+        "-I/usr/local/include",
+        "-fopenmp",
+        "-fPIC"
+    ],
+    "hash" : "157869096215786909621578690962",
+    "is_cpp" : true,
+    "pch" : "Rcpp"
+}

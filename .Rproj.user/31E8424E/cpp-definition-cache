@@ -1,0 +1,44 @@
+[
+    {
+        "definitions" : [
+        ],
+        "file" : "/home/kai/Documents/CDSeq/src/CDSeq_types.h",
+        "file_last_write" : 1578089719.000000
+    },
+    {
+        "definitions" : [
+        ],
+        "file" : "/home/kai/Documents/CDSeq/src/GibbsSampler.cpp",
+        "file_last_write" : 1578609979.000000
+    },
+    {
+        "definitions" : [
+        ],
+        "file" : "/home/kai/Documents/CDSeq/src/Hungarian.cpp",
+        "file_last_write" : 1578512642.000000
+    },
+    {
+        "definitions" : [
+        ],
+        "file" : "/home/kai/Documents/CDSeq/src/Hungarian.h",
+        "file_last_write" : 1578071204.000000
+    },
+    {
+        "definitions" : [
+        ],
+        "file" : "/home/kai/Documents/CDSeq/src/cokus.cpp",
+        "file_last_write" : 1578515625.000000
+    },
+    {
+        "definitions" : [
+        ],
+        "file" : "/home/kai/Documents/CDSeq/src/cokus.h",
+        "file_last_write" : 1578088847.000000
+    },
+    {
+        "definitions" : [
+        ],
+        "file" : "/home/kai/Documents/CDSeq/src/hungarian_Rcpp.cpp",
+        "file_last_write" : 1578515647.000000
+    }
+]

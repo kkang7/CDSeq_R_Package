@@ -1,0 +1,38 @@
+# TCGA SKCM data
+TCGA_SKCM_data <- readMat('TCGA_SKCM_data.mat')
+TCGA_SKCM_emsembl_idx <- TCGA_SKCM_data$EMSEMBL.idx
+TCGA_SKCM_RNAseq <- TCGA_SKCM_data$TCGA.SKCM.RNAseq
+TCGA_SKCM_RNAseq_gl <- TCGA_SKCM_data$TCGA.SKCM.RNAseq.gl
+TCGA_SKCM_gene_id <- TCGA_SKCM_data$TCGA.SKCM.gene.id
+TCGA_SKCM_gene_id_common_ensembl <- TCGA_SKCM_data$TCGA.SKCM.gene.id.common.ensembl
+TCGA_SKCM_gene_length <- TCGA_SKCM_data$TCGA.SKCM.gene.length
+TCGA_SKCM_gene_name <- TCGA_SKCM_data$TCGA.SKCM.gene.name
+TCGA_SKCM_idx <- TCGA_SKCM_data$TCGA.idx
+TCGA_SKCM_RNAseq_nonzero <- TCGA_SKCM_data$TCGA.SKCM.RNAseq.nonzero
+TCGA_SKCM_gene_length_nonzero <- TCGA_SKCM_data$TCGA.SKCM.gene.length.nonzero
+TCGA_SKCM_gene_name_nonzero <- TCGA_SKCM_data$TCGA.SKCM.gene.name.nonzero
+TCGA_nonzero_idx <- TCGA_SKCM_data$nonzero.idx
+
+save(TCGA_SKCM_data, TCGA_SKCM_emsembl_idx, TCGA_SKCM_RNAseq, TCGA_SKCM_RNAseq_gl,
+     TCGA_SKCM_gene_id, TCGA_SKCM_gene_id_common_ensembl, TCGA_SKCM_gene_length,
+     TCGA_SKCM_gene_name, TCGA_SKCM_idx, TCGA_SKCM_RNAseq_nonzero, TCGA_SKCM_gene_length_nonzero,
+     TCGA_SKCM_gene_name_nonzero,TCGA_nonzero_idx,file = 'TCGA_SKCM_data.RData')
+
+#=============================================================================
+
+load('TCGA_SKCM_data.RData')
+
+# filter some lowly expressed genes
+high_exp_genes_idx <- which(rowSums(TCGA_SKCM_RNAseq_nonzero)>500)
+TCGA_SKCM_RNAseq_filtered <- TCGA_SKCM_RNAseq_nonzero[high_exp_genes_idx, ]
+TCGA_SKCM_gene_filtered <- TCGA_SKCM_gene_name_nonzero[high_exp_genes_idx]
+TCGA_SKCM_gene_length_filtered <- TCGA_SKCM_gene_length_nonzero[high_exp_genes_idx]
+
+## run CDSeq
+mydata <- TCGA_SKCM_RNAseq_filtered
+mygenelength <- TCGA_SKCM_gene_length_filtered
+TCGA_SKCM_CDSeq_result <- CDSeq(bulk_data = mydata, cell_type_number = 15, mcmc_iterations = 700,
+                                dilution_factor = 10, block_number = 50, gene_subset_size = 1000, 
+                                cpu_number = 10, gene_length = as.vector(mygenelength))
+
+

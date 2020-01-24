@@ -1,0 +1,31 @@
+This folder contains the processed data reported in:
+Mathys H, Davila-Velderrain J, Peng Z, Gao F, Mohammadi S, Young JZ, Menon M, He L, Abdurrob F, Jiang X, Martorell AJ. Single-cell transcriptomic analysis of Alzheimer’s disease. Nature. 2019 May 1:1.
+
+filtered_count_matrix.mtx - includes the gene-cell count matrix for 17926 genes and 70634 cells after QC filtering.
+filtered_gene_row_names.txt - includes gene names corresponding to the rows in filtered_count_matrix.mtx
+filtered_column_metadata.txt - includes cell annotations corresponding to columns in filtered_count_matrix.mtx. Cells isolated from a given individual can de identified by the corresponding projid code. Initial pre-cluster label, broad cell-type annotation, and subcluster label (as described in the paper) are given.
+
+notfiltered_count_matrix.mtx - includes the gene-cell count matrix for 18192 genes and 80660 cells before QC filtering.
+notfiltered_gene_row_names.txt - includes gene names corresponding to the rows in notfiltered_count_matrix.mtx
+notfiltered_column_metadata.txt - includes cell annotations corresponding to columns in notfiltered_count_matrix.mtx
+
+
+
+notes: count matrices are provided in sparse format.
+using the package Matrix in R the data can be loaded as follow:
+
+require(Matrix)
+
+filtered.counts <- readMM("filtered_count_matrix.mtx")
+rownames(filtered.counts) <- readLines("filtered_gene_row_names.txt")
+filtered.colMetadata <- read.delim("filtered_column_metadata.txt")
+
+notfiltered.counts <- readMM("notfiltered_count_matrix.mtx")
+notfiltered.rowMeatada <- read.delim("notfiltered_gene_row_names.txt", header = F)
+rownames(notfiltered.counts) <- notfiltered.rowMeatada[,2]
+notfiltered.colMetadata <- read.delim("notfiltered_column_metadata.txt")
+
+
+
+
+ 

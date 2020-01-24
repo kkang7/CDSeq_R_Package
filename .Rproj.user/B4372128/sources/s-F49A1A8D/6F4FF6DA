@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1579728146586.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "6F4FF6DA",
+    "lastKnownWriteTime" : 0,
+    "last_content_update" : 1579728146586,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "id" : "8ea130c598c84e37b3451d7e4f914462",
+        "name" : "AD.scRNA.Yongjin$counts",
+        "title" : "AD.scRNA.Yongjin$counts"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "object_explorer"
+}

@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1579383050587.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "88A6BE41",
+    "lastKnownWriteTime" : 1579383266,
+    "last_content_update" : 1579383266040,
+    "path" : "~/Dropbox/Public/MIT/CDSeq_R_package/CDSeq/src/GibbsSampler.cpp",
+    "project_path" : "src/GibbsSampler.cpp",
+    "properties" : {
+        "cursorPosition" : "97,32",
+        "scrollLine" : "60",
+        "source_window_id" : "w9wqjmh10avea"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "cpp"
+}

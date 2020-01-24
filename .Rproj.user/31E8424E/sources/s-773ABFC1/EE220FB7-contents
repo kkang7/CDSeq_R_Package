@@ -1,0 +1,282 @@
+# This demo code shows how to run CDSeq
+# Coder: Kai Kang
+# Last update: 06/24/2018
+# CDSeq R package demo
+
+# to do list
+# Rcpp::checkUserInterrupt(); not working in c++ code
+# add progress bar
+# detect the number of cores available for parallel computing
+
+library(R.matlab)
+library(Rcpp)
+library(RcppArmadillo)
+library(MASS)
+library(foreach)
+library(doParallel)
+library(RcppThread)
+library(dirmult)
+#library(doSNOW)
+#library(tictoc)
+#library(tcltk)
+
+# grab the input data and ground truth
+mixtureGEP<-data$WD # GEP stands for gene expression profile
+true_prop<-data$theta
+true_GEP_read<-data$phi.read
+true_GEP_gene<-data$phi.gene
+true_GEP_rpkm<-data$phi.rpkm
+gene_length<-data$cell.synth.gene.length.nonzero.wd
+
+celsiz<-c(1,2, 1, 1, 2, 1)
+refGEP_rawreads<-t(t(data$cells.filered.wd)*celsiz)
+
+# use Synthetic mixture data from matlab 
+SyntheticMixtureData<-readMat('SyntheticMixtureData.mat')
+mixtureGEP<-SyntheticMixtureData$mixture.samples 
+true_prop_cell<-SyntheticMixtureData$true.SSP.CELL
+true_prop_RNA<-SyntheticMixtureData$true.SSP.RNA
+true_GEP_gene<-SyntheticMixtureData$true.GEP.gene
+true_GEP_read<-SyntheticMixtureData$true.GEP.read
+true_GEP_rpkm<-SyntheticMixtureData$true.GEP.RPKM
+gene_length<-SyntheticMixtureData$gene.length
+refGEP<-SyntheticMixtureData$refGEP.readCount
+#refGEP<-t(t(refGEP[,1:6])*celsiz)
+
+
+#sourceCpp("cokus.cpp")
+sourceCpp("GibbsSampler.cpp")
+sourceCpp("hungarian_Rcpp.cpp")
+source("read2gene.R")
+source("gene2rpkm.R")
+source("RNA2Cell.R")
+source("logpost.R")
+
+source("CDSeq.R")
+
+# testing on different situations
+result<-CDSeq(bulk_data =  mixtureGEP, cell_type_number = 6, mcmc_iterations = 700, dilution_factor = 1, block_number = 1, gene_length = as.vector(gene_length), reference_gep = refGEP)
+result<-CDSeq(bulk_data =  mixtureGEP, cell_type_number=2:8, mcmc_iterations = 700, dilution_factor = 1, block_number = 1, gene_length = as.vector(gene_length), reference_gep = refGEP)
+#lgpst<-logpost(estProp = result$estProp,estGEP = result$estGEP,mixtureGEP, alpha = 5 ,beta = 0.5) # compute the log posterior in RCDSeq
+
+result<-CDSeq(bulk_data =  mixtureGEP,cell_type_number=3, mcmc_iterations=70, dilution_factor=1, gene_subset_size = 100,block_number = 4, gene_length = as.vector(gene_length), reference_gep = refGEP)
+result<-CDSeq(bulk_data =  mixtureGEP,cell_type_number=2:8, mcmc_iterations=70, dilution_factor=1,gene_subset_size = 100,block_number = 5, gene_length = as.vector(gene_length), reference_gep = refGEP)
+
+
+result<-CDSeq(bulk_data =  mixtureGEP,cell_type_number=2:8, mcmc_iterations=700, dilution_factor=1,gene_subset_size = 200,block_number = 5, gene_length = as.vector(gene_length))
+result<-CDSeq(bulk_data =  mixtureGEP,cell_type_number=6, mcmc_iterations=70, dilution_factor=1,gene_subset_size = 100,block_number = 4, gene_length = as.vector(gene_length))
+
+result<-CDSeq(bulk_data =  mixtureGEP,cell_type_number=6, mcmc_iterations=700, dilution_factor=1,gene_subset_size = 5,block_number = 1, gene_length = as.vector(gene_length))
+
+# plot result
+estT <- nrow(result$estProp)
+par(mar=c(1,1,1,1))
+par(mfrow=c(6,estT))
+for (i in 1:6) {
+  for (j in 1:estT) {
+    plot(true_GEP_rpkm[,i],result$estGEP[,j])
+    lines(c(0,36000),c(0,36000),type = "l")
+  }
+}
+
+par(mfrow=c(6,estT))
+for (i in 1:6) {
+  for (j in 1:estT) {
+    plot(true_prop_cell[i,],result$estProp[j,])
+    lines(c(0,.5),c(0,.5), type = "l")
+  }
+}
+
+
+# compare output to grouth truth
+GEP_read_dt<-cor(result$estGEP,true_GEP_read)
+GEP_gene_dt<-cor(result$estGEP,true_GEP_gene)
+prop_dt<-cor(t(result$estProp),t(true_prop))
+hungarian_result<-hungarian_Rcpp(1-GEP_gene_dt)
+celltype_assignment<-hungarian_result$cost_assignment+1
+hung_rt<-list(estProp=estProp,estGEP=estGEP)
+hung_rt$cell_assign<-celltype_assignment
+######################################
+# test on foreach and doParallel
+######################################
+library(foreach)
+library(doParallel)
+cores=detectCores()
+#cl <- makeCluster(cores[1]-1) #not to overload your computer
+registerDoParallel(cores)
+workers_id<-foreach(i=1:5)%dopar%{paste(Sys.info()[['nodename']], Sys.getpid(), sep='-')}
+stopImplicitCluster()
+# foreach
+#stopCluster(cl)
+
+# parlapply seems can do the same thing 
+library(parallel)
+n_cores<-detectCores()-1
+cl <- makeCluster(n_cores)
+parLapply(cl,2:4,function(exponent,x=2) x^exponent)
+
+stopCluster(cl)
+
+################################################
+# test on the behavior random number generator
+################################################
+sourceCpp("randomMTtest.cpp")
+N<-100000
+uniformnumbers<-rep(-1,N)
+for (i in 1:N) {
+  uniformnumbers[i]<-randomMTtest()
+}
+hist(uniformnumbers)
+
+################################################
+# test on MATLAB results (logpost function works fine)
+################################################
+matlab_results_synthdata<-readMat("matlab_results_synthdata.mat")
+tt=c(4,5,6,7,8)
+lgpst_matlabresult<-rep(0,5)
+mydatatmp<-matlab_results_synthdata$mydata
+mydatatmp<-matrix(unlist(mydatatmp),ncol = 40)
+for (i in 1:5) {
+  proptmp<-matlab_results_synthdata$estprop.all[i]
+  estproptmp<-matrix(unlist(proptmp),ncol = 40)
+  geptmp<-matlab_results_synthdata$estGEP.all[i]
+  estGEPtmp<-matrix(unlist(geptmp),ncol = tt[i])
+  cat("dim(estprop)=",dim(estproptmp),",dim(estgep)=",dim(estGEPtmp),"\n")
+  lgpst_matlabresult[i]<-logpost(estProp = estproptmp,estGEP = estGEPtmp,mydata = mydatatmp,alpha = 5,beta = .5)
+}
+
+################################################
+# test on gene subset selection (no problem)
+################################################
+gene_subset<-100
+gene_covar<-var(t(mixtureGEP))
+gene_var<-diag(gene_covar)
+gene_var_idx<-order(-gene_var)
+gene_subset_index<-sort(gene_var_idx[1:gene_subset])
+matlab_genes<-as.integer(matlab_results_synthdata$subgenes)
+
+##############################
+# test on reduced data
+##############################
+gene_subset<-100
+gene_covar<-var(t(mixtureGEP))
+gene_var<-diag(gene_covar)
+gene_var_idx<-order(-gene_var)
+gene_subset_index<-sort(gene_var_idx[1:gene_subset])
+mixtureGEP_red<-mixtureGEP[gene_subset_index,]
+gene_length_red<-gene_length[gene_subset_index]
+result_red<-RCDSeq(mydata =  mixtureGEP_red,cell_type_number=8,N=700, gene_subset = 100, gene_length = as.vector(gene_length_red), referenceGEP = true_GEP_gene[gene_subset_index,])
+
+# compare with MATLAB result
+matlab_results_synthdata_T6<-readMat("matlab_results_synthdata_T_6.mat")
+matlab_estprop<-matlab_results_synthdata_T6$estprop
+matlab_estGEP<-matlab_results_synthdata_T6$estGEP
+matlab_lgpst<-matlab_results_synthdata_T6$logpost
+
+dt_gep<-cor(matlab_estGEP,result_red$estGEP)
+dt_prop<-cor(matlab_estprop,result_red$estProp)
+
+# MATLAB estimations plots
+mu<-1e8
+par(mfrow=c(6, 6))
+for(i in 1:6){
+  for(j in 1:6){
+    #print(cor(prop[j, ], theta[, i]))
+    #print(mean(abs(prop[j, ] - theta[,i])))
+    plot(log2(mu*matlab_estGEP[,i]), log2(mu*true_GEP_gene[gene_subset_index, j]), xlab="MATLAB Proportion", ylab="True Proportion") 
+         #,main = paste("Estimated", j, "vs. Real Topic", i, sep = " "))
+    abline(0, 1)
+  }
+}
+
+
+# R GEP estimations plots
+mu<-1e8
+par(mfrow=c(6, 6))
+for(i in 1:6){
+  for(j in 1:6){
+    #print(cor(prop[j, ], theta[, i]))
+    #print(mean(abs(prop[j, ] - theta[,i])))
+    plot(result_red$estGEP[,i],true_GEP_gene[gene_subset_index, j], xlab="R GEP", ylab="True GEP")
+         #, main = paste("Estimated", j, "vs. Real Topic", i, sep = " "))
+    abline(0, 1)
+  }
+}
+# R proportion estimationis
+par(mfrow=c(6, 6))
+for(i in 1:6){
+  for(j in 1:6){
+    #print(cor(prop[j, ], theta[, i]))
+    #print(mean(abs(prop[j, ] - theta[,i])))
+    plot(result_red$estProp[i,],true_prop[j,], xlab="R Proportion", ylab="True Proportion")
+    #, main = paste("Estimated", j, "vs. Real Topic", i, sep = " "))
+    abline(0, 1)
+  }
+}
+
+#####################################
+# test on the behavior of cokus.cpp
+#####################################
+sourceCpp("cokus.cpp")
+N<-100000
+seedMT(1+2*3)
+uniformnumbers<-rep(-1,N)
+for (i in 1:N) {
+  #uniformnumbers[i]<-randomMT()
+  uniformnumbers[i]<-randomMT() *  6 / (4294967296.0+1.0) 
+}
+hist(uniformnumbers)
+
+
+#####################################
+# test on parLappy
+#####################################
+library(parallel)
+# Calculate the number of cores
+no_cores <- detectCores() - 1
+# Initiate cluster
+cl<-makeCluster(no_cores)
+base <- 2
+clusterExport(cl, "base")
+parLapply(cl,  2:4, function(exponent) base^exponent)
+stopCluster(cl)
+
+#####################################
+# test on ctrl c
+#####################################
+for (i in 1:10000) {
+  cat("now printing ",i,"\n")
+  Sys.sleep(1)
+}
+sourceCpp("ctrl_c_test.cpp")
+ctrl_t_test(20)
+
+####################################
+# test on for loop
+####################################
+a<-rep(0,20)
+k<-0
+for (i in 1:4){
+  for(j in 1:4)
+   { k<-k+1
+    print(k)
+    a[k]<-i+j
+    }
+}
+
+####################################
+# test on memory cost 
+####################################
+result<-CDSeq(mydata = synthMixGEP*100,T=6)
+
+####################################
+# test on foreach nesting loop 
+library(arm)
+avec <-c(1,2)
+bvec <-4
+x <- matrix(0, length(avec), length(bvec))
+x <-foreach(b=bvec, .combine='cbind') %:%
+   foreach(a=avec, .combine='c') %dopar% {
+     cat("here --1\n\n")
+     10*a+b^2
+     }

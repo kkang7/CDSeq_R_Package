@@ -1,0 +1,214 @@
+install.packages("roxygen2")
+install.packages("xml2")
+install.packages("xml2")
+install.packages("roxygen2")
+library(roxygen2)
+install.packages("RcppGSL")
+install.packages("RcppGSL")
+library(CDSeq)
+?CDSeq
+library(CDSeq)
+?CDSeq
+?`CDSeq-package`
+library(CDSeq)
+?CDSeq
+library(CDSeq)
+?CDSeq
+library(CDSeq)
+?CDSeq
+library(CDSeq)
+library(CDSeq)
+?`CDSeq-R-pacakge`
+?CDSeq
+install.packages("devtools")
+install.packages("devtools")
+install.packages("devtools")
+library(devtools)
+devtools::document()
+library(CDSeq)
+?`CDSeq-R-pacakge`
+?`CDSeq-R-pacakge`
+library(CDSeq)
+?`CDSeq-R-pacakge`
+library(CDSeq)
+?`CDSeq-R-pacakge`
+library(CDSeq)
+library(CDSeq)
+?`CDSeq-R-pacakge`
+library(CDSeq)
+?`CDSeq-R-pacakge`
+library(CDSeq)
+?`CDSeq-R-pacakge`
+library(CDSeq)
+library(CDSeq)
+library(CDSeq)
+library(CDSeq)
+library(CDSeq)
+?gibbsSampler
+library(CDSeq)
+setwd("~/Documents/CDSeqRpackage_104")
+SyntheticMixtureData<-readMat('SyntheticMixtureData.mat')
+mixtureGEP<-SyntheticMixtureData$mixture.samples
+true_prop_cell<-SyntheticMixtureData$true.SSP.CELL
+true_prop_RNA<-SyntheticMixtureData$true.SSP.RNA
+true_GEP_gene<-SyntheticMixtureData$true.GEP.gene
+true_GEP_read<-SyntheticMixtureData$true.GEP.read
+true_GEP_rpkm<-SyntheticMixtureData$true.GEP.RPKM
+gene_length<-SyntheticMixtureData$gene.length
+refGEP<-SyntheticMixtureData$refGEP.readCount
+library(R.matlab)
+# use Synthetic mixture data from matlab
+SyntheticMixtureData<-readMat('SyntheticMixtureData.mat')
+mixtureGEP<-SyntheticMixtureData$mixture.samples
+true_prop_cell<-SyntheticMixtureData$true.SSP.CELL
+true_prop_RNA<-SyntheticMixtureData$true.SSP.RNA
+true_GEP_gene<-SyntheticMixtureData$true.GEP.gene
+true_GEP_read<-SyntheticMixtureData$true.GEP.read
+true_GEP_rpkm<-SyntheticMixtureData$true.GEP.RPKM
+gene_length<-SyntheticMixtureData$gene.length
+refGEP<-SyntheticMixtureData$refGEP.readCount
+save(mixtureGEP,true_prop_cell,true_prop_RNA,true_GEP_gene,true_GEP_read,true_GEP_rpkm,gene_length,refGEP,file = "SyntheticMixtureData.RData")
+setwd("~/Documents/CDSeq")
+library(CDSeq)
+library(CDSeq)
+library(CDSeq)
+library(CDSeq)
+devtools::document()
+library(CDSeq)
+library(CDSeq)
+library(CDSeq)
+library(CDSeq)
+library(CDSeq)
+library(R.matlab)
+library(Rcpp)
+library(RcppArmadillo)
+library(MASS)
+library(foreach)
+library(doParallel)
+library(RcppThread)
+library(dirmult)
+library(CDSeq)
+data("SyntheticMixtureData")
+result<-CDSeq(bulk_data = mixtureGEP, cell_type_number = 6, mcmc_iterations = 10)
+library(CDSeq)
+result<-CDSeq(bulk_data = mixtureGEP, cell_type_number = 6, mcmc_iterations = 10)
+getwd()
+setwd("~/Documents/CDSeq")
+tools::package_native_routine_registration_skeleton(".", character_only = FALSE)
+tools::package_native_routine_registration_skeleton(".", character_only = FALSE)
+devtools::document()
+library(CDSeq)
+result<-CDSeq(bulk_data = mixtureGEP, cell_type_number = 6, mcmc_iterations = 10)
+devtools::load_all(".")
+library(CDSeq)
+result<-CDSeq(bulk_data = mixtureGEP, cell_type_number = 6, mcmc_iterations = 10)
+library(CDSeq)
+library(CDSeq)
+is.numeric(2)
+0 || 1 || 1
+0 | 1 | 1
+0 | 0 | 1
+0 || 0 || 1
+a<- 0 | 0 | 1
+a
+a<- 0 | 0 | 1 | 1
+a
+a<- (0 | 0 | 1)
+a
+(0,0)|(1,1)
+c(0,0)|c(1,1)
+c(0,0)||c(1,1)
+c(0,0)||c(1,0)
+c(0,0)|c(1,0)
+result<-CDSeq(bulk_data = mixtureGEP, cell_type_number = 6, mcmc_iterations = 10,cpu_number = 1)
+!is.numeric(1) || is.vector(1) || is.matrix(1)
+is.vector(1)
+is.numeric(1)
+length(1)
+is.matrix(1)
+is.atomic(1)
+library(CDSeq)
+is.atomic(c(1,2))
+library(CDSeq)
+library(CDSeq)
+library(CDSeq)
+library(CDSeq)
+library(CDSeq)
+library(CDSeq)
+library(CDSeq)
+library(CDSeq)
+R CMD check --as-cran
+tmat <- matrix(c(0.9, 0.15, 0.1, 0.85), nr=2)
+tmat
+install.packages("depmixS4")
+states <- c(1,2)
+states
+rea <- data.frame(rnorm(n, -1, 1), rnorm(n, 1, 1))
+n<-100
+rea <- data.frame(rnorm(n, -1, 1), rnorm(n, 1, 1))
+dim(rea)
+sample(states, size=1, prob=tmat[s, ])
+s<-1
+sample(states, size=1, prob=tmat[s, ])
+sample(states, size=1, prob=tmat[s, ])
+sample(states, size=1, prob=tmat[s, ])
+sample(states, size=1, prob=tmat[s, ])
+tmat[1,]
+for (i in 1:(n-1)) {
+s <- sample(states, size=1, prob=tmat[s, ])
+trans <- c(trans, s)
+}
+n <- 100 #number of iterations
+s0 <- 1 #initial state
+set.seed(12345)
+rea <- data.frame(rnorm(n, -1, 1), rnorm(n, 1, 1))
+s <- s0
+#state transition record
+trans <- c(s0)
+for (i in 1:(n-1)) {
+s <- sample(states, size=1, prob=tmat[s, ])
+trans <- c(trans, s)
+}
+traj <- sapply(1:n, function(x) rea[x,trans[x]])
+trans[1]
+trans[2]
+install.packages("depmixS4")
+version
+version
+install.packages("Rcpp")
+install.packages("RcppArmadillo")
+install.packages("R.matlab")
+install.packages("RcppEigen")
+setwd("~/Documents/CDSeq")
+install.packages("foreach")
+install.packages("doParallel")
+install.packages("dirmult")
+install.packages("roxygen2")
+install.packages("RcppThread")
+library(CDSeq)
+data("SyntheticMixtureData")
+result<-CDSeq(bulk_data =  mixtureGEP, cell_type_number = 6, mcmc_iterations = 70, dilution_factor = 1, block_number = 1, gene_length = as.vector(gene_length), reference_gep = refGEP)
+library(CDSeq)
+result<-CDSeq(bulk_data =  mixtureGEP, cell_type_number = 6, mcmc_iterations = 700, dilution_factor = 1, block_number = 1, gene_length = as.vector(gene_length), reference_gep = refGEP)
+estT <- nrow(result$estProp)
+par(mar=c(1,1,1,1))
+par(mfrow=c(6,estT))
+for (i in 1:6) {
+for (j in 1:estT) {
+plot(true_GEP_rpkm[,i],result$estGEP[,j])
+lines(c(0,36000),c(0,36000),type = "l")
+}
+}
+par(mfrow=c(6,estT))
+for (i in 1:6) {
+for (j in 1:estT) {
+plot(true_prop_cell[i,],result$estProp[j,])
+lines(c(0,.5),c(0,.5), type = "l")
+}
+}
+result<-CDSeq(bulk_data =  mixtureGEP, cell_type_number=2:8, mcmc_iterations = 700, dilution_factor = 1, block_number = 1, gene_length = as.vector(gene_length), reference_gep = refGEP)
+install.packages("arm")
+library(CDSeq)
+result<-CDSeq(bulk_data =  mixtureGEP, cell_type_number=2:8, mcmc_iterations = 10, dilution_factor = 1, block_number = 1, gene_length = as.vector(gene_length), reference_gep = refGEP)
+library(CDSeq)
+result<-CDSeq(bulk_data =  mixtureGEP, cell_type_number=2:8, mcmc_iterations = 10, dilution_factor = 1, block_number = 1, gene_length = as.vector(gene_length), reference_gep = refGEP)
