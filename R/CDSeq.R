@@ -46,7 +46,7 @@
 #########################################################
 # CDSeq main function                                   #
 # Code by: Kai kang and David Huang                     #
-# Last update: 1/6/2020                                 #
+# Last update: 2/10/2020                                 #
 #########################################################
 
 
@@ -470,8 +470,8 @@ CDSeq <- function( bulk_data,
       
       if ( block_number == 1){
         if ( gl==1 ){estGEP<-read2gene(estGEP_read,gene_length)}else{estGEP<-estGEP_read} # read to gene
-        if ( ref==1 & cell_type_number[j]<=ncol(refGEPlist[[i]]) ){
-          if ( rawcount==1 ){
+        if ( ref==1 ){
+          if ( rawcount==1 & cell_type_number[j]<=ncol(refGEPlist[[i]])){
             corr_GEP<-cor(estGEP_read,refGEPlist[[i]])
           }else{
             if(gl!=1){warning("Gene length is NOT provided and the reference GEP is NOT read counts data, the cell type association may be inaccurate.")}
