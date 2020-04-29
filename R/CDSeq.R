@@ -17,7 +17,7 @@
 #' 
 #' @param gene_subset_size number of genes randomly sampled for each block. Default is NULL.
 #' 
-#' @param block_number number of genes randomly sampled for each block. Default is 1.
+#' @param block_number number of blocks. Each block contains gene_subset_size genes. Default is 1.
 #' 
 #' @param cpu_number number of cpu cores that can be used for parellel computing; 
 #' Default is NULL and CDSeq will detect the available number of cores on the device and use number of all cores - 1 for parallel computing.
@@ -46,7 +46,7 @@
 #########################################################
 # CDSeq main function                                   #
 # Code by: Kai kang and David Huang                     #
-# Last update: 2/10/2020                                 #
+# Last update: 2/10/2020                                #
 #########################################################
 
 
@@ -403,8 +403,20 @@ CDSeq <- function( bulk_data,
       celltype_assignment<-allresult[[1]]$celltype_assignment
       processIDs[1] <-allresult[[1]]$processID
     } 
+    # keep all the parameters
+    parameters <- list( beta = beta, 
+                        alpha = alpha, 
+                        cell_type_number = cell_type_number, 
+                        mcmc_iterations = mcmc_iterations, 
+                        dilution_factor = dilution_factor,
+                        gene_subset_size = gene_subset_size,
+                        block_number = block_number, 
+                        cpu_number = cpu_number,
+                        gene_length = gene_length,
+                        reference_gep = reference_gep,
+                        print_progress_msg_to_file = print_progress_msg_to_file)
     #Final output
-    CDSeq_result<-list(estProp=estProp,estGEP=estGEP,gibbsRunningTime = gibbsRunningTime, cell_type_assignment = celltype_assignment, processIDs = processIDs)
+    CDSeq_result<-list(estProp=estProp,estGEP=estGEP,gibbsRunningTime = gibbsRunningTime, cell_type_assignment = celltype_assignment, processIDs = processIDs, parameters = parameters)
     
     if(ref==0){
       cell_types<-paste("unknown_cell_type",1:cell_type_number,sep = "_")
@@ -565,8 +577,20 @@ CDSeq <- function( bulk_data,
     if(rpkm==1 & ncol(maxGEP)<=ncol(reference_gep)){maxGEP <- gene2rpkm(maxGEP,gene_length,reference_gep[,celltype_assignment])}
   }
   if(ref==1 & block_number==1){celltype_assignment<-CDseq_all[[maxTindex]]$cell_type_assignment}
+  # keep all the parameters
+  parameters <- list( beta = beta, 
+                      alpha = alpha, 
+                      cell_type_number = cell_type_number, 
+                      mcmc_iterations = mcmc_iterations, 
+                      dilution_factor = dilution_factor,
+                      gene_subset_size = gene_subset_size,
+                      block_number = block_number, 
+                      cpu_number = cpu_number,
+                      gene_length = gene_length,
+                      reference_gep = reference_gep,
+                      print_progress_msg_to_file = print_progress_msg_to_file)
   #Final output
-  CDSeq_result_max<-list(estProp=maxaverestprop, estGEP=maxGEP, cell_type_assignment = celltype_assignment, lgpst=maxlgpst, estT=maxT, est_all = CDseq_all)
+  CDSeq_result_max<-list(estProp=maxaverestprop, estGEP=maxGEP, cell_type_assignment = celltype_assignment, lgpst=maxlgpst, estT=maxT, est_all = CDseq_all, parameters = parameters)
   
   if(ref==0){
     cell_types<-paste("unknown_cell_type",1:CDSeq_result_max$estT,sep = "_")
