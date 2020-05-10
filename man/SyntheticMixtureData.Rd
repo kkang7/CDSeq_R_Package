@@ -4,7 +4,9 @@
 \name{SyntheticMixtureData}
 \alias{SyntheticMixtureData}
 \title{Synthetic bulk RNA-seq read counts data of six cell types}
-\format{This example dataset contains the following}
+\format{
+A matrix of read counts data containing 40 synthetic mixtures with 500 genes
+}
 \source{
 we downloaded the pure cell line RNA-seq data and generated the mixing proportions randomly and produced the mixtures
 }
@@ -13,6 +15,9 @@ data(SyntheticMixtureData)
 }
 \description{
 Synthetic bulk RNA-seq read counts data of six cell types
+}
+\examples{
+data(SyntheticMixtureData)
 }
 \author{
 Kai Kang

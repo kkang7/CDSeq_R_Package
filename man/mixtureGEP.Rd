@@ -4,7 +4,9 @@
 \name{mixtureGEP}
 \alias{mixtureGEP}
 \title{Synthetic bulk RNA-seq read counts data of six cell types}
-\format{numeric matrix}
+\format{
+numeric matrix
+}
 \source{
 we downloaded the pure cell line RNA-seq data and generated the mixing proportions randomly and produced the mixtures
 }

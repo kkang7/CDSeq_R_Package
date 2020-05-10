@@ -1,0 +1,71 @@
+---
+title: "CDSeq: a complete deconvolution method using sequencing data"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{CDSeq: a complete deconvolution method using sequencing data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+
+
+# Introduction
+CDSeq is a complete deconvolution method using sequencing data. Simply put, CDSeq takes bulk RNA-Seq read counts data as input and estimates the cell-type-specific gene expression profiles (csGEPs) and sample-specific cell-type proportions (SSP). 
+
+
+
+# Usage
+
+## Input
+   Input                            Description
+---------------------------  ------------------------
+bulk_data                    this is the bulk RNAseq read counts data. It is a G $\times$ M matrix or data frame, where G is the number of genes and M is the sample size.
+beta                         hyperparameter for csGEP estimation. 
+alpha                        hyperparameter for SSP estimation.
+cell_type_number             number of cell types. It is an integer or a vector of varying integers.
+mcmc_iterations              number of iterations for Gibbs sampler.
+dilution_factor              dilution factor is a number used to dilute the input bulk data for faster computation. CDSeq will dilute the bulk data by *dilution_factor*, i.e. $\frac{\text{bulk_data}}{\text{dilution_factor}}$ will be analyzed. 
+gene_subset_size             number of genes used for a block. 
+block_number                 number of blocks.
+cpu_number                   number of CPUs will be used. If null, CDSeq will detect the number of available cores for parallel computing.
+gene_length                  effective length of the genes in bulk data. It is defined as *gene length - read length + 1*.
+reference_gep                pure cell line gene expressions. 
+print_progress_msg_to_file   indicator of printing the running process.
+
+## Ouput
+Output                Description
+--------------------  ------------------------
+estGEP                CDSeq-estimated cell-type-specific gene expression profiles. It is a G by M matrix where G denotes the number of genes and M is the sample size.
+estProp               CDSeq-estimated sample-specific cell-type proportions. It is a M by T matrix where M is the sample size and T is the number of cell types.
+cell_type_assignment  If refGEP is given, CDSeq will perform one-to-one cell types assignment for
+est_all
+parameters
+gibbsRunningTime
+processIDs
+# Examples
+## installation
+You could install CDSeq from Github by running the following
+```{r installation, eval=FALSE}
+install_github("kkang7/CDSeq_R_Package")
+```
+
+## quick example
+```{r library}
+library(CDSeq)
+```
+```{r example 1, eval=FALSE}
+result<-CDSeq(bulk_data =  mixtureGEP, cell_type_number = 6, mcmc_iterations = 10, 
+       dilution_factor = 1, block_number = 1, gene_length = as.vector(gene_length), 
+       reference_gep = refGEP, cpu_number=1, print_progress_msg_to_file=1)
+```
+
+# Compare CDSeq-estiamted cell-type-specific gene expressions with single cell RNA-Seq data
+

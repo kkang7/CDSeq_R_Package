@@ -35,7 +35,7 @@ e.g. cell_type_number <- 2:30, then CDSeq will estimate the number of cell types
 
 \item{gene_subset_size}{number of genes randomly sampled for each block. Default is NULL.}
 
-\item{block_number}{number of genes randomly sampled for each block. Default is 1.}
+\item{block_number}{number of blocks. Each block contains gene_subset_size genes. Default is 1.}
 
 \item{cpu_number}{number of cpu cores that can be used for parellel computing; 
 Default is NULL and CDSeq will detect the available number of cores on the device and use number of all cores - 1 for parallel computing.}
@@ -60,5 +60,5 @@ result<-CDSeq(bulk_data =  mixtureGEP, cell_type_number = 6, mcmc_iterations = 1
 
 result<-CDSeq(bulk_data =  mixtureGEP, cell_type_number=2:8, mcmc_iterations = 10, 
        dilution_factor = 1, block_number = 1, gene_length = as.vector(gene_length), 
-       reference_gep = refGEP, cpu_number=2, print_progress_msg_to_file=1)
+       reference_gep = refGEP, cpu_number=2, print_progress_msg_to_file=0)
 }

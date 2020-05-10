@@ -4,7 +4,9 @@
 \name{true_prop_RNA}
 \alias{true_prop_RNA}
 \title{True cell type RNA proportions}
-\format{numeric matrix}
+\format{
+numeric matrix
+}
 \source{
 randomly generated
 }

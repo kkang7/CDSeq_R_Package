@@ -4,7 +4,9 @@
 \name{true_GEP_gene}
 \alias{true_GEP_gene}
 \title{True GEPs of the six component cell types normalized by gene length}
-\format{numeric matrix}
+\format{
+numeric matrix
+}
 \usage{
 data(SyntheticMixtureData)
 }

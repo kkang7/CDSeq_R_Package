@@ -4,7 +4,9 @@
 \name{true_prop_cell}
 \alias{true_prop_cell}
 \title{True cell proportions of the mixtures}
-\format{numeric matrix}
+\format{
+numeric matrix
+}
 \source{
 cell type proportions are randomly generated
 }

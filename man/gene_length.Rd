@@ -4,7 +4,9 @@
 \name{gene_length}
 \alias{gene_length}
 \title{Gene length}
-\format{numeric vector}
+\format{
+numeric vector
+}
 \usage{
 data(SyntheticMixtureData)
 }

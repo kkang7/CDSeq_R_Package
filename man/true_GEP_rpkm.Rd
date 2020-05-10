@@ -4,7 +4,9 @@
 \name{true_GEP_rpkm}
 \alias{true_GEP_rpkm}
 \title{True GEPs of the six component cell types RPKM normalization}
-\format{numeric matrix}
+\format{
+numeric matrix
+}
 \usage{
 data(SyntheticMixtureData)
 }

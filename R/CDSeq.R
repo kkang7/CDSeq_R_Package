@@ -37,17 +37,11 @@
 #' 
 #' result<-CDSeq(bulk_data =  mixtureGEP, cell_type_number=2:8, mcmc_iterations = 10, 
 #'        dilution_factor = 1, block_number = 1, gene_length = as.vector(gene_length), 
-#'        reference_gep = refGEP, cpu_number=2, print_progress_msg_to_file=1)
+#'        reference_gep = refGEP, cpu_number=2, print_progress_msg_to_file=0)
 #' @export
 #'  
 #' @return CDSeq returns estimates of both cell-type-specific gene expression profiles and sample-specific cell-type proportions. CDSeq will also return estimated number of cell types.
 #'  and the log posterior values for different number of cell types. 
-
-#########################################################
-# CDSeq main function                                   #
-# Code by: Kai kang and David Huang                     #
-# Last update: 2/10/2020                                #
-#########################################################
 
 
 #---------
@@ -201,6 +195,12 @@ CDSeq <- function( bulk_data,
       rpkm<-0
       warning("Gene length is NOT provided, RPKM normalization is NOT performed.")
      }
+  }
+  
+  # check the cell_type_number and ncol(refGEP), 
+  if(max(cell_type_number)>ncol(reference_gep)){
+    rpkm <- 0
+    ref <- 0
   }
   
   ###################################
@@ -456,7 +456,9 @@ CDSeq <- function( bulk_data,
     #two parallel loop
     printout=0
     CDSeq_tmp_log <- tempfile(pattern = "CDSeq_tmp_log_",fileext = ".txt")
-    cat(sprintf("CDSeq is running in parallel, it may take some time...\n(Progress is being printed to %s. You may delete the file if will not use it.)\n",CDSeq_tmp_log))
+    if(print_progress_msg_to_file==1){
+      cat(sprintf("CDSeq is running in parallel, it may take some time...\n(Progress is being printed to %s. You may delete the file if will not use it.)\n",CDSeq_tmp_log))
+    }
     #cat("CDSeq is running in parallel, it may take some time...\n(Progress is being printed to CDSeq_logfile.txt in working directory. You may delete the file if will not use it.)\n")
     est_all<-foreach(j=1:length(cell_type_number), .combine = 'rbind') %:% 
       foreach(i=1:block_number, .combine = 'c') %dopar% {

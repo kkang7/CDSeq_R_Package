@@ -7,4 +7,4 @@
 #' @source we downloaded the pure cell line RNA-seq data and generated the mixing proportions randomly and produced the mixtures
 #' @examples 
 #' data(SyntheticMixtureData)
-"SyntheticMixtureData"
+NULL

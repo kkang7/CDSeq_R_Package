@@ -4,7 +4,9 @@
 \name{refGEP}
 \alias{refGEP}
 \title{GEPs of six component pure cell lines}
-\format{numeric matrix}
+\format{
+numeric matrix
+}
 \usage{
 data(SyntheticMixtureData)
 }
