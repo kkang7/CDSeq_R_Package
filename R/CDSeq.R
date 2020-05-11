@@ -198,10 +198,13 @@ CDSeq <- function( bulk_data,
   }
   
   # check the cell_type_number and ncol(refGEP), 
-  if(max(cell_type_number)>ncol(reference_gep)){
-    rpkm <- 0
-    ref <- 0
+  if(!is.null(reference_gep)){
+    if(max(cell_type_number)>ncol(reference_gep)){
+      rpkm <- 0
+      ref <- 0
+    }
   }
+  
   
   ###################################
   # Save sample names and gene names

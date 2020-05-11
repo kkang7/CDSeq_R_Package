@@ -10,7 +10,10 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  fig.width=10, 
+  fig.height=7,
+  fig.align = 'center'
 )
 ```
 
@@ -45,27 +48,52 @@ Output                Description
 --------------------  ------------------------
 estGEP                CDSeq-estimated cell-type-specific gene expression profiles. It is a G by M matrix where G denotes the number of genes and M is the sample size.
 estProp               CDSeq-estimated sample-specific cell-type proportions. It is a M by T matrix where M is the sample size and T is the number of cell types.
-cell_type_assignment  If refGEP is given, CDSeq will perform one-to-one cell types assignment for
-est_all
-parameters
-gibbsRunningTime
-processIDs
+cell_type_assignment  If refGEP is given, CDSeq will perform one-to-one cell types assignment for CDSeq-estimated cell types.
+lgpst                 This is the log posterior values for each element in cell_type_number.
+estT                  CDSeq-estimated number of cell types.
+est_all               If cell_type_number is a vector, CDSeq will return all estimations for all elements in cell_type_vector.
+parameters            The user-provided parameters for CDSeq. 
+gibbsRunningTime      Time consumed for Gibbs sampler. 
+processIDs            Process ID in the operating system for running CDSeq.
+
 # Examples
-## installation
+## Installation
 You could install CDSeq from Github by running the following
 ```{r installation, eval=FALSE}
 install_github("kkang7/CDSeq_R_Package")
 ```
 
-## quick example
+## Quick example
+### Given the number of cell types
 ```{r library}
 library(CDSeq)
 ```
-```{r example 1, eval=FALSE}
-result<-CDSeq(bulk_data =  mixtureGEP, cell_type_number = 6, mcmc_iterations = 10, 
-       dilution_factor = 1, block_number = 1, gene_length = as.vector(gene_length), 
-       reference_gep = refGEP, cpu_number=1, print_progress_msg_to_file=1)
+```{r example 1, eval=FALSE, cache=FALSE, results='hide'}
+result<-CDSeq(bulk_data =  mixtureGEP, 
+              cell_type_number = 6, 
+              mcmc_iterations = 700, 
+              dilution_factor = 1, 
+              block_number = 1, 
+              gene_length = as.vector(gene_length), 
+              reference_gep = refGEP, 
+              cpu_number = 1, 
+              print_progress_msg_to_file = 1)
 ```
 
-# Compare CDSeq-estiamted cell-type-specific gene expressions with single cell RNA-Seq data
+```{r fig1, echo=FALSE,cache=FALSE,eval=FALSE}
+par(mar=c(1,1,1,1))
+par(mfrow=c(6,6))
+for (i in 1:6) {
+  for (j in 1:6) {
+    plot(result$estGEP[,i],true_GEP_gene[,j],xlab = "CDSeq-estimated GEPs", ylab = "True GEPs")
+    max_v <- max(c(result$estGEP[,i], true_GEP_gene[,j]))
+    lines(c(0,max_v),c(0,max_v), type = "l")
+  }
+}
+
+```
+
+
+# Comparison with single cell RNA seq data
+CDSeq can be viewed as an *in silico* single cell profiling of the bulk RNA-Seq data.
 
