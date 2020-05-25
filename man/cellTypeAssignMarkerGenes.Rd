@@ -2,8 +2,7 @@
 % Please edit documentation in R/cellTypeAssignMarkerGenes.R
 \name{cellTypeAssignMarkerGenes}
 \alias{cellTypeAssignMarkerGenes}
-\title{cell type assignment heatmap function
-this function plots the heatmap based on marker genes expressions}
+\title{\code{cellTypeAssignMarkerGenes} assigns CDSeq-identified cell types using user-provided marker gene list and plots heatmap.}
 \usage{
 cellTypeAssignMarkerGenes(
   cell_gep,
@@ -30,15 +29,19 @@ cellTypeAssignMarkerGenes(
 \value{
 cellTypeAssignMarkerGenes returns a list containing: 
 GEP_markerSum (a A by B matrix where A is nrow(marker_gene_list), B is ncol(cell_gep)), 
+
 GEP_markerSum_zscore (row-wise z score of GEP_markerSum), 
+
 GEP_matched is cell_gep(,cell_type_idx),
-cell_type_idx (column index of cell_gep that are considered matching with cell types in marker_gene_list).  
+
+cell_type_idx (column index of cell_gep that are considered matching with cell types in marker_gene_list), 
+
 cell_type_matched stores the cell types in marker_gene_list that are considered to be matched with cell_gep, 
+
 GEP_markerSum_zscore_matched contains only the rows of GEP_markerSum_zscore that are considered to be matched with some cell types in cell_gep. GEP_markerSum_zscore_matched and GEP_markerSum_zscore have same columns. 
-cell_type_matched_fussy s a zero-one matrix that has the same size as GEP_markerSum_zscore_matched. If (i,j) element is one, means ith cell type in marker_gene_list is assigned to jth element in cell_gep.
+
+cell_type_matched_fussy is a zero-one matrix that has the same size as GEP_markerSum_zscore_matched. If (i,j) element is one, means ith cell type in marker_gene_list is assigned to jth element in cell_gep.
 }
 \description{
-there is a bug when threhold is 0, it should include all CDSeq estimated cell types but it seems not. 
-Assign cell types using marker gene list.
-\code{cellTypeAssignMarkerGenes} assigns CDSeq-identified cell types using user-provided marker gene list.
+\code{cellTypeAssignMarkerGenes} assigns CDSeq-identified cell types using user-provided marker gene list and plots heatmap.
 }
