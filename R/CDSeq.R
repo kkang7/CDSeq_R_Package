@@ -473,6 +473,7 @@ CDSeq <- function( bulk_data,
       #output two vectors. estGEP_vec is gene x cell type; estSSp_vec is sample x cell type
       estGEP_vec<-result$csGEP_vec
       estSSp_vec<-result$SSP_vec
+      cellTypeAssignSplit <- result$cellTypeAssignSplit
       
       #vector to matrix
       samplesize<-ncol(bulk_data)
@@ -500,8 +501,8 @@ CDSeq <- function( bulk_data,
           if(rawcount==1 & nrow(estProp)<=ncol(refGEPlist[[i]])){estProp <- RNA2Cell(colSums(refGEPlist[[i]][,celltype_assignment]),estProp)}
           if(rpkm==1){estGEP <- gene2rpkm(estGEP,gene_length,refGEPlist[[i]][,celltype_assignment])}
         }
-      }
-      if(block_number>1){return(list(estProp,lgpst))}else{return(list(estProp,estGEP,lgpst,celltype_assignment))}
+      }# save cellTypeAssignSplit only when block number is 1, since for block number greater than 1, cellTypeAssignSplit info is not useful. 
+      if(block_number>1){return(list(estProp,lgpst))}else{return(list(estProp,estGEP,lgpst,celltype_assignment, cellTypeAssignSplit))}
     }#foreach loop end
     
     #stop parallel
@@ -549,12 +550,14 @@ CDSeq <- function( bulk_data,
       estGEPall <- est_all[,2]
       lgpstall <- est_all[,3]
       celltype_assignment_all<-est_all[,4]
+      cellTypeAssignSplit_all <- est_all[,5]
       for(j in 1:length(cell_type_number)){
         averestprop <- estPropall[[j]]
         estGEP <- estGEPall[[j]]
         mlgpst <- lgpstall[[j]]
         celltype_assignment<-celltype_assignment_all[[j]]
-        CDseq_all[[j]]<-list(estProp=averestprop,estGEP=estGEP,lgpst=mlgpst, cell_type_assignment = celltype_assignment)
+        cellTypeAssignSplit <- cellTypeAssignSplit_all[[j]]
+        CDseq_all[[j]]<-list(estProp=averestprop,estGEP=estGEP,lgpst=mlgpst, cell_type_assignment = celltype_assignment, cellTypeAssignSplit = cellTypeAssignSplit)
       }
     }
   
@@ -568,6 +571,8 @@ CDSeq <- function( bulk_data,
   maxaverestprop <- CDseq_all[[maxTindex]]$estProp
   maxGEP <- CDseq_all[[maxTindex]]$estGEP
   maxlgpst <- max(alllgpst)
+  
+  maxcellTypeAssignSplit <- CDseq_all[[maxTindex]]$cellTypeAssignSplit
   
   # cell type association
   if(ref==1 & block_number>1){
@@ -596,7 +601,7 @@ CDSeq <- function( bulk_data,
                       reference_gep = reference_gep,
                       print_progress_msg_to_file = print_progress_msg_to_file)
   #Final output
-  CDSeq_result_max<-list(estProp=maxaverestprop, estGEP=maxGEP, cell_type_assignment = celltype_assignment, lgpst=maxlgpst, estT=maxT, est_all = CDseq_all, parameters = parameters)
+  CDSeq_result_max<-list(estProp=maxaverestprop, estGEP=maxGEP, cell_type_assignment = celltype_assignment,cellTypeAssignSplit = maxcellTypeAssignSplit, lgpst=maxlgpst, estT=maxT, est_all = CDseq_all, parameters = parameters)
   
   if(ref==0){
     cell_types<-paste("unknown_cell_type",1:CDSeq_result_max$estT,sep = "_")
