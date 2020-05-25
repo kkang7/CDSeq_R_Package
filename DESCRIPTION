@@ -15,7 +15,11 @@ Imports: Rcpp (>= 1.0.3),
          dirmult, 
          RcppThread,
          iterators,
-         parallel
+         parallel,
+         qlcMatrix,
+         gplots,
+         grDevices,
+         clue
 LinkingTo: Rcpp, RcppArmadillo
 Encoding: UTF-8
 LazyData: true

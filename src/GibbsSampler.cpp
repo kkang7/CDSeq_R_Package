@@ -57,6 +57,11 @@ List gibbsSampler(double ALPHA, std::vector<double> BETA, NumericMatrix mixtureS
   vector<double> probs(T);
   vector<unsigned int> order(n), cellTypeBag(n);// unsigned int for saving space
   
+  // this matrix stores reads-cell-type-assignment for each sample
+  // use RcppArmadillo cube data structure as 3D matrix container
+  arma::cube cellTypeAssignSplit(genes,samples,T);
+  cellTypeAssignSplit.fill(0);// initialize with zeros
+  
   int wi,di,i,ii,j,cellType, rp, iter, wioffset, dioffset;
   double totprob, WBETA, r, max;
   ofstream logfile (CDSeq_tmp_log, std::ios_base::app);
@@ -76,6 +81,7 @@ List gibbsSampler(double ALPHA, std::vector<double> BETA, NumericMatrix mixtureS
       csGEP_vec[wi*T + cellType]++;
       SSP_vec[di*T + cellType]++;
       cellTypeTot[cellType]++; // increment cellTypeTot matrix
+      cellTypeAssignSplit(wi,di,cellType)++;
     }
   for (i = 0; i < n; i ++) order[i]=i; // fill with increasing series
   
@@ -113,6 +119,7 @@ List gibbsSampler(double ALPHA, std::vector<double> BETA, NumericMatrix mixtureS
       di  = sid[i]; // current sample index  
       cellType = cellTypeBag[i]; // current cell type assignment to gene read
       cellTypeTot[cellType]--;  // substract this from counts
+      cellTypeAssignSplit(wi,di,cellType)--;
       
       wioffset = wi*T;
       dioffset = di*T;
@@ -137,6 +144,7 @@ List gibbsSampler(double ALPHA, std::vector<double> BETA, NumericMatrix mixtureS
       csGEP_vec[wioffset + cellType ]++; // and update counts
       SSP_vec[dioffset + cellType ]++;
       cellTypeTot[cellType] ++;
+      cellTypeAssignSplit(wi,di,cellType)++;//keep read-cell-type-assignment for each cell type in each sample
     }
   }
   logfile.close();
@@ -144,6 +152,7 @@ List gibbsSampler(double ALPHA, std::vector<double> BETA, NumericMatrix mixtureS
   result["csGEP_vec"] = csGEP_vec;
   result["SSP_vec"] = SSP_vec;
   result["cellTypeTot"] = cellTypeTot;
+  result["cellTypeAssignSplit"] = cellTypeAssignSplit;
   return result;
 }
 

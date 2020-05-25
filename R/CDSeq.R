@@ -348,7 +348,7 @@ CDSeq <- function( bulk_data,
               if(rawcount==1){estProp <- RNA2Cell(colSums(refGEPlist[[i]][,celltype_assignment]),estProp)}
               if(rpkm==1){estGEP <- gene2rpkm(estGEP,gene_length,refGEPlist[[i]][,celltype_assignment])}
             }
-            return(list(estProp = estProp, estGEP = estGEP, celltype_assignment = celltype_assignment, processID = Sys.getpid()))
+            return(list(estProp = estProp, estGEP = estGEP, celltype_assignment = celltype_assignment,cellTypeAssignSplit = result$cellTypeAssignSplit, processID = Sys.getpid()))
           }else{
             #return(estProp)
             return(list(estProp = estProp, processID = Sys.getpid()))
@@ -404,6 +404,7 @@ CDSeq <- function( bulk_data,
       estProp <- allresult[[1]]$estProp
       estGEP <- allresult[[1]]$estGEP
       celltype_assignment<-allresult[[1]]$celltype_assignment
+      cellTypeAssignSplit <- allresult[[1]]$cellTypeAssignSplit
       processIDs[1] <-allresult[[1]]$processID
     } 
     # keep all the parameters
@@ -419,7 +420,7 @@ CDSeq <- function( bulk_data,
                         reference_gep = reference_gep,
                         print_progress_msg_to_file = print_progress_msg_to_file)
     #Final output
-    CDSeq_result<-list(estProp=estProp,estGEP=estGEP,gibbsRunningTime = gibbsRunningTime, cell_type_assignment = celltype_assignment, processIDs = processIDs, parameters = parameters)
+    CDSeq_result<-list(estProp=estProp,estGEP=estGEP,gibbsRunningTime = gibbsRunningTime, cell_type_assignment = celltype_assignment, cellTypeAssignSplit = cellTypeAssignSplit,processIDs = processIDs, parameters = parameters)
     
     if(ref==0){
       cell_types<-paste("unknown_cell_type",1:cell_type_number,sep = "_")

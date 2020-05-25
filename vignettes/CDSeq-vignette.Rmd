@@ -11,8 +11,8 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.width=10, 
-  fig.height=7,
+  fig.width = 10, 
+  fig.height = 7,
   fig.align = 'center'
 )
 ```
@@ -43,7 +43,7 @@ gene_length                  effective length of the genes in bulk data. It is d
 reference_gep                pure cell line gene expressions. 
 print_progress_msg_to_file   indicator of printing the running process.
 
-## Ouput
+## Ouput {#output}
 Output                Description
 --------------------  ------------------------
 estGEP                CDSeq-estimated cell-type-specific gene expression profiles. It is a G by M matrix where G denotes the number of genes and M is the sample size.
@@ -64,33 +64,189 @@ install_github("kkang7/CDSeq_R_Package")
 ```
 
 ## Quick example
-### Given the number of cell types
+### When number of cell types is a scalar
 ```{r library}
 library(CDSeq)
 ```
-```{r example 1, eval=FALSE, cache=FALSE, results='hide'}
-result<-CDSeq(bulk_data =  mixtureGEP, 
+The followig code runs **CDSeq** using synthetic mixtures comes with the R package. The *mixtureGEP* consists of 40 samples with 500 genes. These mixtures are generated using six pure cell lines and random generated mixing proportions. **CDSeq** takes *mixtureGEP* as input and outputs the estimates of cell-type-specific gene expressions and sample-specific cell-type proportions. 
+```{r example 1, eval=FALSE, cache=TRUE, results='hide'}
+result1<-CDSeq(bulk_data =  mixtureGEP, 
               cell_type_number = 6, 
-              mcmc_iterations = 700, 
+              mcmc_iterations = 1000, 
               dilution_factor = 1, 
               block_number = 1, 
               gene_length = as.vector(gene_length), 
               reference_gep = refGEP, 
               cpu_number = 1, 
-              print_progress_msg_to_file = 1)
+              print_progress_msg_to_file = 0)
 ```
 
-```{r fig1, echo=FALSE,cache=FALSE,eval=FALSE}
+The output *result* is a list containing multiple entities as listed in [link1](#output). When *cell_type_number* is a scalar, **CDSeq** will only returnt the following values.
+```{r output, eval=FALSE, echo=TRUE}
+ls(result1)
+```
+We can compare the CDSeq-estimated cell-type-specific GEPs with the ground truth.
+```{r fig1, echo=TRUE,cache=TRUE,eval=FALSE}
+trueGEP <- true_GEP_rpkm[,result$cell_type_assignment]
+par(mar=c(4,4,1,1))
+par(mfrow=c(2,3))
+par(pty="s")
+for (i in 1:6) {
+    plot(result$estGEP[,i],trueGEP[,i],xlab = "CDSeq-estimated GEPs", ylab = "True GEPs")
+    max_v <- max(c(result$estGEP[,i], trueGEP[,i]))
+    lines(c(0,max_v),c(0,max_v), type = "l")
+}
+
+```
+
+We then compare the CDSeq-estimated cell type proportions with group truth.
+```{r fig2, echo=TRUE,cache=TRUE,eval=FALSE}
+trueProp <- true_prop_cell[result$cell_type_assignment,]
+par(mar=c(4,4,1,1))
+par(mfrow=c(2,3))
+par(pty="s")
+for (i in 1:6) {
+    plot(result$estProp[i,],trueProp[i,],xlab = "CDSeq-estimated proportions", ylab = "True proportions")
+    lines(c(0,1),c(0,1), type = "l")
+}
+```
+
+For this dataset, CDSeq takes about 10 minutes.
+```{r time, echo=TRUE,cache=FALSE,eval=FALSE}
+result$gibbsRunningTime
+```
+
+
+
+### Estimate the number of cell types
+```{r example 2, eval=FALSE, cache=TRUE, results='hide'}
+result2<-CDSeq(bulk_data =  mixtureGEP, 
+              cell_type_number = 2:10, 
+              mcmc_iterations = 700, 
+              dilution_factor = 1, 
+              block_number = 1, 
+              gene_length = as.vector(gene_length), 
+              reference_gep = refGEP, 
+              cpu_number = 8, # use multiple cores to save time 
+              print_progress_msg_to_file = 0)
+
+```
+```{r, eval=FALSE}
+cor(result2$estGEP,true_GEP_rpkm)
+```
+
+```{r fig3, echo=FALSE, eval=FALSE}
 par(mar=c(1,1,1,1))
 par(mfrow=c(6,6))
+par(pty="s")
 for (i in 1:6) {
   for (j in 1:6) {
-    plot(result$estGEP[,i],true_GEP_gene[,j],xlab = "CDSeq-estimated GEPs", ylab = "True GEPs")
-    max_v <- max(c(result$estGEP[,i], true_GEP_gene[,j]))
+        plot(result2$estGEP[,i],true_GEP_gene[,j],xlab = "CDSeq-estimated GEPs", ylab = "True GEPs")
+    max_v <- max(c(result2$estGEP[,i], true_GEP_gene[,j]))
     lines(c(0,max_v),c(0,max_v), type = "l")
   }
 }
+```
 
+
+```{r fig4, echo=FALSE, eval=FALSE}
+trueProp <- true_prop_cell[result2$cell_type_assignment,]
+par(mar=c(4,4,1,1))
+par(mfrow=c(2,3))
+par(pty="s")
+for (i in 1:6) {
+    plot(result2$estProp[i,],trueProp[i,],xlab = "CDSeq-estimated proportions", ylab = "True proportions")
+    lines(c(0,1),c(0,1), type = "l")
+}
+```
+
+```{r fig5,echo=FALSE, eval=FALSE}
+lgpst <- rep(0,9)
+for (i in 1:9) {
+  lgpst[i] <- result2$est_all[[i]]$lgpst
+}
+plot(2:10,lgpst,xlab = "number of cell typess", ylab = "log posterior")
+points(6,lgpst[5],pch=16,col="red")
+lines(2:10, lgpst)
+lines(c(6,6),c(0,lgpst[5]),lty=2)
+```
+
+
+### Reduce-Recover strategy for speeding up
+```{r example 3, eval=FALSE, cache=TRUE, results='hide'}
+result3<-CDSeq(bulk_data =  mixtureGEP, 
+              cell_type_number = 6, 
+              mcmc_iterations = 700, 
+              dilution_factor = 1, 
+              block_number = 10,
+              gene_subset_size = 100,
+              gene_length = as.vector(gene_length), 
+              reference_gep = refGEP, 
+              cpu_number = 10, 
+              print_progress_msg_to_file = 0)
+```
+
+
+```{r fig6, echo=FALSE, eval=FALSE}
+trueGEP <- true_GEP_rpkm[,result3$cell_type_assignment]
+par(mar=c(4,4,1,1))
+par(mfrow=c(2,3))
+par(pty="s")
+for (i in 1:6) {
+    plot(result3$estGEP[,i],trueGEP[,i],xlab = "CDSeq-estimated GEPs", ylab = "True GEPs")
+    max_v <- max(c(result3$estGEP[,i], trueGEP[,i]))
+    lines(c(0,max_v),c(0,max_v), type = "l")
+  }
+```
+
+
+```{r fig7, echo=FALSE, eval=FALSE}
+trueProp <- true_prop_cell[result3$cell_type_assignment,]
+par(mar=c(4,4,1,1))
+par(mfrow=c(2,3))
+par(pty="s")
+for (i in 1:6) {
+    plot(result3$estProp[i,],trueProp[i,],xlab = "CDSeq-estimated proportions", ylab = "True proportions")
+    lines(c(0,1),c(0,1), type = "l")
+}
+```
+
+
+```{r example 4, eval=FALSE, cache=TRUE, results='hide'}
+result4<-CDSeq(bulk_data =  mixtureGEP, 
+              cell_type_number = 2:10, 
+              mcmc_iterations = 1000, 
+              dilution_factor = 1, 
+              block_number = 5,
+              gene_subset_size = 50,
+              gene_length = as.vector(gene_length), 
+              reference_gep = refGEP, 
+              cpu_number = 10, 
+              print_progress_msg_to_file = 0)
+```
+
+```{r fig8, echo=FALSE, eval=FALSE}
+trueGEP <- true_GEP_rpkm[,result4$cell_type_assignment]
+par(mar=c(4,4,1,1))
+par(mfrow=c(2,3))
+par(pty="s")
+for (i in 1:6) {
+    plot(result4$estGEP[,i],trueGEP[,i],xlab = "CDSeq-estimated GEPs", ylab = "True GEPs")
+    max_v <- max(c(result4$estGEP[,i], trueGEP[,i]))
+    lines(c(0,max_v),c(0,max_v), type = "l")
+  }
+```
+
+
+```{r fig9, echo=FALSE, eval=FALSE}
+trueProp <- true_prop_cell[result4$cell_type_assignment,]
+par(mar=c(4,4,1,1))
+par(mfrow=c(2,3))
+par(pty="s")
+for (i in 1:6) {
+    plot(result4$estProp[i,],trueProp[i,],xlab = "CDSeq-estimated proportions", ylab = "True proportions")
+    lines(c(0,1),c(0,1), type = "l")
+}
 ```
 
 
