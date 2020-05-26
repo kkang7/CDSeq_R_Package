@@ -19,7 +19,8 @@ Imports: Rcpp (>= 1.0.3),
          qlcMatrix,
          gplots,
          grDevices,
-         clue
+         clue,
+         Biobase
 LinkingTo: Rcpp, RcppArmadillo
 Encoding: UTF-8
 LazyData: true

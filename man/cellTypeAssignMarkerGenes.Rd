@@ -5,8 +5,8 @@
 \title{\code{cellTypeAssignMarkerGenes} assigns CDSeq-identified cell types using user-provided marker gene list and plots heatmap.}
 \usage{
 cellTypeAssignMarkerGenes(
-  cell_gep,
-  marker_gene_list,
+  cell_gep = NULL,
+  marker_gene_list = NULL,
   threshold = 2,
   fig_path = getwd(),
   heatmap_name = "cellTypeAssign_heatmap.pdf",

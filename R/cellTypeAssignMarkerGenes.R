@@ -8,7 +8,7 @@
 #' @importFrom grDevices pdf dev.off 
 #' @importFrom gplots heatmap.2 bluered
 #' @importFrom clue solve_LSAP
-#' @importFrom qlcMatrix rowMax
+#' @importFrom Biobase rowMax
 #' @export
 #' @return cellTypeAssignMarkerGenes returns a list containing: 
 #' GEP_markerSum (a A by B matrix where A is nrow(marker_gene_list), B is ncol(cell_gep)), 
@@ -25,8 +25,8 @@
 #' 
 #' cell_type_matched_fussy is a zero-one matrix that has the same size as GEP_markerSum_zscore_matched. If (i,j) element is one, means ith cell type in marker_gene_list is assigned to jth element in cell_gep.
 
-cellTypeAssignMarkerGenes <- function(cell_gep,
-                                     marker_gene_list,
+cellTypeAssignMarkerGenes <- function(cell_gep = NULL,
+                                     marker_gene_list = NULL,
                                      threshold = 2,
                                      fig_path = getwd(),
                                      heatmap_name = "cellTypeAssign_heatmap.pdf",# may remove .pdf extension  heatmap_name_twoway = NULL
@@ -79,7 +79,7 @@ cellTypeAssignMarkerGenes <- function(cell_gep,
   # this chooses the rows whose max values are greater than threshold. 
   # this is saying if the max value of that row is greater than threshold
   # then we consider there is a match of that cell type
-  cell_type_matched_idx <- which(rowMax(GEP_markerSum_zscore) > threshold) 
+  cell_type_matched_idx <- which(Biobase::rowMax(GEP_markerSum_zscore) > threshold) 
   cat("length(cell_type_matched_idx) = ", length(cell_type_matched_idx), "threshold = ",threshold,"\n")
   if(length(cell_type_matched_idx)==0){stop("no cell type assigned. all z scores are smaller than the threshold. Try lower the threshold value.")}
   cell_type_matched <- celltypes[cell_type_matched_idx]
