@@ -46,7 +46,7 @@ print_progress_msg_to_file   indicator of printing the running process.
 ## Ouput {#output}
 Output                Description
 --------------------  ------------------------
-estGEP                CDSeq-estimated cell-type-specific gene expression profiles. It is a G by M matrix where G denotes the number of genes and M is the sample size.
+estGEP                CDSeq-estimated cell-type-specific gene expression profiles. It is a G by T matrix where G denotes the number of genes and M is the sample size.
 estProp               CDSeq-estimated sample-specific cell-type proportions. It is a M by T matrix where M is the sample size and T is the number of cell types.
 cell_type_assignment  If refGEP is given, CDSeq will perform one-to-one cell types assignment for CDSeq-estimated cell types.
 lgpst                 This is the log posterior values for each element in cell_type_number.

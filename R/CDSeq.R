@@ -340,7 +340,8 @@ CDSeq <- function( bulk_data,
               if(rawcount==1){
                 corr_GEP<-cor(estGEP_read,refGEPlist[[i]])
               }else{
-                if(gl!=1){corr_GEP<-cor(estGEP,refGEPlist[[i]]);warning("Gene length is NOT provided and the reference GEP is NOT read counts data, the cell type association may be inaccurate.")}
+                corr_GEP<-cor(estGEP,refGEPlist[[i]])
+                if(gl!=1){warning("Gene length is NOT provided and the reference GEP is NOT read counts data, the cell type association may be inaccurate.")}
               }
               hungarian_result<-hungarian_Rcpp(1-corr_GEP)
               celltype_assignment<-hungarian_result$cost_assignment+1

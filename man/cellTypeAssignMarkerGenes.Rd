@@ -10,7 +10,7 @@ cellTypeAssignMarkerGenes(
   threshold = 2,
   fig_path = getwd(),
   heatmap_name = "cellTypeAssign_heatmap.pdf",
-  heatmap_name_fussy_assign = "cellTypeAssign_heatmap_fussy.pdf"
+  heatmap_name_fuzzy_assign = "cellTypeAssign_heatmap_fuzzy.pdf"
 )
 }
 \arguments{
@@ -24,7 +24,7 @@ cellTypeAssignMarkerGenes(
 
 \item{heatmap_name}{the name of heatmap figure of one-to-one assignment.}
 
-\item{heatmap_name_fussy_assign}{the name of heatmap figure of fussy assignment.}
+\item{heatmap_name_fuzzy_assign}{the name of heatmap figure of fuzzy assignment.}
 }
 \value{
 cellTypeAssignMarkerGenes returns a list containing: 
@@ -40,7 +40,7 @@ cell_type_matched stores the cell types in marker_gene_list that are considered 
 
 GEP_markerSum_zscore_matched contains only the rows of GEP_markerSum_zscore that are considered to be matched with some cell types in cell_gep. GEP_markerSum_zscore_matched and GEP_markerSum_zscore have same columns. 
 
-cell_type_matched_fussy is a zero-one matrix that has the same size as GEP_markerSum_zscore_matched. If (i,j) element is one, means ith cell type in marker_gene_list is assigned to jth element in cell_gep.
+cell_type_matched_fuzzy is a zero-one matrix that has the same size as GEP_markerSum_zscore_matched. If (i,j) element is one, means ith cell type in marker_gene_list is assigned to jth element in cell_gep.
 }
 \description{
 \code{cellTypeAssignMarkerGenes} assigns CDSeq-identified cell types using user-provided marker gene list and plots heatmap.
