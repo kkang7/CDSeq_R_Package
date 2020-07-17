@@ -543,6 +543,14 @@ CDSeq <- function( bulk_data,
         if(gl==1){estGEP<-read2gene(estGEP_read,gene_length)}else{estGEP<-estGEP_read} # read to gene
         
         mlgpst <- mean(unlist(lgpstall[j,]))
+        
+        # add colnames and rownames
+        cell_types<-paste("CDSeq_estimated_cell_type",1:ncol(estGEP),sep = "_")
+        rownames(estGEP)<-gene_names
+        colnames(estGEP)<-cell_types
+        rownames(averestprop)<-cell_types
+        colnames(averestprop)<-sample_names
+        
         CDseq_all[[j]]<-list(estProp=averestprop,estGEP=estGEP,lgpst=mlgpst)
         
       }
@@ -558,6 +566,14 @@ CDSeq <- function( bulk_data,
         mlgpst <- lgpstall[[j]]
         celltype_assignment<-celltype_assignment_all[[j]]
         cellTypeAssignSplit <- cellTypeAssignSplit_all[[j]]
+        
+        # add colnames and rownames
+        cell_types<-paste("CDSeq_estimated_cell_type",1:ncol(estGEP),sep = "_")
+        rownames(estGEP)<-gene_names
+        colnames(estGEP)<-cell_types
+        rownames(averestprop)<-cell_types
+        colnames(averestprop)<-sample_names
+        
         CDseq_all[[j]]<-list(estProp=averestprop,estGEP=estGEP,lgpst=mlgpst, cell_type_assignment = celltype_assignment, cellTypeAssignSplit = cellTypeAssignSplit)
       }
     }
