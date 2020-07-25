@@ -1,8 +1,8 @@
 Package: CDSeq
 Type: Package
 Title: CDSeq: Complete deconvolution using sequencing data
-Version: 1.0.5
-Date: 2020-01-03
+Version: 1.0.6
+Date: 2020-07-25
 Author: Kai Kang, David Huang
 Maintainer: Kai Kang <kangkai0714@gmail.com>
 Description: Estimate cell-type-specific GEPs and sample-specific cell-type proportions simultaneously.
@@ -20,7 +20,12 @@ Imports: Rcpp (>= 1.0.3),
          gplots,
          grDevices,
          clue,
-         Biobase
+         Biobase,
+         Seurat,
+         ggplot2,
+         magrittr,
+         dplyr,
+         rlang
 LinkingTo: Rcpp, RcppArmadillo
 Encoding: UTF-8
 LazyData: true
