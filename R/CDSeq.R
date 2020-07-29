@@ -1,6 +1,6 @@
 #' Complete deconvolution using sequencing data.
 #' 
-#' \code{CDSeq} takes bulk RNA-seq data as input and simultaneously returns estimates of both cell-type-specific gene expression profiles and sample-specific cell-type proportions.
+#' \code{CDSeq} takes bulk RNA-seq data as input and simultaneously returns estimates of both cell-type-specific gene expression profiles and sample-specific cell-type proportions (versioin 1.0.6).
 #' 
 #' @param bulk_data RNA-Seq read counts matrix. Columns represent samples and rows represent genes.
 #' 
@@ -86,7 +86,7 @@ CDSeq <- function( bulk_data,
                    reference_gep = NULL,
                    print_progress_msg_to_file = 0) {
   
-  cat("\n============================================ CDSeq R package version 1.0.5 ==================================================\n")
+  cat("\n============================================ CDSeq R package version 1.0.6 ==================================================\n")
   cat("|  Coders     : Kai Kang, David Huang                                                                                         |\n")
   cat("|  Reference 1: CDSeq: A novel complete deconvolution method for dissecting heterogeneous samples using gene expression data  |\n")
   cat("|  Reference 2: CDSeq: An R package for fast complete deconvolution using gene expression data                                |\n")

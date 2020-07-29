@@ -22,6 +22,7 @@
 #' @param fig_path the location where the heatmap figure is saved. 
 #' @param fig_name the name of umap and tsne figures. Umap figure will have the name of fig_name_umap and tsne figure will be named fig_name_tsne.
 #' @param fig_format "pdf", "jpeg", or "png".
+#' @param fig_dpi figure dpi
 #' @importFrom grDevices rainbow
 #' @importFrom stats rmultinom rnbinom
 #' @importFrom Seurat CreateSeuratObject NormalizeData FindVariableFeatures ScaleData FindNeighbors FindClusters FindAllMarkers RunUMAP RunTSNE RunPCA 
@@ -34,6 +35,8 @@
 #' fig_path: same as the input fig_path
 #' 
 #' fig_name: same as the input fig_name
+#' 
+#' cdseq_synth_scRNA: synthetic scRNAseq data generated using CDSeq-estiamted GEPs
 #' 
 #' cdseq_scRNA_umap: ggplot figure of the umap outcome
 #' 
@@ -52,6 +55,8 @@
 #' seurat_markers: DE genes for each Seurat cluster.
 #' 
 #' seurat_top_markers: Top seurat_top_n_markers DE genes for each Seurat cluster.
+#' 
+#' CDSeq_cell_type_assignment_df: cell type assignment for CDSeq-estimated cell types.
 
 
 cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
@@ -76,8 +81,8 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
                                 plot_tsne = 1,
                                 fig_path = getwd(),
                                 fig_name = "cellTypeAssignSCRNA",
-                                fig_format = "pdf"
-){
+                                fig_format = "pdf",
+                                fig_dpi = 300){
   #################################################################
   ##                         check input                         ##
   #################################################################
@@ -101,17 +106,16 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
   
   # check annotation
   if(is.null(sc_annotation)){
-    message("sc_annotation (single cell annotation) is not provided. Cluster labels and DE genes will be generated. ")
+    warning("sc_annotation (single cell annotation) is not provided. Cluster labels and DE genes will be generated. ")
   }else{
     if(is.null(dim(sc_annotation))){stop("sc_annotation has to be a two dimensional data frame with column names: cell_id and cell_type")}
     if(nrow(sc_annotation)!=nc_sc){stop("nrow(sc_annotation) should be equal to ncol(sc_gep).")}
     if(sum(colnames(sc_annotation) == c("cell_id","cell_type"))!=2){stop("sc_annotation has to be a two dimensional data frame with column names: cell_id and cell_type")}
-    cat("sum(sc_id == sc_annotation$cell_id) = ",sum(sc_id == sc_annotation$cell_id),"length(sc_id)=",length(sc_id),"\n")
+    #cat("sum(sc_id == sc_annotation$cell_id) = ",sum(sc_id == sc_annotation$cell_id),"length(sc_id)=",length(sc_id),"\n")
     if(sum(sc_id == sc_annotation$cell_id) != length(sc_id)){stop("cell id in sc_gep has to be the same as the cell id in sc_annotation.")}
   }
   # declare variable to avoid R CMD check notes for no visible binding for global variable
-  #V1 <- V2 <- avg_logFC <- cluster <- nCount_RNA <- NULL
-  
+  avg_logFC <- cluster <- nCount_RNA <- NULL
   ###################################################################
   ##  Generate synthetic scRNAseq data from CDSeq estimated GEPs   ##
   ##                 and combine with scRNAseq data                ##
@@ -125,7 +129,7 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
       cdseq_synth_scRNA[,(i-1)*ncell + j] <-  rmultinom(1,nreads[j],cdseq_gep[,i])
     }
   }
-  colnames(cdseq_synth_scRNA) <- paste0("CDSeq_SynthCell",rep(1:nc_cdseq,each = ncell), rep(1:ncell), sep = ".")  
+  colnames(cdseq_synth_scRNA) <- paste("CDSeq_SynthCell",rep(1:nc_cdseq,each = ncell), rep(1:ncell), sep = ".")  
   rownames(cdseq_synth_scRNA) <- rownames(cdseq_gep)
   
   cdseq_sc_comb <- cbind(sc_gep,cdseq_synth_scRNA)
@@ -136,7 +140,7 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
   cat("Calling Seurat pipeline ... \n")
   cdseq_synth_scRNA_seurat <- Seurat::CreateSeuratObject(counts = cdseq_sc_comb, project = "cdseq_synth_scRNAseq")
   # filter cells
-  cdseq_synth_scRNA_seurat <- subset(cdseq_synth_scRNA_seurat, subset = .data$nCount_RNA > seurat_count_threshold )#nFeature_RNA > 20 & nFeature_RNA < 2500)
+  cdseq_synth_scRNA_seurat <- subset(cdseq_synth_scRNA_seurat, subset = nCount_RNA > seurat_count_threshold )#nFeature_RNA > 20 & nFeature_RNA < 2500)
   # normalize
   cdseq_synth_scRNA_seurat <- Seurat::NormalizeData(cdseq_synth_scRNA_seurat, normalization.method = seurat_norm_method , scale.factor = seurat_scale_factor)
   # select genes
@@ -146,9 +150,8 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
   
   cdseq_synth_scRNA_seurat <- Seurat::RunPCA(cdseq_synth_scRNA_seurat, npcs = seurat_npcs) #features = VariableFeatures(object = cdseq_synth_scRNA_seurat), 
   
-  #DimPlot(cdseq_synth_scRNA_seurat, reduction = seurat_reduction)
-  
   cdseq_synth_scRNA_seurat <- Seurat::FindNeighbors(cdseq_synth_scRNA_seurat, dims = seurat_dims, reduction = seurat_reduction)
+  
   cdseq_synth_scRNA_seurat <- Seurat::FindClusters(cdseq_synth_scRNA_seurat, resolution = seurat_resolution)
   
   ##################################################################
@@ -157,10 +160,9 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
   ##################################################################
   # find makers
   cdseq_synth_scRNA_seurat_markers <- Seurat::FindAllMarkers(cdseq_synth_scRNA_seurat, min.pct = 0.25, logfc.threshold = seurat_DE_logfc, test.use = seurat_DE_test)
-  cdseq_synth_scRNA_seurat_markers %>% dplyr::group_by(.data$cluster) %>% dplyr::top_n(n = 2, wt = .data$avg_logFC)
-  seurat_top_markers <- cdseq_synth_scRNA_seurat_markers %>% dplyr::group_by(.data$cluster) %>% dplyr::top_n(n = seurat_top_n_markers, wt = .data$avg_logFC)
+  cdseq_synth_scRNA_seurat_markers %>% dplyr::group_by(cluster) %>% dplyr::top_n(n = 2, wt = avg_logFC)
+  seurat_top_markers <- cdseq_synth_scRNA_seurat_markers %>% dplyr::group_by(cluster) %>% dplyr::top_n(n = seurat_top_n_markers, wt = avg_logFC)
   
-  cdseq_synth_scRNA_seurat_markers_df <- as.data.frame(cbind(cdseq_synth_scRNA_seurat_markers, singleCellAnnotation = rep("NA",nrow(cdseq_synth_scRNA_seurat_markers))))
   #seurat_top_markers_df <- as.data.frame(cbind(seurat_top_markers, singleCellAnnotation = rep("NA",nrow(seurat_top_markers))))
   
   if(!is.null(sc_annotation)){
@@ -168,11 +170,12 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
     ##                  use scRNAseq annotation to                  ##
     ##              annotate CDSeq estimated cell types             ##
     ##################################################################
+    cdseq_synth_scRNA_seurat_markers_df <- data.frame(cdseq_synth_scRNA_seurat_markers, singleCellAnnotation = rep("NA",nrow(cdseq_synth_scRNA_seurat_markers)),stringsAsFactors = FALSE)
+    
     # grep single cell id in seurat output
     scRNAseq_cell_gene_name <- cdseq_synth_scRNA_seurat@assays$RNA@counts@Dimnames[[1]]
     scRNAseq_cell_id_seurat <- cdseq_synth_scRNA_seurat@assays$RNA@counts@Dimnames[[2]]
-    cdseq_cell_idx <- grep("CDSeq",scRNAseq_cell_id_seurat)
-    
+
     # construct gold standard cluster label using sc_annotation
     scRNA_seurat_comm_cell <- intersection(list(scRNAseq_cell_id_seurat,sc_annotation$cell_id),order = 'stable')
     scRNA_seurat_comm_cell_id <- scRNA_seurat_comm_cell$comm.value
@@ -189,6 +192,12 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
     # NOTICE THAT [scRNAseq_cell_cluster_label_seurat] and [scRNAseq_seurat_goldstandard_annotation] should be in the same order in term of cell ids
     scRNAseq_cell_cluster_label_seurat <- cdseq_synth_scRNA_seurat@meta.data$seurat_clusters[seurat_scRNA_comm_idx]
     
+    cdseq_cell_idx <- grep("CDSeq",scRNAseq_cell_id_seurat)
+    cdseq_cell_seurat_cluster_id <- cdseq_synth_scRNA_seurat@meta.data$seurat_clusters[cdseq_cell_idx]
+    cdseq_cell_id <- scRNAseq_cell_id_seurat[cdseq_cell_idx]
+    
+    CDSeq_cell_type_assignment_df <- data.frame(cdseq_cell_id = cdseq_cell_id, seurat_cluster = cdseq_cell_seurat_cluster_id, cdseq_cell_type_assignment = rep("NA",length(cdseq_cell_id)),stringsAsFactors = FALSE)
+    
     # compute the cluster score (there is a bug due to the large number of cells )
     #seurat_cluster_scores <- cluster_scores(c = as.numeric(scRNAseq_cell_cluster_label_seurat) , k = as.numeric(scRNAseq_seurat_goldstandard_annotation) ,beta = 1)
     
@@ -204,9 +213,12 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
       seurat_cluster_gold_label[i] <- seurat_cluster_assess$max_element
       # add sc_annotation to DE marker data frame
       tmp_idx <- which(as.numeric(cdseq_synth_scRNA_seurat_markers_df$cluster) == seurat_unique_clusters[i])
-      cdseq_synth_scRNA_seurat_markers_df$singleCellAnnotation[tmp_idx] <- seurat_cluster_gold_label[i] 
+      cdseq_synth_scRNA_seurat_markers_df$singleCellAnnotation[tmp_idx] <- seurat_cluster_gold_label[i]
+      
+      cdseq_tmp_idx <- which(as.numeric(CDSeq_cell_type_assignment_df$seurat_cluster) == seurat_unique_clusters[i])
+      CDSeq_cell_type_assignment_df$cdseq_cell_type_assignment[cdseq_tmp_idx] <- seurat_cluster_gold_label[i]
     }
-    seurat_top_markers_df <- cdseq_synth_scRNA_seurat_markers_df %>% dplyr::group_by(.data$cluster) %>% dplyr::top_n(n = seurat_top_n_markers, wt = .data$avg_logFC)
+    seurat_top_markers_df <- cdseq_synth_scRNA_seurat_markers_df %>% dplyr::group_by(cluster) %>% dplyr::top_n(n = seurat_top_n_markers, wt = avg_logFC)
   }
 
   
@@ -265,7 +277,7 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
            plot = cdseq_scRNA_umap,
            width = 25,
            height = 20,
-           dpi = 300)
+           dpi = fig_dpi)
   }
   ##################################################################
   ##                             TSNE                             ##
@@ -320,12 +332,13 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
            plot = cdseq_scRNA_tsne,
            width = 25,
            height = 20,
-           dpi = 300)
+           dpi = fig_dpi)
   }
 
   output <- list()
   output$fig_path <- fig_path
   output$fig_name <- fig_name
+  output$cdseq_synth_scRNA <- cdseq_synth_scRNA
   if(plot_umap){output$cdseq_scRNA_umap <- cdseq_scRNA_umap}
   if(plot_tsne){output$cdseq_scRNA_tsne <- cdseq_scRNA_tsne}
   output$cdseq_synth_scRNA_seurat <- cdseq_synth_scRNA_seurat
@@ -333,8 +346,11 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
     output$seurat_cluster_purity <- seurat_cluster_purity
     output$seurat_cluster_gold_label <- seurat_cluster_gold_label
     output$seurat_unique_clusters <- seurat_unique_clusters
+    output$seurat_markers <- cdseq_synth_scRNA_seurat_markers_df
+    output$CDSeq_cell_type_assignment_df <- CDSeq_cell_type_assignment_df
+  }else{
+    output$seurat_markers <- cdseq_synth_scRNA_seurat_markers
   }
-  output$seurat_markers <- cdseq_synth_scRNA_seurat_markers_df
   output$seurat_top_markers <- seurat_top_markers_df
   return(output)
   

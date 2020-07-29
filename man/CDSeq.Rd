@@ -51,7 +51,7 @@ CDSeq returns estimates of both cell-type-specific gene expression profiles and 
  and the log posterior values for different number of cell types.
 }
 \description{
-\code{CDSeq} takes bulk RNA-seq data as input and simultaneously returns estimates of both cell-type-specific gene expression profiles and sample-specific cell-type proportions.
+\code{CDSeq} takes bulk RNA-seq data as input and simultaneously returns estimates of both cell-type-specific gene expression profiles and sample-specific cell-type proportions (versioin 1.0.6).
 }
 \examples{
 result<-CDSeq(bulk_data =  mixtureGEP, cell_type_number = 6, mcmc_iterations = 10, 

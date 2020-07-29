@@ -6,11 +6,17 @@ For example, if you have a bulk RNA-Seq data, $A_{G\times M}$, which is a G by M
 Importantly, you can ask CDSeq to estimate the number of cell types, i.e. T, by providing a vector of possible integer values for T. For example, if the user input for T is a vector, i.e. $T=\{2,3,4,5,6\}$, then CDSeq will estimate the most likely number for T.    
 
  
-## Version 1.0.5
+## Versioning 
 I follow the versioning scheme: *major*.*minor*.*patch*. In CDSeq package, *major*, *minor* and *patch* basically indicate the following types of changes:
 1. *major*: changes on the underlying probabilistic modeling 
 2. *minor*: changes on the numerical procedures or coding structure
 3. *patch*: others
+
+## Version 1.0.5
+Add cellTypeAssignMarkerGenes function. This function can be used for cell type assignment using user provided marker gene list.
+
+## Version 1.0.6
+Add cellTypeAssignSCRNA function. This function can be used for cell type assignment using user provided single cell RNAseq data (with annotations).
 
 ## Installation
 

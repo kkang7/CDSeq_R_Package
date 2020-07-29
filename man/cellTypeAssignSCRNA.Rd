@@ -27,7 +27,8 @@ cellTypeAssignSCRNA(
   plot_tsne = 1,
   fig_path = getwd(),
   fig_name = "cellTypeAssignSCRNA",
-  fig_format = "pdf"
+  fig_format = "pdf",
+  fig_dpi = 300
 )
 }
 \arguments{
@@ -76,12 +77,16 @@ cellTypeAssignSCRNA(
 \item{fig_name}{the name of umap and tsne figures. Umap figure will have the name of fig_name_umap and tsne figure will be named fig_name_tsne.}
 
 \item{fig_format}{"pdf", "jpeg", or "png".}
+
+\item{fig_dpi}{figure dpi}
 }
 \value{
 cellTypeAssignSCRNA returns a list containing following fields: 
 fig_path: same as the input fig_path
 
 fig_name: same as the input fig_name
+
+cdseq_synth_scRNA: synthetic scRNAseq data generated using CDSeq-estiamted GEPs
 
 cdseq_scRNA_umap: ggplot figure of the umap outcome
 
@@ -100,6 +105,8 @@ seurat_cluster_gold_label: The cell type annotations for each unique Seurat clus
 seurat_markers: DE genes for each Seurat cluster.
 
 seurat_top_markers: Top seurat_top_n_markers DE genes for each Seurat cluster.
+
+CDSeq_cell_type_assignment_df: cell type assignment for CDSeq-estimated cell types.
 }
 \description{
 \code{cellTypeAssignSCRNA} assigns CDSeq-identified cell types using single cell RNAseq data.
