@@ -6,9 +6,9 @@
 \usage{
 cellTypeAssignSCRNA(
   cdseq_gep = NULL,
+  cdseq_prop = NULL,
   sc_gep = NULL,
   sc_annotation = NULL,
-  ncell = 1,
   nb_size = 100,
   nb_mu = 1000,
   seurat_count_threshold = 100,
@@ -32,13 +32,13 @@ cellTypeAssignSCRNA(
 )
 }
 \arguments{
-\item{cdseq_gep}{CDSeq-estimated gene expression profile matrix with G rows (genes) and M columns (cell types).}
+\item{cdseq_gep}{CDSeq-estimated gene expression profile matrix with G rows (genes) and T columns (cell types).}
+
+\item{cdseq_prop}{CDSeq-estimated sample-specific cell-type proportion, a matrix with T rows (cell type) and M (sample size).}
 
 \item{sc_gep}{a G (genes) by N (cell) matrix or dataframe that contains the gene expression profile for N single cells.}
 
 \item{sc_annotation}{a dataframe contains two columns "cell_id"  and "cell_type". cell_id needs to match with the cell_id in sc_gep but not required to have the same size. cell_type is the cell type annotation for the single cells.}
-
-\item{ncell}{number of pseudo single cells generated for each CDSeq-estimated cell type using CDSeq-estimaged GEP, typically 1 works fine.}
 
 \item{nb_size}{size parameter for negative binomial distribution, check rnbinom for details.}
 

@@ -1,8 +1,8 @@
 #' \code{cellTypeAssignSCRNA} assigns CDSeq-identified cell types using single cell RNAseq data.
-#' @param cdseq_gep CDSeq-estimated gene expression profile matrix with G rows (genes) and M columns (cell types).
+#' @param cdseq_gep CDSeq-estimated gene expression profile matrix with G rows (genes) and T columns (cell types).
+#' @param cdseq_prop CDSeq-estimated sample-specific cell-type proportion, a matrix with T rows (cell type) and M (sample size).
 #' @param sc_gep a G (genes) by N (cell) matrix or dataframe that contains the gene expression profile for N single cells.
 #' @param sc_annotation a dataframe contains two columns "cell_id"  and "cell_type". cell_id needs to match with the cell_id in sc_gep but not required to have the same size. cell_type is the cell type annotation for the single cells.
-#' @param ncell number of pseudo single cells generated for each CDSeq-estimated cell type using CDSeq-estimaged GEP, typically 1 works fine.
 #' @param nb_size size parameter for negative binomial distribution, check rnbinom for details.
 #' @param nb_mu mu parameter for negative binomial distribution, check rnbinom for details.
 #' @param seurat_count_threshold this parameter will be passed to Seurat subset function (subset = nCount_RNA > seurat_count_threshold) for filtering out single cells whose total counts is less this threshold. 
@@ -60,9 +60,9 @@
 
 
 cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
+                                cdseq_prop = NULL,
                                 sc_gep = NULL,
                                 sc_annotation = NULL,
-                                ncell = 1,
                                 nb_size = 100,
                                 nb_mu = 1000,
                                 seurat_count_threshold = 100,
@@ -92,7 +92,7 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
   nc_cdseq <- ncol(cdseq_gep)
   nr_sc <- nrow(sc_gep)
   nc_sc <- ncol(sc_gep)
-  if(nr_cdseq!=nr_sc){stop("cdseq_gep and sc_gep should have the same number of rows (genes).")}
+  
   
   # check gene names
   gene_cdseq <- rownames(cdseq_gep)
@@ -100,13 +100,25 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
   if(is.null(gene_cdseq) || is.null(gene_sc)){stop("cdseq_gep and sc_gep should have gene names as row names.")}
   if(sum(gene_cdseq == gene_sc) != nr_cdseq ){stop("cdseq_gep and sc_gep should have the same gene names and in the same order.")}
   
+  # check cell type proportions
+  if(!is.null(cdseq_prop)){
+    nr_prop <- nrow(cdseq_prop)
+    nc_prop <- ncol(cdseq_prop)
+    if(nr_cdseq!=nr_sc){stop("cdseq_gep and sc_gep should have the same number of rows (genes).")}
+    if(nr_prop!=nc_cdseq){stop("column number of cdseq_gep should equal to row number of cdseq_prop.")}
+    
+    if(is.null(colnames(cdseq_prop))){stop("cdseq_prop column name is missing. Column names are sample ids.")}
+    if(is.null(rownames(cdseq_prop))){stop("cdseq_prop row name is missing. Row names are the cell type names.")}
+    if(sum(rownames(cdseq_prop) == colnames(cdseq_gep)) != nr_prop){stop("Row names of cdseq_prop and column names of cdseq_gep should be the same and in same order. They both denote cell types.")}
+  }
+  
   # check cell ids
   sc_id <- colnames(sc_gep)
   if(is.null(sc_id)){stop("Please provide cell id in sc_gep.")}
   
   # check annotation
   if(is.null(sc_annotation)){
-    warning("sc_annotation (single cell annotation) is not provided. Cluster labels and DE genes will be generated. ")
+    warning("sc_annotation (single cell annotation) is not provided. Cluster labels and DE genes will be generated. It is recommanded to use annotated scRNAseq in this function.")
   }else{
     if(is.null(dim(sc_annotation))){stop("sc_annotation has to be a two dimensional data frame with column names: cell_id and cell_type")}
     if(nrow(sc_annotation)!=nc_sc){stop("nrow(sc_annotation) should be equal to ncol(sc_gep).")}
@@ -114,6 +126,8 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
     #cat("sum(sc_id == sc_annotation$cell_id) = ",sum(sc_id == sc_annotation$cell_id),"length(sc_id)=",length(sc_id),"\n")
     if(sum(sc_id == sc_annotation$cell_id) != length(sc_id)){stop("cell id in sc_gep has to be the same as the cell id in sc_annotation.")}
   }
+  
+  
   # declare variable to avoid R CMD check notes for no visible binding for global variable
   avg_logFC <- cluster <- nCount_RNA <- NULL
   ###################################################################
@@ -122,6 +136,7 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
   ###################################################################
   cat("generating synthetic scRNAseq data using CDSeq estimated GEPs ...\n")
   # generate synthetic scRNAseq 
+  ncell <-  1
   cdseq_synth_scRNA <- matrix(0,nrow = nr_cdseq, ncol = nc_cdseq*ncell)
   for (i in 1:nc_cdseq) {
     nreads <- rnbinom(n = ncell,size = nb_size, mu = nb_mu)
@@ -129,7 +144,8 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
       cdseq_synth_scRNA[,(i-1)*ncell + j] <-  rmultinom(1,nreads[j],cdseq_gep[,i])
     }
   }
-  colnames(cdseq_synth_scRNA) <- paste("CDSeq_SynthCell",rep(1:nc_cdseq,each = ncell), rep(1:ncell), sep = ".")  
+  #colnames(cdseq_synth_scRNA) <- paste("CDSeq_SynthCell",rep(1:nc_cdseq,each = ncell), rep(1:ncell), sep = ".")  
+  colnames(cdseq_synth_scRNA) <- paste(rep(colnames(cdseq_gep),each = ncell), "CDSeq" ,rep(1:ncell), sep = ".")  
   rownames(cdseq_synth_scRNA) <- rownames(cdseq_gep)
   
   cdseq_sc_comb <- cbind(sc_gep,cdseq_synth_scRNA)
@@ -219,6 +235,19 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
       CDSeq_cell_type_assignment_df$cdseq_cell_type_assignment[cdseq_tmp_idx] <- seurat_cluster_gold_label[i]
     }
     seurat_top_markers_df <- cdseq_synth_scRNA_seurat_markers_df %>% dplyr::group_by(cluster) %>% dplyr::top_n(n = seurat_top_n_markers, wt = avg_logFC)
+    
+    if(!is.null(cdseq_prop)){
+       # current version assumes each CDSeq-estGEP only generate 1 synthetic single cell. May extend to more general case later
+       # the gsub function extract patterns between two dots.
+       #cdseq_est_cell_ids <- as.numeric(unlist(lapply(CDSeq_cell_type_assignment_df$cdseq_cell_id, function(x){gsub("^.+?\\.(.+?)\\..*$", "\\1",x)})))
+      
+       # the sub function extract pattern before a dot
+       cdseq_est_cell_ids <- unlist(lapply(CDSeq_cell_type_assignment_df$cdseq_cell_id, function(x){sub("\\..*","",x)}))
+       if(sum(cdseq_est_cell_ids == rownames(cdseq_prop)) != nr_prop){stop("Please make sure the rownames(cdseq_prop) and colnames(cdseq_gep) are the same and in same order.")}
+       rownames(cdseq_prop) <- CDSeq_cell_type_assignment_df$cdseq_cell_type_assignment
+       cdseq_prop_merged <- rowsum(cdseq_prop, group = rownames(cdseq_prop))
+       
+    }
   }
 
   
@@ -351,6 +380,7 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
   }else{
     output$seurat_markers <- cdseq_synth_scRNA_seurat_markers
   }
+  if(!is.null(cdseq_prop)){output$cdseq_prop_merged <- cdseq_prop_merged}
   output$seurat_top_markers <- seurat_top_markers_df
   return(output)
   
