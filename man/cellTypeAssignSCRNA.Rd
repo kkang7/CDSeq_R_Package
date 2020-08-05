@@ -7,6 +7,7 @@
 cellTypeAssignSCRNA(
   cdseq_gep = NULL,
   cdseq_prop = NULL,
+  cdseq_gep_sample_specific = NULL,
   sc_gep = NULL,
   sc_annotation = NULL,
   nb_size = 100,
@@ -35,6 +36,8 @@ cellTypeAssignSCRNA(
 \item{cdseq_gep}{CDSeq-estimated gene expression profile matrix with G rows (genes) and T columns (cell types).}
 
 \item{cdseq_prop}{CDSeq-estimated sample-specific cell-type proportion, a matrix with T rows (cell type) and M (sample size).}
+
+\item{cdseq_gep_sample_specific}{CDSeq-estimated sample-specific cell type gene expression, in the form of read counts. It is a 3 dimension array, i.e. gene by sample by cell type. The element cdseq_gep_sample_specific[i,j,k] represents the reads mapped to gene i from cell type k in sample j.}
 
 \item{sc_gep}{a G (genes) by N (cell) matrix or dataframe that contains the gene expression profile for N single cells.}
 
@@ -107,6 +110,10 @@ seurat_markers: DE genes for each Seurat cluster.
 seurat_top_markers: Top seurat_top_n_markers DE genes for each Seurat cluster.
 
 CDSeq_cell_type_assignment_df: cell type assignment for CDSeq-estimated cell types.
+
+cdseq_prop_merged: CDSeq-estimated cell type proportions with cell type annotations.
+
+cdseq_gep_sample_specific_merged: sample-specific cell-type read counts. It is a 3d array with dimensions: gene, sample, cell type.
 }
 \description{
 \code{cellTypeAssignSCRNA} assigns CDSeq-identified cell types using single cell RNAseq data.

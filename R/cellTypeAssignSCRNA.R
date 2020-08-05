@@ -1,6 +1,7 @@
 #' \code{cellTypeAssignSCRNA} assigns CDSeq-identified cell types using single cell RNAseq data.
 #' @param cdseq_gep CDSeq-estimated gene expression profile matrix with G rows (genes) and T columns (cell types).
 #' @param cdseq_prop CDSeq-estimated sample-specific cell-type proportion, a matrix with T rows (cell type) and M (sample size).
+#' @param cdseq_gep_sample_specific CDSeq-estimated sample-specific cell type gene expression, in the form of read counts. It is a 3 dimension array, i.e. gene by sample by cell type. The element cdseq_gep_sample_specific[i,j,k] represents the reads mapped to gene i from cell type k in sample j.
 #' @param sc_gep a G (genes) by N (cell) matrix or dataframe that contains the gene expression profile for N single cells.
 #' @param sc_annotation a dataframe contains two columns "cell_id"  and "cell_type". cell_id needs to match with the cell_id in sc_gep but not required to have the same size. cell_type is the cell type annotation for the single cells.
 #' @param nb_size size parameter for negative binomial distribution, check rnbinom for details.
@@ -57,10 +58,15 @@
 #' seurat_top_markers: Top seurat_top_n_markers DE genes for each Seurat cluster.
 #' 
 #' CDSeq_cell_type_assignment_df: cell type assignment for CDSeq-estimated cell types.
+#' 
+#' cdseq_prop_merged: CDSeq-estimated cell type proportions with cell type annotations.
+#' 
+#' cdseq_gep_sample_specific_merged: sample-specific cell-type read counts. It is a 3d array with dimensions: gene, sample, cell type. 
 
 
 cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
                                 cdseq_prop = NULL,
+                                cdseq_gep_sample_specific = NULL,
                                 sc_gep = NULL,
                                 sc_annotation = NULL,
                                 nb_size = 100,
@@ -248,6 +254,27 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
        cdseq_prop_merged <- rowsum(cdseq_prop, group = rownames(cdseq_prop))
        
     }
+    
+    if(!is.null(cdseq_gep_sample_specific)){
+      cdseq_gep_sample_specific_merged <- array(numeric(),c(dim(cdseq_gep_sample_specific)[1], dim(cdseq_gep_sample_specific)[2],length(unique(CDSeq_cell_type_assignment_df$cdseq_cell_type_assignment)) ))
+      if(is.null(dimnames(cdseq_gep_sample_specific))){
+        if(is.null(cdseq_prop)){stop("Need to provide cdseq_prop or provide dimnames for cdseq_gep_sample_specific.")}
+        message("dimnames(cdseq_gep_sample_specific) is NULL. cellTypeAssignSCRNA assumes its dimnames are same as: rownames(cdseq_gep), colnames(cdseq_prop), rownames(cdseq_prop)")
+        dimnames(cdseq_gep_sample_specific)[[1]] <- rownames(cdseq_gep)
+        dimnames(cdseq_gep_sample_specific)[[2]] <- colnames(cdseq_prop)
+        dimnames(cdseq_gep_sample_specific)[[3]] <- rownames(cdseq_prop)
+        for (i in 1:dim(cdseq_gep_sample_specific)[2]) {
+          cdseq_gep_sample_specific_merged[,i,] <- t(rowsum(t(cdseq_gep_sample_specific[,i,]), group = rownames(t(cdseq_gep_sample_specific[,i,]))))
+        }
+      }else{
+        cdseq_est_cell_ids <- unlist(lapply(CDSeq_cell_type_assignment_df$cdseq_cell_id, function(x){sub("\\..*","",x)}))
+        if(sum(cdseq_est_cell_ids == dimnames(cdseq_gep_sample_specific)[[3]]) != nr_prop){stop("Please make sure the dimnames(cdseq_gep_sample_specific)[[3]] and colnames(cdseq_gep) are the same and in same order.")}
+        dimnames(cdseq_gep_sample_specific)[[3]] <- CDSeq_cell_type_assignment_df$cdseq_cell_type_assignment
+        for (i in 1:dim(cdseq_gep_sample_specific)[2]) {
+          cdseq_gep_sample_specific_merged[,i,] <- t(rowsum(t(cdseq_gep_sample_specific[,i,]), group = rownames(t(cdseq_gep_sample_specific[,i,]))))
+        }
+      }
+    }
   }
 
   
@@ -381,6 +408,7 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
     output$seurat_markers <- cdseq_synth_scRNA_seurat_markers
   }
   if(!is.null(cdseq_prop)){output$cdseq_prop_merged <- cdseq_prop_merged}
+  if(!is.null(cdseq_gep_sample_specific)){output$cdseq_gep_sample_specific_merged <- cdseq_gep_sample_specific_merged}
   output$seurat_top_markers <- seurat_top_markers_df
   return(output)
   
