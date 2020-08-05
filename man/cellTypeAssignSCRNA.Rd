@@ -77,7 +77,7 @@ cellTypeAssignSCRNA(
 
 \item{fig_path}{the location where the heatmap figure is saved.}
 
-\item{fig_name}{the name of umap and tsne figures. Umap figure will have the name of fig_name_umap and tsne figure will be named fig_name_tsne.}
+\item{fig_name}{the name of umap and tsne figures. Umap figure will have the name of fig_name_umap_date and tsne figure will be named fig_name_tsne_date.}
 
 \item{fig_format}{"pdf", "jpeg", or "png".}
 

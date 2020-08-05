@@ -21,7 +21,7 @@
 #' @param plot_umap set 1 to plot umap figure of scRNAseq and CDSeq-estimated cell types, 0 otherwise.
 #' @param plot_tsne set 1 to plot tsne figure of scRNAseq and CDSeq-estimated cell types, 0 otherwise.
 #' @param fig_path the location where the heatmap figure is saved. 
-#' @param fig_name the name of umap and tsne figures. Umap figure will have the name of fig_name_umap and tsne figure will be named fig_name_tsne.
+#' @param fig_name the name of umap and tsne figures. Umap figure will have the name of fig_name_umap_date and tsne figure will be named fig_name_tsne_date.
 #' @param fig_format "pdf", "jpeg", or "png".
 #' @param fig_dpi figure dpi
 #' @importFrom grDevices rainbow
@@ -328,8 +328,9 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
             legend.text = element_text(color = "blue", face = "bold", size = 30)) + 
       guides(color = guide_legend(override.aes = list(size=5)), fill = guide_legend(override.aes = list(shape=21,size=5)))
     
-    cat("save umap at ", paste0(fig_path,fig_name,"_umap.",fig_format),"...\n")
-    ggsave(filename = paste0(fig_path,fig_name,"_umap.",fig_format),
+    fig_tmp_name <- paste0(fig_path,fig_name,"_umap_",gsub("-|\\s|:","_",Sys.time()),".",fig_format)
+    cat("save umap at ",fig_tmp_name ,"...\n")
+    ggsave(filename = fig_tmp_name,#paste0(fig_path,fig_name,"_umap.",fig_format),
            plot = cdseq_scRNA_umap,
            width = 25,
            height = 20,
@@ -383,8 +384,9 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
             legend.text = element_text(color = "blue", face = "bold", size = 30)) + 
       guides(color = guide_legend(override.aes = list(size=5)), fill = guide_legend(override.aes = list(shape=21,size=5)))
     
-    cat("save umap at ", paste0(fig_path,fig_name,"_tsne.",fig_format),"...\n")
-    ggsave(filename = paste0(fig_path,fig_name,"_tsne.",fig_format),
+    fig_tmp_name <- paste0(fig_path,fig_name,"_tsne_",gsub("-|\\s|:","_",Sys.time()),".",fig_format)
+    cat("save umap at ", fig_tmp_name ,"...\n")
+    ggsave(filename = fig_tmp_name,#paste0(fig_path,fig_name,"_tsne.",fig_format),
            plot = cdseq_scRNA_tsne,
            width = 25,
            height = 20,
