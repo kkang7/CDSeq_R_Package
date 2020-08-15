@@ -113,7 +113,13 @@ CDSeq_cell_type_assignment_df: cell type assignment for CDSeq-estimated cell typ
 
 cdseq_prop_merged: CDSeq-estimated cell type proportions with cell type annotations.
 
-cdseq_gep_sample_specific_merged: sample-specific cell-type read counts. It is a 3d array with dimensions: gene, sample, cell type.
+cdseq_gep_sample_specific_merged: sample-specific cell-type read counts. It is a 3d array with dimensions: gene, sample, cell type. 
+
+input_list: values for input parameters
+
+cdseq_sc_comb_umap_df: dataframe for umap plot
+
+cdseq_sc_comb_tsne_df: dataframe for tsne plot
 }
 \description{
 \code{cellTypeAssignSCRNA} assigns CDSeq-identified cell types using single cell RNAseq data.

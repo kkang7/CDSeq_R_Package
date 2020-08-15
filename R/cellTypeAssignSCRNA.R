@@ -62,6 +62,12 @@
 #' cdseq_prop_merged: CDSeq-estimated cell type proportions with cell type annotations.
 #' 
 #' cdseq_gep_sample_specific_merged: sample-specific cell-type read counts. It is a 3d array with dimensions: gene, sample, cell type. 
+#' 
+#' input_list: values for input parameters
+#' 
+#' cdseq_sc_comb_umap_df: dataframe for umap plot
+#' 
+#' cdseq_sc_comb_tsne_df: dataframe for tsne plot
 
 
 cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
@@ -192,7 +198,7 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
     ##                  use scRNAseq annotation to                  ##
     ##              annotate CDSeq estimated cell types             ##
     ##################################################################
-    cdseq_synth_scRNA_seurat_markers_df <- data.frame(cdseq_synth_scRNA_seurat_markers, singleCellAnnotation = rep("NA",nrow(cdseq_synth_scRNA_seurat_markers)),stringsAsFactors = FALSE)
+    cdseq_synth_scRNA_seurat_markers_df <- data.frame(cdseq_synth_scRNA_seurat_markers, singleCellAnnotation = rep("Unknown",nrow(cdseq_synth_scRNA_seurat_markers)),stringsAsFactors = FALSE)
     
     # grep single cell id in seurat output
     scRNAseq_cell_gene_name <- cdseq_synth_scRNA_seurat@assays$RNA@counts@Dimnames[[1]]
@@ -311,7 +317,7 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
     cdseq_sc_comb_umap_df <- data.frame(V1 = cdseq_sc_comb_umap[,1], V2 = cdseq_sc_comb_umap[,2], cell_sources= cell_sources , cluster_label = cluster_label)
     point_stroke <- c(rep(0,length(scRNA_idx)), rep(2,length(CDSeq_idx)))
     
-    cat("nrow(cdseq_sc_comb_umap_df) = ", nrow(cdseq_sc_comb_umap_df), "length(point_stroke) = ", length(point_stroke),"...\n")
+    #cat("nrow(cdseq_sc_comb_umap_df) = ", nrow(cdseq_sc_comb_umap_df), "length(point_stroke) = ", length(point_stroke),"...\n")
     
     cdseq_scRNA_umap<- ggplot(cdseq_sc_comb_umap_df,aes(x=.data$V1, y=.data$V2, colour=as.factor(cell_sources), size=as.factor(cell_sources), shape=as.factor(cell_sources), fill=as.factor(cluster_label), stroke=point_stroke)) + 
       ggtitle(paste0('CDSeq estimated cell types and scRNAseq')) + 
@@ -392,6 +398,31 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
            height = 20,
            dpi = fig_dpi)
   }
+  input_list <- list(cdseq_gep = cdseq_gep,
+                     cdseq_prop = cdseq_prop,
+                     cdseq_gep_sample_specific = cdseq_gep_sample_specific,
+                     sc_gep = sc_gep,
+                     sc_annotation = sc_annotation,
+                     nb_size = nb_size,
+                     nb_mu = nb_mu,
+                     seurat_count_threshold = seurat_count_threshold,
+                     seurat_scale_factor = seurat_scale_factor,
+                     seurat_norm_method = seurat_norm_method,
+                     seurat_select_method = seurat_select_method,
+                     seurat_nfeatures = seurat_nfeatures,
+                     seurat_npcs = seurat_npcs,
+                     seurat_dims = seurat_dims,
+                     seurat_reduction = seurat_reduction,
+                     seurat_resolution = seurat_resolution,
+                     seurat_DE_test = seurat_DE_test,
+                     seurat_DE_logfc = seurat_DE_logfc,
+                     seurat_top_n_markers = seurat_top_n_markers,
+                     plot_umap = plot_umap,
+                     plot_tsne = plot_tsne,
+                     fig_path = fig_path,
+                     fig_name = fig_name,
+                     fig_format = fig_format,
+                     fig_dpi = fig_dpi)
 
   output <- list()
   output$fig_path <- fig_path
@@ -412,6 +443,9 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
   if(!is.null(cdseq_prop)){output$cdseq_prop_merged <- cdseq_prop_merged}
   if(!is.null(cdseq_gep_sample_specific)){output$cdseq_gep_sample_specific_merged <- cdseq_gep_sample_specific_merged}
   output$seurat_top_markers <- seurat_top_markers_df
+  output$input_list <- input_list
+  if(plot_umap){output$cdseq_sc_comb_umap_df <- cdseq_sc_comb_umap_df}
+  if(plot_tsne){output$cdseq_sc_comb_tsne_df <- cdseq_sc_comb_tsne_df}
   return(output)
   
   
