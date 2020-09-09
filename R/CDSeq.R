@@ -86,7 +86,7 @@ CDSeq <- function( bulk_data,
                    reference_gep = NULL,
                    print_progress_msg_to_file = 0) {
   
-  cat("\n============================================ CDSeq R package version 1.0.6 ==================================================\n")
+  cat("\n============================================ CDSeq R package version 1.0.7 ==================================================\n")
   cat("|  Coders     : Kai Kang, David Huang                                                                                         |\n")
   cat("|  Reference 1: CDSeq: A novel complete deconvolution method for dissecting heterogeneous samples using gene expression data  |\n")
   cat("|  Reference 2: CDSeq: An R package for fast complete deconvolution using gene expression data                                |\n")
@@ -287,8 +287,8 @@ CDSeq <- function( bulk_data,
     registerDoParallel(cpu_number)
   }
   
-  celltype_assignment <- NULL;
-  
+  celltype_assignment <- NULL
+  cellTypeAssignSplit <- NULL
   # keep track of the worker process ID for parallel progress printing
   processIDs <- matrix(0,length(cell_type_number),block_number) 
   #=====================================================================================================
