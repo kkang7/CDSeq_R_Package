@@ -18,6 +18,9 @@ Add cellTypeAssignMarkerGenes function. This function can be used for cell type 
 ## Version 1.0.6
 Add cellTypeAssignSCRNA function. This function can be used for cell type assignment using user provided single cell RNAseq data (with annotations).
 
+## Version 1.0.7
+Bug fix. Add more features to cellTypeAssignSCRNA function.
+
 ## Installation
 
 install_github("kkang7/CDSeq_R_Package")

@@ -424,7 +424,7 @@ CDSeq <- function( bulk_data,
     CDSeq_result<-list(estProp=estProp,estGEP=estGEP,gibbsRunningTime = gibbsRunningTime, cell_type_assignment = celltype_assignment, cellTypeAssignSplit = cellTypeAssignSplit,processIDs = processIDs, parameters = parameters)
     
     if(ref==0){
-      cell_types<-paste("unknown_cell_type",1:cell_type_number,sep = "_")
+      cell_types<-paste("CDSeq_estimated_cell_type",1:cell_type_number,sep = "_")
       rownames(CDSeq_result$estGEP)<-gene_names
       colnames(CDSeq_result$estGEP)<-cell_types
       
@@ -630,7 +630,7 @@ CDSeq <- function( bulk_data,
   CDSeq_result_max<-list(estProp=maxaverestprop, estGEP=maxGEP, cell_type_assignment = celltype_assignment,cellTypeAssignSplit = maxcellTypeAssignSplit, lgpst=maxlgpst, estT=maxT, est_all = CDseq_all, parameters = parameters)
   
   if(ref==0){
-    cell_types<-paste("unknown_cell_type",1:CDSeq_result_max$estT,sep = "_")
+    cell_types<-paste("CDSeq_estimated_cell_type",1:CDSeq_result_max$estT,sep = "_")
     rownames(CDSeq_result_max$estGEP)<-gene_names
     colnames(CDSeq_result_max$estGEP)<-cell_types
     
