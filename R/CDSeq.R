@@ -440,11 +440,11 @@ CDSeq <- function( bulk_data,
       if(is.null(cell_types)){cell_types<-paste("ref_cell_type",1:refcol,sep = "_")}
       if(refcol>=cell_type_number){cell_types_tmp<-cell_types[celltype_assignment]}
       if(refcol<cell_type_number){
-        cell_types_tmp<-paste("unknow_cell_type",1:cell_type_number)
+        cell_types_tmp<-paste0("CDSeq_estimated_cell_type_",1:cell_type_number)
         cell_types_idx<-which(celltype_assignment!=0)
         cell_types_idx_2<-which(celltype_assignment==0)
         cell_types_tmp[cell_types_idx]<-cell_types[celltype_assignment[cell_types_idx]]
-        cell_types_tmp[cell_types_idx_2]<-paste("unknow_cell_type",1:length(cell_types_idx_2))
+        cell_types_tmp[cell_types_idx_2]<-paste0("CDSeq_estimated_cell_type_",1:length(cell_types_idx_2))
       }
       
       colnames(CDSeq_result$estGEP)<-cell_types_tmp
@@ -642,11 +642,11 @@ CDSeq <- function( bulk_data,
     if(is.null(cell_types)){cell_types<-paste("ref_cell_type",1:refcol,sep = "_")}
     if(refcol>=CDSeq_result_max$estT){cell_types_tmp<-cell_types[celltype_assignment]}
     if(refcol<CDSeq_result_max$estT){
-      cell_types_tmp<-paste("unknow_cell_type",1:CDSeq_result_max$estT)
+      cell_types_tmp<-paste("CDSeq_estimated_cell_type",1:CDSeq_result_max$estT)
       cell_types_idx<-which(celltype_assignment!=0)
       cell_types_idx_2<-which(celltype_assignment==0)
       cell_types_tmp[cell_types_idx]<-cell_types[celltype_assignment[cell_types_idx]]
-      cell_types_tmp[cell_types_idx_2]<-paste("unknow_cell_type",1:length(cell_types_idx_2))
+      cell_types_tmp[cell_types_idx_2]<-paste("CDSeq_estimated_cell_type",1:length(cell_types_idx_2))
     }
     
     colnames(CDSeq_result_max$estGEP)<-cell_types_tmp

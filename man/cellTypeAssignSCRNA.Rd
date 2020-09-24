@@ -21,6 +21,7 @@ cellTypeAssignSCRNA(
   seurat_dims = 1:10,
   seurat_reduction = "pca",
   seurat_resolution = 0.8,
+  seurat_find_marker = FALSE,
   seurat_DE_test = "wilcox",
   seurat_DE_logfc = 0.25,
   seurat_top_n_markers = 10,
@@ -64,6 +65,8 @@ cellTypeAssignSCRNA(
 \item{seurat_reduction}{this parameter will be passed to reduction in Seurat function FindNeighbors.}
 
 \item{seurat_resolution}{ths parameter will be passed to resolution in Seurat function FindClusters.}
+
+\item{seurat_find_marker}{this parameter controls if run seurat FindMarker function, default is FALSE.}
 
 \item{seurat_DE_test}{this parameter will be passed to test.use in Seurat function FindAllMarkers.}
 

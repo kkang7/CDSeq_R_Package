@@ -15,6 +15,7 @@
 #' @param seurat_dims this parameter will be passed to dims in Seurat function FindNeighbors.
 #' @param seurat_reduction this parameter will be passed to reduction in Seurat function FindNeighbors.
 #' @param seurat_resolution ths parameter will be passed to resolution in Seurat function FindClusters.
+#' @param seurat_find_marker this parameter controls if run seurat FindMarker function, default is FALSE.
 #' @param seurat_DE_test this parameter will be passed to test.use in Seurat function FindAllMarkers.
 #' @param seurat_DE_logfc this parameter will be passed to logfc.threshold in Seurat function FindAllMarkers.
 #' @param seurat_top_n_markers the number of top DE markers saved from Seurat output. 
@@ -87,6 +88,7 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
                                 seurat_dims = 1:10,
                                 seurat_reduction = 'pca',
                                 seurat_resolution = 0.8,
+                                seurat_find_marker = FALSE,
                                 seurat_DE_test = "wilcox",
                                 seurat_DE_logfc = 0.25,
                                 seurat_top_n_markers = 10,
@@ -99,7 +101,7 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
   #################################################################
   ##                         check input                         ##
   #################################################################
-  cat("CDSeq version 1.0.7\n")
+  #cat("CDSeq version 1.0.7\n")
   cat("checking input ... \n")
   # check dimension
   nr_cdseq <- nrow(cdseq_gep)
@@ -193,10 +195,15 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
   ##            for CDSeq-estimatd cell type annotation           ##
   ##################################################################
   # find makers
-  cdseq_synth_scRNA_seurat_markers <- Seurat::FindAllMarkers(cdseq_synth_scRNA_seurat, min.pct = 0.25, logfc.threshold = seurat_DE_logfc, test.use = seurat_DE_test)
-  cdseq_synth_scRNA_seurat_markers %>% dplyr::group_by(cluster) %>% dplyr::top_n(n = 2, wt = avg_logFC)
-  seurat_top_markers <- cdseq_synth_scRNA_seurat_markers %>% dplyr::group_by(cluster) %>% dplyr::top_n(n = seurat_top_n_markers, wt = avg_logFC)
-  
+  if(seurat_find_marker){
+    cdseq_synth_scRNA_seurat_markers <- Seurat::FindAllMarkers(cdseq_synth_scRNA_seurat, min.pct = 0.25, logfc.threshold = seurat_DE_logfc, test.use = seurat_DE_test)
+    cdseq_synth_scRNA_seurat_markers %>% dplyr::group_by(cluster) %>% dplyr::top_n(n = 2, wt = avg_logFC)
+    seurat_top_markers <- cdseq_synth_scRNA_seurat_markers %>% dplyr::group_by(cluster) %>% dplyr::top_n(n = seurat_top_n_markers, wt = avg_logFC)
+  }else{
+    cdseq_synth_scRNA_seurat_markers <- NULL
+    seurat_top_markers <- NULL
+  }
+ 
   #seurat_top_markers_df <- as.data.frame(cbind(seurat_top_markers, singleCellAnnotation = rep("NA",nrow(seurat_top_markers))))
   
   if(!is.null(sc_annotation)){
@@ -204,7 +211,11 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
     ##                  use scRNAseq annotation to                  ##
     ##              annotate CDSeq estimated cell types             ##
     ##################################################################
-    cdseq_synth_scRNA_seurat_markers_df <- data.frame(cdseq_synth_scRNA_seurat_markers, singleCellAnnotation = rep("Unknown",nrow(cdseq_synth_scRNA_seurat_markers)),stringsAsFactors = FALSE)
+    if(seurat_find_marker){
+      cdseq_synth_scRNA_seurat_markers_df <- data.frame(cdseq_synth_scRNA_seurat_markers, singleCellAnnotation = rep("Unknown",nrow(cdseq_synth_scRNA_seurat_markers)),stringsAsFactors = FALSE)
+    }else{
+      cdseq_synth_scRNA_seurat_markers_df <- NULL
+    }
     
     # grep single cell id in seurat output
     scRNAseq_cell_gene_name <- cdseq_synth_scRNA_seurat@assays$RNA@counts@Dimnames[[1]]
@@ -246,13 +257,18 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
       seurat_cluster_purity[i] <- seurat_cluster_assess$max_element_proportion
       seurat_cluster_gold_label[i] <- seurat_cluster_assess$max_element
       # add sc_annotation to DE marker data frame
-      tmp_idx <- which(as.numeric(cdseq_synth_scRNA_seurat_markers_df$cluster) == seurat_unique_clusters[i])
-      cdseq_synth_scRNA_seurat_markers_df$singleCellAnnotation[tmp_idx] <- seurat_cluster_gold_label[i]
-      
+      if(seurat_find_marker){
+        tmp_idx <- which(as.numeric(cdseq_synth_scRNA_seurat_markers_df$cluster) == seurat_unique_clusters[i])
+        cdseq_synth_scRNA_seurat_markers_df$singleCellAnnotation[tmp_idx] <- seurat_cluster_gold_label[i]
+      }
       cdseq_tmp_idx <- which(as.numeric(CDSeq_cell_type_assignment_df$seurat_cluster) == seurat_unique_clusters[i])
       CDSeq_cell_type_assignment_df$cdseq_cell_type_assignment[cdseq_tmp_idx] <- seurat_cluster_gold_label[i]
     }
-    seurat_top_markers_df <- cdseq_synth_scRNA_seurat_markers_df %>% dplyr::group_by(cluster) %>% dplyr::top_n(n = seurat_top_n_markers, wt = avg_logFC)
+    if(seurat_find_marker){
+      seurat_top_markers_df <- cdseq_synth_scRNA_seurat_markers_df %>% dplyr::group_by(cluster) %>% dplyr::top_n(n = seurat_top_n_markers, wt = avg_logFC)
+    }else{
+      seurat_top_markers_df <- NULL
+    }
     
     if(!is.null(cdseq_prop)){
        # current version assumes each CDSeq-estGEP only generate 1 synthetic single cell. May extend to more general case later
