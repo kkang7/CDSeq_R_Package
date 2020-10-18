@@ -25,6 +25,9 @@ Bug fix. Add more features to cellTypeAssignSCRNA function.
 
 install_github("kkang7/CDSeq_R_Package")
 
+## scRNAseq data for CDSeq-estimated cell type annotations
+We collected some public available scRNAseq data from https://www.nature.com/articles/s41586-020-2157-4 and put them in hdf5 format. The data are available upon request. 
+
 ## Known issue about MacOS installation
 It is possible for Mac users to run into some errors when install from source due to problems of Rcpp compiler tools. Follow the instruction here may help: https://thecoatlessprofessor.com/programming/cpp/r-compiler-tools-for-rcpp-on-macos/
  
