@@ -21,6 +21,7 @@
 #' @param seurat_top_n_markers the number of top DE markers saved from Seurat output. 
 #' @param plot_umap set 1 to plot umap figure of scRNAseq and CDSeq-estimated cell types, 0 otherwise.
 #' @param plot_tsne set 1 to plot tsne figure of scRNAseq and CDSeq-estimated cell types, 0 otherwise.
+#' @param plot_per_sample currently disabled for debugging
 #' @param fig_path the location where the heatmap figure is saved. 
 #' @param fig_name the name of umap and tsne figures. Umap figure will have the name of fig_name_umap_date and tsne figure will be named fig_name_tsne_date.
 #' @param fig_format "pdf", "jpeg", or "png".
@@ -94,6 +95,7 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
                                 seurat_top_n_markers = 10,
                                 plot_umap = 1,
                                 plot_tsne = 1,
+                                plot_per_sample = 0,
                                 fig_path = getwd(),
                                 fig_name = "cellTypeAssignSCRNA",
                                 fig_format = "pdf",
@@ -470,67 +472,71 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
     ##################################################################
     ##    plot CDSeq-estimated cell-type-specific gep per sample    ##
     ##################################################################
-    cat("Running UMAP: plot CDSeq-estimated cell-type-specific gep per sample ... \n")
-    
-    cdseq_synth_scRNA_seurat_persample <- RunUMAP(cdseq_synth_scRNA_seurat_persample, dims = seurat_dims)
-    
-    # plot scRNAseq and cdseq estimates
-    if(is.null(sc_annotation)){
-      cluster_label <- paste0("cluster_",cdseq_synth_scRNA_seurat_persample$seurat_clusters)#sub_grp#clusterlouvain$membership
-    }else{
-      tmp_label <- as.numeric(cdseq_synth_scRNA_seurat_persample$seurat_clusters)
-      cluster_label <- rep("no_label",length(tmp_label))
-      for (i in 1:length(seurat_unique_clusters_persample)) {
-        cluster_label[which(tmp_label==seurat_unique_clusters_persample[i])] <- seurat_cluster_gold_label_persample[i]
+    if(plot_per_sample){
+      warning("plot_per_sample option is not working properly. I'm working on it.")
+      cat("Running UMAP: plot CDSeq-estimated cell-type-specific gep per sample ... \n")
+      
+      cdseq_synth_scRNA_seurat_persample <- RunUMAP(cdseq_synth_scRNA_seurat_persample, dims = seurat_dims)
+      
+      # plot scRNAseq and cdseq estimates
+      if(is.null(sc_annotation)){
+        cluster_label <- paste0("cluster_",cdseq_synth_scRNA_seurat_persample$seurat_clusters)#sub_grp#clusterlouvain$membership
+      }else{
+        tmp_label <- as.numeric(cdseq_synth_scRNA_seurat_persample$seurat_clusters)
+        cluster_label <- rep("no_label",length(tmp_label))
+        for (i in 1:length(seurat_unique_clusters_persample)) {
+          cluster_label[which(tmp_label==seurat_unique_clusters_persample[i])] <- seurat_cluster_gold_label_persample[i]
+        }
       }
+      
+      cluster_label <- factor(cluster_label, levels = unique(cluster_label))
+      cdseq_sc_comb_umap <- cdseq_synth_scRNA_seurat_persample@reductions$umap@cell.embeddings
+      
+      cell_sources <- rownames(cdseq_sc_comb_umap)
+      umap_tot <- 1:nrow(cdseq_sc_comb_umap)
+      CDSeq_idx <- grep("CDSeq",rownames(cdseq_sc_comb_umap))
+      scRNA_idx <- umap_tot[-CDSeq_idx]
+      
+      cat("length(CDSeq_idx) = ", length(CDSeq_idx), 
+          " length(scRNA_idx) = ", length(scRNA_idx),
+          " length(cell_sources) = ",length(cell_sources),
+          " length(cluster_label) = ",length(cluster_label),
+          " nrow(cdseq_sc_comb_umap) = ",nrow(cdseq_sc_comb_umap),
+          " ncol(cdseq_sc_comb_umap) = ",ncol(cdseq_sc_comb_umap),"\n")
+      
+      cell_sources[CDSeq_idx] <- "CDSeq"
+      cell_sources[scRNA_idx] <- "scRNA"
+      cell_sources <- factor(cell_sources,levels = c('scRNA','CDSeq') )
+      #cell_sources <- factor(c(rep('scRNA',length(scRNA_idx)), rep('CDSeq',length(CDSeq_idx))), levels = c('scRNA','CDSeq'))
+      cdseq_sc_comb_umap_per_sample_df <- data.frame(V1 = cdseq_sc_comb_umap[,1], V2 = cdseq_sc_comb_umap[,2], cell_sources= cell_sources , cluster_label = cluster_label)
+      point_stroke <- c(rep(0,length(scRNA_idx)), rep(2,length(CDSeq_idx)))
+      
+      cat("nrow(cdseq_sc_comb_umap_per_sample_df) = ", nrow(cdseq_sc_comb_umap_per_sample_df), "length(point_stroke) = ", length(point_stroke),"...\n")
+      
+      cdseq_scRNA_umap_per_sample<- ggplot(cdseq_sc_comb_umap_per_sample_df,aes(x=.data$V1, y=.data$V2, colour=as.factor(cell_sources), size=as.factor(cell_sources), shape=as.factor(cell_sources), fill=as.factor(cluster_label), stroke=point_stroke)) + 
+        ggtitle(paste0('CDSeq estimated per-sample-cell-type-specific GEP and scRNAseq')) + 
+        xlab("UMAP 1") + ylab("UMAP 2") +
+        geom_point() + # this is the edge color
+        scale_colour_manual(name="cell source",values=c("gray","black"),na.value = NA,label=levels(cell_sources)) +
+        scale_fill_manual(name="clusters",values=c(rainbow(length(unique(cluster_label)))),na.value = NA,label=levels(cluster_label)) +
+        scale_size_manual(name="cell source", values = c(1,3), na.value = NA,label=levels(cell_sources)) +
+        scale_shape_manual(name="cell source", values = c(21,23), na.value = NA,label=levels(cell_sources)) +
+        theme(plot.title = element_text(size = 45, face = "bold"), 
+              axis.title.x = element_text(color="black", size=35,face="bold"),
+              axis.title.y = element_text(color="black", size=35,face="bold"),
+              legend.title = element_text(color = "blue", face = "bold", size = 30),
+              legend.text = element_text(color = "blue", face = "bold", size = 30)) + 
+        guides(color = guide_legend(override.aes = list(size=5)), fill = guide_legend(override.aes = list(shape=21,size=5)))
+      
+      fig_tmp_name <- paste0(fig_path,fig_name,"_umap_per_sample_cts_",gsub("-|\\s|:","_",Sys.time()),".",fig_format)
+      cat("save umap at ",fig_tmp_name ,"...\n")
+      ggsave(filename = fig_tmp_name,#paste0(fig_path,fig_name,"_umap.",fig_format),
+             plot = cdseq_scRNA_umap_per_sample,
+             width = 25,
+             height = 20,
+             dpi = fig_dpi)
     }
     
-    cluster_label <- factor(cluster_label, levels = unique(cluster_label))
-    cdseq_sc_comb_umap <- cdseq_synth_scRNA_seurat_persample@reductions$umap@cell.embeddings
-    
-    cell_sources <- rownames(cdseq_sc_comb_umap)
-    umap_tot <- 1:nrow(cdseq_sc_comb_umap)
-    CDSeq_idx <- grep("CDSeq",rownames(cdseq_sc_comb_umap))
-    scRNA_idx <- umap_tot[-CDSeq_idx]
-    
-    cat("length(CDSeq_idx) = ", length(CDSeq_idx), 
-        " length(scRNA_idx) = ", length(scRNA_idx),
-        " length(cell_sources) = ",length(cell_sources),
-        " length(cluster_label) = ",length(cluster_label),
-        " nrow(cdseq_sc_comb_umap) = ",nrow(cdseq_sc_comb_umap),
-        " ncol(cdseq_sc_comb_umap) = ",ncol(cdseq_sc_comb_umap),"\n")
-    
-    cell_sources[CDSeq_idx] <- "CDSeq"
-    cell_sources[scRNA_idx] <- "scRNA"
-    cell_sources <- factor(cell_sources,levels = c('scRNA','CDSeq') )
-    #cell_sources <- factor(c(rep('scRNA',length(scRNA_idx)), rep('CDSeq',length(CDSeq_idx))), levels = c('scRNA','CDSeq'))
-    cdseq_sc_comb_umap_per_sample_df <- data.frame(V1 = cdseq_sc_comb_umap[,1], V2 = cdseq_sc_comb_umap[,2], cell_sources= cell_sources , cluster_label = cluster_label)
-    point_stroke <- c(rep(0,length(scRNA_idx)), rep(2,length(CDSeq_idx)))
-    
-    cat("nrow(cdseq_sc_comb_umap_per_sample_df) = ", nrow(cdseq_sc_comb_umap_per_sample_df), "length(point_stroke) = ", length(point_stroke),"...\n")
-    
-    cdseq_scRNA_umap_per_sample<- ggplot(cdseq_sc_comb_umap_per_sample_df,aes(x=.data$V1, y=.data$V2, colour=as.factor(cell_sources), size=as.factor(cell_sources), shape=as.factor(cell_sources), fill=as.factor(cluster_label), stroke=point_stroke)) + 
-      ggtitle(paste0('CDSeq estimated per-sample-cell-type-specific GEP and scRNAseq')) + 
-      xlab("UMAP 1") + ylab("UMAP 2") +
-      geom_point() + # this is the edge color
-      scale_colour_manual(name="cell source",values=c("gray","black"),na.value = NA,label=levels(cell_sources)) +
-      scale_fill_manual(name="clusters",values=c(rainbow(length(unique(cluster_label)))),na.value = NA,label=levels(cluster_label)) +
-      scale_size_manual(name="cell source", values = c(1,3), na.value = NA,label=levels(cell_sources)) +
-      scale_shape_manual(name="cell source", values = c(21,23), na.value = NA,label=levels(cell_sources)) +
-      theme(plot.title = element_text(size = 45, face = "bold"), 
-            axis.title.x = element_text(color="black", size=35,face="bold"),
-            axis.title.y = element_text(color="black", size=35,face="bold"),
-            legend.title = element_text(color = "blue", face = "bold", size = 30),
-            legend.text = element_text(color = "blue", face = "bold", size = 30)) + 
-      guides(color = guide_legend(override.aes = list(size=5)), fill = guide_legend(override.aes = list(shape=21,size=5)))
-    
-    fig_tmp_name <- paste0(fig_path,fig_name,"_umap_per_sample_cts_",gsub("-|\\s|:","_",Sys.time()),".",fig_format)
-    cat("save umap at ",fig_tmp_name ,"...\n")
-    ggsave(filename = fig_tmp_name,#paste0(fig_path,fig_name,"_umap.",fig_format),
-           plot = cdseq_scRNA_umap_per_sample,
-           width = 25,
-           height = 20,
-           dpi = fig_dpi)
     
     
   }
@@ -593,59 +599,61 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
     ##################################################################
     ##    plot CDSeq-estimated cell-type-specific gep per sample    ##
     ##################################################################
-    cat("Running TSNE: per sample CDSeq-estimated cell types ... \n")
-    cdseq_synth_scRNA_seurat_persample <- RunTSNE(cdseq_synth_scRNA_seurat_persample, dims = seurat_dims, check_duplicates = FALSE)
-    
-    # plot scRNAseq and cdseq estimates
-    if(is.null(sc_annotation)){
-      cluster_label <- paste0("cluster_",cdseq_synth_scRNA_seurat_persample$seurat_clusters)#sub_grp#clusterlouvain$membership
-    }else{
-      tmp_label <- as.numeric(cdseq_synth_scRNA_seurat_persample$seurat_clusters)
-      cluster_label <- rep("a",length(tmp_label))
-      for (i in 1:length(seurat_unique_clusters_persample)) {
-        cluster_label[which(tmp_label==seurat_unique_clusters_persample[i])] <- seurat_cluster_gold_label_persample[i]
+    if(plot_per_sample){
+      warning("plot_per_sample option is not working properly. I'm working on it.")
+      cat("Running TSNE: per sample CDSeq-estimated cell types ... \n")
+      cdseq_synth_scRNA_seurat_persample <- RunTSNE(cdseq_synth_scRNA_seurat_persample, dims = seurat_dims, check_duplicates = FALSE)
+      
+      # plot scRNAseq and cdseq estimates
+      if(is.null(sc_annotation)){
+        cluster_label <- paste0("cluster_",cdseq_synth_scRNA_seurat_persample$seurat_clusters)#sub_grp#clusterlouvain$membership
+      }else{
+        tmp_label <- as.numeric(cdseq_synth_scRNA_seurat_persample$seurat_clusters)
+        cluster_label <- rep("a",length(tmp_label))
+        for (i in 1:length(seurat_unique_clusters_persample)) {
+          cluster_label[which(tmp_label==seurat_unique_clusters_persample[i])] <- seurat_cluster_gold_label_persample[i]
+        }
       }
+      
+      cluster_label <- factor(cluster_label, levels = unique(cluster_label))
+      cdseq_sc_comb_tsne <- cdseq_synth_scRNA_seurat_persample@reductions$tsne@cell.embeddings
+      
+      cell_sources <- rownames(cdseq_sc_comb_tsne)
+      tsne_tot <- 1:nrow(cdseq_sc_comb_tsne)
+      CDSeq_idx <- grep("CDSeq",rownames(cdseq_sc_comb_tsne))
+      scRNA_idx <- tsne_tot[-CDSeq_idx]
+      
+      cell_sources[CDSeq_idx] <- "CDSeq"
+      cell_sources[scRNA_idx] <- "scRNA"
+      cell_sources <- factor(cell_sources,levels = c('scRNA','CDSeq') )
+      
+      cdseq_sc_comb_tsne_df_persample <- data.frame(V1 = cdseq_sc_comb_tsne[,1], V2 = cdseq_sc_comb_tsne[,2], cell_sources= cell_sources , cluster_label = cluster_label)
+      point_stroke <- c(rep(0,length(scRNA_idx)), rep(2,length(CDSeq_idx)))
+      
+      cdseq_scRNA_tsne_persample <- ggplot(cdseq_sc_comb_tsne_df_persample,aes(x=.data$V1, y=.data$V2, colour=as.factor(cell_sources), size=as.factor(cell_sources), shape=as.factor(cell_sources), fill=as.factor(cluster_label), stroke=point_stroke)) +
+        ggtitle(paste0('CDSeq estimated cell types and scRNAseq')) + 
+        xlab("TSNE 1") + ylab("TSNE 2") +
+        geom_point() + # this is the edge color
+        scale_colour_manual(name="cell source",values=c("gray","black"),na.value = NA,label=levels(cell_sources)) +
+        scale_fill_manual(name="clusters",values=c(rainbow(length(unique(cluster_label)))),na.value = NA,label=levels(cluster_label)) +
+        scale_size_manual(name="cell source", values = c(1,3), na.value = NA,label=levels(cell_sources)) +
+        scale_shape_manual(name="cell source", values = c(21,23), na.value = NA,label=levels(cell_sources)) +
+        theme(plot.title = element_text(size = 45, face = "bold"), 
+              axis.title.x = element_text(color="black", size=35,face="bold"),
+              axis.title.y = element_text(color="black", size=35,face="bold"),
+              legend.title = element_text(color = "blue", face = "bold", size = 30),
+              legend.text = element_text(color = "blue", face = "bold", size = 30)) + 
+        guides(color = guide_legend(override.aes = list(size=5)), fill = guide_legend(override.aes = list(shape=21,size=5)))
+      
+      fig_tmp_name <- paste0(fig_path,fig_name,"_tsne_per_sample_cts_",gsub("-|\\s|:","_",Sys.time()),".",fig_format)
+      cat("save umap at ", fig_tmp_name ,"...\n")
+      ggsave(filename = fig_tmp_name,#paste0(fig_path,fig_name,"_tsne.",fig_format),
+             plot = cdseq_scRNA_tsne_persample,
+             width = 25,
+             height = 20,
+             dpi = fig_dpi)
+      
     }
-    
-    cluster_label <- factor(cluster_label, levels = unique(cluster_label))
-    cdseq_sc_comb_tsne <- cdseq_synth_scRNA_seurat_persample@reductions$tsne@cell.embeddings
-    
-    cell_sources <- rownames(cdseq_sc_comb_tsne)
-    tsne_tot <- 1:nrow(cdseq_sc_comb_tsne)
-    CDSeq_idx <- grep("CDSeq",rownames(cdseq_sc_comb_tsne))
-    scRNA_idx <- tsne_tot[-CDSeq_idx]
-    
-    cell_sources[CDSeq_idx] <- "CDSeq"
-    cell_sources[scRNA_idx] <- "scRNA"
-    cell_sources <- factor(cell_sources,levels = c('scRNA','CDSeq') )
-    
-    cdseq_sc_comb_tsne_df_persample <- data.frame(V1 = cdseq_sc_comb_tsne[,1], V2 = cdseq_sc_comb_tsne[,2], cell_sources= cell_sources , cluster_label = cluster_label)
-    point_stroke <- c(rep(0,length(scRNA_idx)), rep(2,length(CDSeq_idx)))
-    
-    cdseq_scRNA_tsne_persample <- ggplot(cdseq_sc_comb_tsne_df_persample,aes(x=.data$V1, y=.data$V2, colour=as.factor(cell_sources), size=as.factor(cell_sources), shape=as.factor(cell_sources), fill=as.factor(cluster_label), stroke=point_stroke)) +
-      ggtitle(paste0('CDSeq estimated cell types and scRNAseq')) + 
-      xlab("TSNE 1") + ylab("TSNE 2") +
-      geom_point() + # this is the edge color
-      scale_colour_manual(name="cell source",values=c("gray","black"),na.value = NA,label=levels(cell_sources)) +
-      scale_fill_manual(name="clusters",values=c(rainbow(length(unique(cluster_label)))),na.value = NA,label=levels(cluster_label)) +
-      scale_size_manual(name="cell source", values = c(1,3), na.value = NA,label=levels(cell_sources)) +
-      scale_shape_manual(name="cell source", values = c(21,23), na.value = NA,label=levels(cell_sources)) +
-      theme(plot.title = element_text(size = 45, face = "bold"), 
-            axis.title.x = element_text(color="black", size=35,face="bold"),
-            axis.title.y = element_text(color="black", size=35,face="bold"),
-            legend.title = element_text(color = "blue", face = "bold", size = 30),
-            legend.text = element_text(color = "blue", face = "bold", size = 30)) + 
-      guides(color = guide_legend(override.aes = list(size=5)), fill = guide_legend(override.aes = list(shape=21,size=5)))
-    
-    fig_tmp_name <- paste0(fig_path,fig_name,"_tsne_per_sample_cts_",gsub("-|\\s|:","_",Sys.time()),".",fig_format)
-    cat("save umap at ", fig_tmp_name ,"...\n")
-    ggsave(filename = fig_tmp_name,#paste0(fig_path,fig_name,"_tsne.",fig_format),
-           plot = cdseq_scRNA_tsne_persample,
-           width = 25,
-           height = 20,
-           dpi = fig_dpi)
-    
-    
     
   }
   input_list <- list(cdseq_gep = cdseq_gep,
