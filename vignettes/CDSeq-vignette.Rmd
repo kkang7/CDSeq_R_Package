@@ -18,11 +18,12 @@ knitr::opts_chunk$set(
 ```
 
 
-
+```{r klippy, echo=FALSE, include=TRUE}
+klippy::klippy(position = c('top', 'right'), color = 'darkred', tooltip_message = 'Click to copy', tooltip_success = 'Done')
+```
 
 # Introduction
 CDSeq is a complete deconvolution method using sequencing data. Simply put, CDSeq takes bulk RNA-Seq read counts data as input and estimates the cell-type-specific gene expression profiles (csGEPs) and sample-specific cell-type proportions (SSP). 
-
 
 
 # Usage
@@ -62,35 +63,61 @@ You could install CDSeq from Github by running the following
 install_github("kkang7/CDSeq_R_Package")
 ```
 
-# Examples
-## Quick example
+# Quick start
+## Examples
 ### When the number of cell types is a scalar
 ```{r library}
 library(CDSeq)
 ```
 The followig code runs **CDSeq** using synthetic mixtures comes with the R package. The *mixtureGEP* consists of 40 samples with 500 genes. These mixtures are generated using six pure cell lines and random generated mixing proportions. **CDSeq** takes *mixtureGEP* as input and outputs the estimates of cell-type-specific gene expressions and sample-specific cell-type proportions. 
-```{r example 1, eval=FALSE, cache=FALSE, results='hide'}
-result1<-CDSeq(bulk_data =  mixtureGEP, 
-              cell_type_number = 6, 
-              mcmc_iterations = 700, 
-              dilution_factor = 1, 
-              block_number = 1, 
-              gene_length = as.vector(gene_length), 
-              reference_gep = refGEP, 
-              cpu_number = 1, 
-              print_progress_msg_to_file = 0)
+
+```{r quick start, eval=TRUE, cache=FALSE, results='hide', class.source='klippy'} 
+#################################################################
+##                   set up CDSeq parameters                   ##
+#################################################################
+library(matrixStats)
+# use the first 50 genes and first 10 synthetic mixtures as a quick example
+gene_subset <- sort(rowVars(mixtureGEP), decreasing = TRUE, index.return=TRUE)$ix[1:50]
+sample_subset <- 1:10
+bulk_data <- mixtureGEP[gene_subset,sample_subset]     
+
+# number of cell types in the mixtures
+cell_type_number <- 6   
+
+# number of iterations of MCMC procedure
+mcmc_iter <- 700    
+
+# number of CPUs that will be used for CDSeq. 
+# This is used for parallel computing 
+# when cell_type_number is a vector or reduce-recover is used.
+cpu_number <- 1     
+
+# effective gene length
+gene_length <- as.vector(gene_length[gene_subset]) 
+
+# pure cell line GEP, i.e. ground truth
+ref_gep <- refGEP[gene_subset,]                    
+
+
+#################################################################
+##                          Run CDSeq                          ##
+#################################################################
+result1<-CDSeq(bulk_data =  bulk_data, 
+               cell_type_number = cell_type_number, 
+               mcmc_iterations = mcmc_iter, 
+               gene_length = gene_length, 
+               reference_gep = ref_gep, 
+               cpu_number = cpu_number)
 ```
 
-The output *result* is a list containing multiple entities as listed in [Output](#output). When *cell_type_number* is a scalar, **CDSeq** will only returnt the following values.
-```{r output, eval=FALSE, echo=TRUE}
+The output *result1* is a list containing multiple entities as listed in [Output](#output). When *cell_type_number* is a scalar, **CDSeq** will only returnt the following values.
+```{r output, eval=TRUE, echo=TRUE}
 ls(result1)
 ```
 We can compare the CDSeq-estimated cell-type-specific GEPs with the ground truth.
-```{r fig1, echo=TRUE,cache=FALSE,eval=FALSE}
-trueGEP <- true_GEP_rpkm[,result1$cell_type_assignment]
-par(mar=c(4,4,1,1))
-par(mfrow=c(2,3))
-par(pty="s")
+```{r fig1, echo=TRUE,cache=FALSE,eval=TRUE}
+trueGEP <- true_GEP_rpkm[gene_subset,result1$cell_type_assignment]
+par(mar=c(4,4,1,1), mfrow=c(2,3), pty="s")
 for (i in 1:6) {
     plot(result1$estGEP[,i],trueGEP[,i],xlab = "CDSeq-estimated GEPs", ylab = "True GEPs")
     max_v <- max(c(result1$estGEP[,i], trueGEP[,i]))

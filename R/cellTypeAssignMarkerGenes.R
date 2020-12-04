@@ -77,6 +77,7 @@ cellTypeAssignMarkerGenes <- function(cell_gep = NULL,
   
   # this computes the z score of the rows of GEP_markerSum
   GEP_markerSum_zscore <- t(scale(t(GEP_markerSum))) 
+  GEP_markerSum_zscore[is.nan(GEP_markerSum_zscore)] <- 0
   
   # this chooses the rows whose max values are greater than threshold. 
   # this is saying if the max value of that row is greater than threshold
