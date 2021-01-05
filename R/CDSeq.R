@@ -86,7 +86,7 @@ CDSeq <- function( bulk_data,
                    reference_gep = NULL,
                    print_progress_msg_to_file = 0) {
   
-  cat("\n============================================ CDSeq R package version 1.0.7 ==================================================\n")
+  cat("\n============================================ CDSeq R package version 1.0.8 ==================================================\n")
   cat("|  Coders     : Kai Kang, David Huang                                                                                         |\n")
   cat("|  Reference 1: CDSeq: A novel complete deconvolution method for dissecting heterogeneous samples using gene expression data  |\n")
   cat("|  Reference 2: CDSeq: An R package for fast complete deconvolution using gene expression data                                |\n")
@@ -201,7 +201,7 @@ CDSeq <- function( bulk_data,
   if(!is.null(reference_gep)){
     if(max(cell_type_number)>ncol(reference_gep)){
       rpkm <- 0
-      ref <- 0
+      #ref <- 0 # I need to write a more robust cell type assignment function to take care this case
     }
   }
   

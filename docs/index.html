@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">CDSeq</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.8</span>
       </span>
     </div>
 
@@ -39,12 +39,24 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
 <li>
   <a href="reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+<li>
+      <a href="articles/CDSeq-vignette.html">CDSeq: a complete deconvolution method using sequencing data</a>
+    </li>
+  </ul>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right"></ul>
@@ -64,15 +76,49 @@
 <a href="#cdseq-r-package" class="anchor"></a>CDSeq R Package</h1></div>
 <p>CDSeq is a complete deconvolution method for dissecting bulk RNA-Seq data. The input of CDSeq is, ideally, bulk RNA-Seq read counts (for example HTSeq read counts), and CDSeq will estimate, simultaneously, the cell-type-specific gene expression profiles and the sample-specific cell-type proportions, no reference of pure cell line GEPs or scRNAseq reference is needed for running CDSeq.</p>
 <p>For example, if you have a bulk RNA-Seq data, <span class="math inline"><em>A</em><sub><em>G</em> × <em>M</em></sub></span>, which is a G by M matrix. G denotes the number of genes and M is the sample size, then CDSeq will output <span class="math inline"><em>B</em><sub><em>G</em> × <em>T</em></sub></span> and <span class="math inline"><em>C</em><sub><em>T</em> × <em>M</em></sub></span>, where T is the number of cell types, <span class="math inline"><em>B</em><sub><em>G</em> × <em>T</em></sub></span> is the estiamte of cell-type-specific GEPs and <span class="math inline"><em>C</em><sub><em>T</em> × <em>M</em></sub></span> is the estiamte of sample-specific cell-type proportions.</p>
-<p>Importantly, you can ask CDSeq to estimate the number of cell types, i.e. T, by providing a vector of possible integer values for T. For example, if the user input for T is a vector, i.e. <span class="math inline"><em>T</em> = {2, 3, 4, 5, 6}</span>, then CDSeq will estimate the most likely number for T.</p>
-<div id="version-1-0-4" class="section level2">
+<p>Importantly, you can ask CDSeq to estimate the number of cell types, i.e. T, by providing a vector of possible integer values for T. For example, if the user input for T is a vector, i.e. <span class="math inline"><em>T</em> = {2, 3, 4, 5, 6}</span>, then CDSeq will estimate the most likely number for T.</p>
+<div id="versioning" class="section level2">
 <h2 class="hasAnchor">
-<a href="#version-1-0-4" class="anchor"></a>Version 1.0.4</h2>
+<a href="#versioning" class="anchor"></a>Versioning</h2>
+<p>I follow the versioning scheme: <em>major</em>.<em>minor</em>.<em>patch</em>. In CDSeq package, <em>major</em>, <em>minor</em> and <em>patch</em> basically indicate the following types of changes:</p>
+<ol>
+<li>
+<em>major</em>: changes on the underlying probabilistic modeling</li>
+<li>
+<em>minor</em>: changes on the numerical procedures or coding structure</li>
+<li>
+<em>patch</em>: others</li>
+</ol>
+</div>
+<div id="version-108" class="section level2">
+<h2 class="hasAnchor">
+<a href="#version-108" class="anchor"></a>Version 1.0.8</h2>
+<p>Bug fix. Add vignette.</p>
+</div>
+<div id="version-107" class="section level2">
+<h2 class="hasAnchor">
+<a href="#version-107" class="anchor"></a>Version 1.0.7</h2>
+<p>Bug fix. Add more features to cellTypeAssignSCRNA function.</p>
+</div>
+<div id="version-106" class="section level2">
+<h2 class="hasAnchor">
+<a href="#version-106" class="anchor"></a>Version 1.0.6</h2>
+<p>Add cellTypeAssignSCRNA function. This function can be used for cell type assignment using user provided single cell RNAseq data (with annotations).</p>
+</div>
+<div id="version-105" class="section level2">
+<h2 class="hasAnchor">
+<a href="#version-105" class="anchor"></a>Version 1.0.5</h2>
+<p>Add cellTypeAssignMarkerGenes function. This function can be used for cell type assignment using user provided marker gene list.</p>
 </div>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
 <p>install_github(“kkang7/CDSeq_R_Package”)</p>
+</div>
+<div id="scrnaseq-data-for-cdseq-estimated-cell-type-annotations" class="section level2">
+<h2 class="hasAnchor">
+<a href="#scrnaseq-data-for-cdseq-estimated-cell-type-annotations" class="anchor"></a>scRNAseq data for CDSeq-estimated cell type annotations</h2>
+<p>We collected some public available scRNAseq data from <a href="https://www.nature.com/articles/s41586-020-2157-4" class="uri">https://www.nature.com/articles/s41586-020-2157-4</a> and put them in hdf5 format. The data are available upon request.</p>
 </div>
 <div id="known-issue-about-macos-installation" class="section level2">
 <h2 class="hasAnchor">
@@ -110,7 +156,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

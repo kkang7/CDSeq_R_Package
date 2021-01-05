@@ -12,14 +12,21 @@ I follow the versioning scheme: *major*.*minor*.*patch*. In CDSeq package, *majo
 2. *minor*: changes on the numerical procedures or coding structure
 3. *patch*: others
 
-## Version 1.0.5
-Add cellTypeAssignMarkerGenes function. This function can be used for cell type assignment using user provided marker gene list.
+
+## Version 1.0.8
+Bug fix. Add vignette.
+
+## Version 1.0.7
+Bug fix. Add more features to cellTypeAssignSCRNA function.
 
 ## Version 1.0.6
 Add cellTypeAssignSCRNA function. This function can be used for cell type assignment using user provided single cell RNAseq data (with annotations).
 
-## Version 1.0.7
-Bug fix. Add more features to cellTypeAssignSCRNA function.
+
+## Version 1.0.5
+Add cellTypeAssignMarkerGenes function. This function can be used for cell type assignment using user provided marker gene list.
+
+
 
 ## Installation
 

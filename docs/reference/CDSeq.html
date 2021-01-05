@@ -40,7 +40,7 @@
 
 
 <meta property="og:title" content="Complete deconvolution using sequencing data. — CDSeq" />
-<meta property="og:description" content="CDSeq takes bulk RNA-seq data as input and simultaneously returns estimates of both cell-type-specific gene expression profiles and sample-specific cell-type proportions." />
+<meta property="og:description" content="CDSeq takes bulk RNA-seq data as input and simultaneously returns estimates of both cell-type-specific gene expression profiles and sample-specific cell-type proportions (versioin 1.0.6)." />
 
 
 
@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CDSeq</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.8</span>
       </span>
     </div>
 
@@ -80,12 +80,24 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/CDSeq-vignette.html">CDSeq: a complete deconvolution method using sequencing data</a>
+    </li>
+  </ul>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -109,23 +121,23 @@
     </div>
 
     <div class="ref-description">
-    <p><code>CDSeq</code> takes bulk RNA-seq data as input and simultaneously returns estimates of both cell-type-specific gene expression profiles and sample-specific cell-type proportions.</p>
+    <p><code>CDSeq</code> takes bulk RNA-seq data as input and simultaneously returns estimates of both cell-type-specific gene expression profiles and sample-specific cell-type proportions (versioin 1.0.6).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>CDSeq</span>(
-  <span class='no'>bulk_data</span>,
-  <span class='kw'>beta</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
-  <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>5</span>,
-  <span class='kw'>cell_type_number</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>mcmc_iterations</span> <span class='kw'>=</span> <span class='fl'>700</span>,
-  <span class='kw'>dilution_factor</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>gene_subset_size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>block_number</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>cpu_number</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>gene_length</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>reference_gep</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>print_progress_msg_to_file</span> <span class='kw'>=</span> <span class='fl'>0</span>
-)</pre>
+    <pre class="usage"><span class='fu'>CDSeq</span><span class='op'>(</span>
+  <span class='va'>bulk_data</span>,
+  beta <span class='op'>=</span> <span class='fl'>0.5</span>,
+  alpha <span class='op'>=</span> <span class='fl'>5</span>,
+  cell_type_number <span class='op'>=</span> <span class='cn'>NULL</span>,
+  mcmc_iterations <span class='op'>=</span> <span class='fl'>700</span>,
+  dilution_factor <span class='op'>=</span> <span class='fl'>1</span>,
+  gene_subset_size <span class='op'>=</span> <span class='cn'>NULL</span>,
+  block_number <span class='op'>=</span> <span class='fl'>1</span>,
+  cpu_number <span class='op'>=</span> <span class='cn'>NULL</span>,
+  gene_length <span class='op'>=</span> <span class='cn'>NULL</span>,
+  reference_gep <span class='op'>=</span> <span class='cn'>NULL</span>,
+  print_progress_msg_to_file <span class='op'>=</span> <span class='fl'>0</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -161,7 +173,7 @@ e.g. cell_type_number &lt;- 2:30, then CDSeq will estimate the number of cell ty
     </tr>
     <tr>
       <th>block_number</th>
-      <td><p>number of genes randomly sampled for each block. Default is 1.</p></td>
+      <td><p>number of blocks. Each block contains gene_subset_size genes. Default is 1.</p></td>
     </tr>
     <tr>
       <th>cpu_number</th>
@@ -188,10 +200,11 @@ Default is NULL and CDSeq will detect the available number of cores on the devic
  and the log posterior values for different number of cell types.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>result</span><span class='kw'>&lt;-</span><span class='fu'>CDSeq</span>(<span class='kw'>bulk_data</span> <span class='kw'>=</span>  <span class='no'>mixtureGEP</span>, <span class='kw'>cell_type_number</span> <span class='kw'>=</span> <span class='fl'>6</span>, <span class='kw'>mcmc_iterations</span> <span class='kw'>=</span> <span class='fl'>10</span>,
-       <span class='kw'>dilution_factor</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>block_number</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>gene_length</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/vector.html'>as.vector</a></span>(<span class='no'>gene_length</span>),
-       <span class='kw'>reference_gep</span> <span class='kw'>=</span> <span class='no'>refGEP</span>, <span class='kw'>cpu_number</span><span class='kw'>=</span><span class='fl'>1</span>, <span class='kw'>print_progress_msg_to_file</span><span class='kw'>=</span><span class='fl'>1</span>)</div><div class='output co'>#&gt; 
-#&gt; ============================================ CDSeq R package version 1.0.5 ==================================================
+    <pre class="examples"><div class='input'><span class='va'>result</span><span class='op'>&lt;-</span><span class='fu'>CDSeq</span><span class='op'>(</span>bulk_data <span class='op'>=</span>  <span class='va'>mixtureGEP</span>, cell_type_number <span class='op'>=</span> <span class='fl'>6</span>, mcmc_iterations <span class='op'>=</span> <span class='fl'>10</span>, 
+       dilution_factor <span class='op'>=</span> <span class='fl'>1</span>, block_number <span class='op'>=</span> <span class='fl'>1</span>, gene_length <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/vector.html'>as.vector</a></span><span class='op'>(</span><span class='va'>gene_length</span><span class='op'>)</span>, 
+       reference_gep <span class='op'>=</span> <span class='va'>refGEP</span>, cpu_number<span class='op'>=</span><span class='fl'>1</span>, print_progress_msg_to_file<span class='op'>=</span><span class='fl'>1</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; 
+#&gt; ============================================ CDSeq R package version 1.0.8 ==================================================
 #&gt; |  Coders     : Kai Kang, David Huang                                                                                         |
 #&gt; |  Reference 1: CDSeq: A novel complete deconvolution method for dissecting heterogeneous samples using gene expression data  |
 #&gt; |  Reference 2: CDSeq: An R package for fast complete deconvolution using gene expression data                                |
@@ -200,19 +213,19 @@ Default is NULL and CDSeq will detect the available number of cores on the devic
 #&gt; CDSeq is running in non Reduce-Recover mode. To use Reduce-Recover mode, assign a value to block_number that is greater than 1.
 #&gt; 0    of 10   MCMC runs (finished  0%, press esc at any time to terminate the MCMC iteration)10   of 10   MCMC runs (finished 100%, press esc at any time to terminate the MCMC iteration)10   of 10   MCMC runs (finished 100%)
 #&gt; Gibbs sampler completed succefully
-#&gt; CDSeq completed successfully using 0.0030 hours</div><div class='input'>
-<span class='no'>result</span><span class='kw'>&lt;-</span><span class='fu'>CDSeq</span>(<span class='kw'>bulk_data</span> <span class='kw'>=</span>  <span class='no'>mixtureGEP</span>, <span class='kw'>cell_type_number</span><span class='kw'>=</span><span class='fl'>2</span>:<span class='fl'>8</span>, <span class='kw'>mcmc_iterations</span> <span class='kw'>=</span> <span class='fl'>10</span>,
-       <span class='kw'>dilution_factor</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>block_number</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>gene_length</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/vector.html'>as.vector</a></span>(<span class='no'>gene_length</span>),
-       <span class='kw'>reference_gep</span> <span class='kw'>=</span> <span class='no'>refGEP</span>, <span class='kw'>cpu_number</span><span class='kw'>=</span><span class='fl'>2</span>, <span class='kw'>print_progress_msg_to_file</span><span class='kw'>=</span><span class='fl'>1</span>)</div><div class='output co'>#&gt; 
-#&gt; ============================================ CDSeq R package version 1.0.5 ==================================================
+#&gt; CDSeq completed successfully using 0.0036 hours</div><div class='input'>
+<span class='va'>result</span><span class='op'>&lt;-</span><span class='fu'>CDSeq</span><span class='op'>(</span>bulk_data <span class='op'>=</span>  <span class='va'>mixtureGEP</span>, cell_type_number<span class='op'>=</span><span class='fl'>2</span><span class='op'>:</span><span class='fl'>8</span>, mcmc_iterations <span class='op'>=</span> <span class='fl'>10</span>, 
+       dilution_factor <span class='op'>=</span> <span class='fl'>1</span>, block_number <span class='op'>=</span> <span class='fl'>1</span>, gene_length <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/vector.html'>as.vector</a></span><span class='op'>(</span><span class='va'>gene_length</span><span class='op'>)</span>, 
+       reference_gep <span class='op'>=</span> <span class='va'>refGEP</span>, cpu_number<span class='op'>=</span><span class='fl'>2</span>, print_progress_msg_to_file<span class='op'>=</span><span class='fl'>0</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; 
+#&gt; ============================================ CDSeq R package version 1.0.8 ==================================================
 #&gt; |  Coders     : Kai Kang, David Huang                                                                                         |
 #&gt; |  Reference 1: CDSeq: A novel complete deconvolution method for dissecting heterogeneous samples using gene expression data  |
 #&gt; |  Reference 2: CDSeq: An R package for fast complete deconvolution using gene expression data                                |
 #&gt; |  Maintainer : kangkai0714@gmail.com                                                                                         |
 #&gt; ===============================================================================================================================
 #&gt; CDSeq is running in non Reduce-Recover mode. To use Reduce-Recover mode, assign a value to block_number that is greater than 1.
-#&gt; CDSeq is running in parallel, it may take some time...
-#&gt; (Progress is being printed to /var/folders/5s/2j1xh3n142s1q5h3b384j7q40000gn/T//RtmpJ4fv6C/CDSeq_tmp_log_4a795c22ba6.txt. You may delete the file if will not use it.)</div><div class='output co'>#&gt; <span class='error'>Error in {    if (!is.null(beta_est)) {        beta &lt;- beta_est[i, ]    }    processIDs[j, i] &lt;- Sys.getpid()    result &lt;- gibbsSampler(alpha, beta, bulk_data_blocks[[i]],         cell_type_number[j], mcmc_iterations, printout, processIDs[j,             i], i, CDSeq_tmp_log, print_progress_msg_to_file)    estGEP_vec &lt;- result$csGEP_vec    estSSp_vec &lt;- result$SSP_vec    samplesize &lt;- ncol(bulk_data)    estGEP_mat &lt;- t(matrix(estGEP_vec, nrow = cell_type_number[j],         ncol = nrow(bulk_data_blocks[[i]])))    estSSp_mat &lt;- matrix(estSSp_vec, nrow = cell_type_number[j],         ncol = samplesize)    estProp &lt;- t(t(estSSp_mat + alpha)/colSums(estSSp_mat + alpha))    estGEP_read &lt;- t(t(estGEP_mat + beta)/colSums(estGEP_mat +         beta))    lgpst &lt;- logpost(estProp, estGEP_read, bulk_data_blocks[[i]],         alpha, beta)    if (block_number == 1) {        if (gl == 1) {            estGEP &lt;- read2gene(estGEP_read, gene_length)        }        else {            estGEP &lt;- estGEP_read        }        if (ref == 1) {            if (rawcount == 1 &amp; cell_type_number[j] &lt;= ncol(refGEPlist[[i]])) {                corr_GEP &lt;- cor(estGEP_read, refGEPlist[[i]])            }            else {                if (gl != 1) {                  warning("Gene length is NOT provided and the reference GEP is NOT read counts data, the cell type association may be inaccurate.")                }                corr_GEP &lt;- cor(estGEP, refGEPlist[[i]])            }            hungarian_result &lt;- hungarian_Rcpp(1 - corr_GEP)            celltype_assignment &lt;- hungarian_result$cost_assignment +                 1            if (rawcount == 1 &amp; nrow(estProp) &lt;= ncol(refGEPlist[[i]])) {                estProp &lt;- RNA2Cell(colSums(refGEPlist[[i]][,                   celltype_assignment]), estProp)            }            if (rpkm == 1) {                estGEP &lt;- gene2rpkm(estGEP, gene_length, refGEPlist[[i]][,                   celltype_assignment])            }        }    }    if (block_number &gt; 1) {        return(list(estProp, lgpst))    }    else {        return(list(estProp, estGEP, lgpst, celltype_assignment))    }}: task 1 failed - "in function gene2rpkm: gene_rate and cell_line_counts should have the same number of columns"</span></div></pre>
+#&gt; CDSeq completed successfully using 0.0138 hours</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -228,7 +241,7 @@ Default is NULL and CDSeq will detect the available number of cores on the devic
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

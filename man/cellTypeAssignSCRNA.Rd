@@ -25,6 +25,8 @@ cellTypeAssignSCRNA(
   seurat_DE_test = "wilcox",
   seurat_DE_logfc = 0.25,
   seurat_top_n_markers = 10,
+  sc_pt_size = 1,
+  cdseq_pt_size = 3,
   plot_umap = 1,
   plot_tsne = 1,
   plot_per_sample = 0,
@@ -74,6 +76,10 @@ cellTypeAssignSCRNA(
 \item{seurat_DE_logfc}{this parameter will be passed to logfc.threshold in Seurat function FindAllMarkers.}
 
 \item{seurat_top_n_markers}{the number of top DE markers saved from Seurat output.}
+
+\item{sc_pt_size}{point size of single cell data in umap and tsne plots}
+
+\item{cdseq_pt_size}{point size of CDSeq-estimated cell types in umap and tsne plots}
 
 \item{plot_umap}{set 1 to plot umap figure of scRNAseq and CDSeq-estimated cell types, 0 otherwise.}
 

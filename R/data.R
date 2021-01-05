@@ -1,4 +1,4 @@
-#' Synthetic bulk RNA-seq read counts data of six cell types
+#' Synthetic bulk RNA-seq read counts data of six cell types, PBMC mixtures using scRNASeq and some preliminary results
 #' @name SyntheticMixtureData
 #' @docType data
 #' @usage data(SyntheticMixtureData)

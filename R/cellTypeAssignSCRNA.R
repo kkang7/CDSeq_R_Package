@@ -19,6 +19,8 @@
 #' @param seurat_DE_test this parameter will be passed to test.use in Seurat function FindAllMarkers.
 #' @param seurat_DE_logfc this parameter will be passed to logfc.threshold in Seurat function FindAllMarkers.
 #' @param seurat_top_n_markers the number of top DE markers saved from Seurat output. 
+#' @param sc_pt_size point size of single cell data in umap and tsne plots
+#' @param cdseq_pt_size point size of CDSeq-estimated cell types in umap and tsne plots
 #' @param plot_umap set 1 to plot umap figure of scRNAseq and CDSeq-estimated cell types, 0 otherwise.
 #' @param plot_tsne set 1 to plot tsne figure of scRNAseq and CDSeq-estimated cell types, 0 otherwise.
 #' @param plot_per_sample currently disabled for debugging
@@ -93,6 +95,8 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
                                 seurat_DE_test = "wilcox",
                                 seurat_DE_logfc = 0.25,
                                 seurat_top_n_markers = 10,
+                                sc_pt_size = 1,
+                                cdseq_pt_size = 3, 
                                 plot_umap = 1,
                                 plot_tsne = 1,
                                 plot_per_sample = 0,
@@ -453,7 +457,7 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
       geom_point() + # this is the edge color
       scale_colour_manual(name="cell source",values=c("gray","black"),na.value = NA,label=levels(cell_sources)) +
       scale_fill_manual(name="clusters",values=c(rainbow(length(unique(cluster_label)))),na.value = NA,label=levels(cluster_label)) +
-      scale_size_manual(name="cell source", values = c(1,3), na.value = NA,label=levels(cell_sources)) +
+      scale_size_manual(name="cell source", values = c(sc_pt_size,cdseq_pt_size), na.value = NA,label=levels(cell_sources)) +
       scale_shape_manual(name="cell source", values = c(21,23), na.value = NA,label=levels(cell_sources)) +
       theme(plot.title = element_text(size = 45, face = "bold"), 
             axis.title.x = element_text(color="black", size=35,face="bold"),
@@ -519,7 +523,7 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
         geom_point() + # this is the edge color
         scale_colour_manual(name="cell source",values=c("gray","black"),na.value = NA,label=levels(cell_sources)) +
         scale_fill_manual(name="clusters",values=c(rainbow(length(unique(cluster_label)))),na.value = NA,label=levels(cluster_label)) +
-        scale_size_manual(name="cell source", values = c(1,3), na.value = NA,label=levels(cell_sources)) +
+        scale_size_manual(name="cell source", values = c(sc_pt_size,cdseq_pt_size), na.value = NA,label=levels(cell_sources)) +
         scale_shape_manual(name="cell source", values = c(21,23), na.value = NA,label=levels(cell_sources)) +
         theme(plot.title = element_text(size = 45, face = "bold"), 
               axis.title.x = element_text(color="black", size=35,face="bold"),
@@ -579,7 +583,7 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
       geom_point() + # this is the edge color
       scale_colour_manual(name="cell source",values=c("gray","black"),na.value = NA,label=levels(cell_sources)) +
       scale_fill_manual(name="clusters",values=c(rainbow(length(unique(cluster_label)))),na.value = NA,label=levels(cluster_label)) +
-      scale_size_manual(name="cell source", values = c(1,3), na.value = NA,label=levels(cell_sources)) +
+      scale_size_manual(name="cell source", values = c(sc_pt_size,cdseq_pt_size), na.value = NA,label=levels(cell_sources)) +
       scale_shape_manual(name="cell source", values = c(21,23), na.value = NA,label=levels(cell_sources)) +
       theme(plot.title = element_text(size = 45, face = "bold"), 
             axis.title.x = element_text(color="black", size=35,face="bold"),
@@ -636,7 +640,7 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
         geom_point() + # this is the edge color
         scale_colour_manual(name="cell source",values=c("gray","black"),na.value = NA,label=levels(cell_sources)) +
         scale_fill_manual(name="clusters",values=c(rainbow(length(unique(cluster_label)))),na.value = NA,label=levels(cluster_label)) +
-        scale_size_manual(name="cell source", values = c(1,3), na.value = NA,label=levels(cell_sources)) +
+        scale_size_manual(name="cell source", values = c(sc_pt_size,cdseq_pt_size), na.value = NA,label=levels(cell_sources)) +
         scale_shape_manual(name="cell source", values = c(21,23), na.value = NA,label=levels(cell_sources)) +
         theme(plot.title = element_text(size = 45, face = "bold"), 
               axis.title.x = element_text(color="black", size=35,face="bold"),
