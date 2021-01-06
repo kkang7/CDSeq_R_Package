@@ -27,7 +27,7 @@ gibbsSampler(
 
 \item{T}{number of cell types.}
 
-\item{NN}{number of MCMC interations.}
+\item{NN}{number of MCMC iteration.}
 
 \item{OUTPUT}{MCMC progress output control.}
 

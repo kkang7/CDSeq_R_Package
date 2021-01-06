@@ -3,7 +3,7 @@
 \docType{data}
 \name{pbmc_ggplot}
 \alias{pbmc_ggplot}
-\title{ggplot figures of comparision between CDSeq-estimated cell type proportion and ground truth}
+\title{ggplot figures of comparison between CDSeq-estimated cell type proportion and ground truth}
 \format{
 ggplot object
 }
@@ -14,7 +14,7 @@ CDseq-estimated cell type proportion and ground truth
 data(SyntheticMixtureData)
 }
 \description{
-ggplot figures of comparision between CDSeq-estimated cell type proportion and ground truth
+ggplot figures of comparison between CDSeq-estimated cell type proportion and ground truth
 }
 \author{
 Kai Kang

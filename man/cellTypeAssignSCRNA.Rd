@@ -67,7 +67,7 @@ cellTypeAssignSCRNA(
 
 \item{seurat_reduction}{this parameter will be passed to reduction in Seurat function FindNeighbors.}
 
-\item{seurat_resolution}{ths parameter will be passed to resolution in Seurat function FindClusters.}
+\item{seurat_resolution}{this parameter will be passed to resolution in Seurat function FindClusters.}
 
 \item{seurat_find_marker}{this parameter controls if run seurat FindMarker function, default is FALSE.}
 

@@ -37,10 +37,10 @@ e.g. cell_type_number <- 2:30, then CDSeq will estimate the number of cell types
 
 \item{block_number}{number of blocks. Each block contains gene_subset_size genes. Default is 1.}
 
-\item{cpu_number}{number of cpu cores that can be used for parellel computing; 
+\item{cpu_number}{number of cpu cores that can be used for parallel computing; 
 Default is NULL and CDSeq will detect the available number of cores on the device and use number of all cores - 1 for parallel computing.}
 
-\item{gene_length}{a vector of the effective lenght (gene length - read length + 1) of each gene; Default is NULL.}
+\item{gene_length}{a vector of the effective length (gene length - read length + 1) of each gene; Default is NULL.}
 
 \item{reference_gep}{a reference gene expression profile can be used to determine the cell type and/or estimate beta; Default is NULL.}
 
@@ -51,7 +51,7 @@ CDSeq returns estimates of both cell-type-specific gene expression profiles and 
  and the log posterior values for different number of cell types.
 }
 \description{
-\code{CDSeq} takes bulk RNA-seq data as input and simultaneously returns estimates of both cell-type-specific gene expression profiles and sample-specific cell-type proportions (versioin 1.0.6).
+\code{CDSeq} takes bulk RNA-seq data as input and simultaneously returns estimates of both cell-type-specific gene expression profiles and sample-specific cell-type proportions.
 }
 \examples{
 result<-CDSeq(bulk_data =  mixtureGEP, cell_type_number = 6, mcmc_iterations = 10, 

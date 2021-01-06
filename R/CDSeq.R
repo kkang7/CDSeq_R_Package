@@ -1,6 +1,6 @@
 #' Complete deconvolution using sequencing data.
 #' 
-#' \code{CDSeq} takes bulk RNA-seq data as input and simultaneously returns estimates of both cell-type-specific gene expression profiles and sample-specific cell-type proportions (versioin 1.0.6).
+#' \code{CDSeq} takes bulk RNA-seq data as input and simultaneously returns estimates of both cell-type-specific gene expression profiles and sample-specific cell-type proportions.
 #' 
 #' @param bulk_data RNA-Seq read counts matrix. Columns represent samples and rows represent genes.
 #' 
@@ -19,10 +19,10 @@
 #' 
 #' @param block_number number of blocks. Each block contains gene_subset_size genes. Default is 1.
 #' 
-#' @param cpu_number number of cpu cores that can be used for parellel computing; 
+#' @param cpu_number number of cpu cores that can be used for parallel computing; 
 #' Default is NULL and CDSeq will detect the available number of cores on the device and use number of all cores - 1 for parallel computing.
 #' 
-#' @param gene_length a vector of the effective lenght (gene length - read length + 1) of each gene; Default is NULL.
+#' @param gene_length a vector of the effective length (gene length - read length + 1) of each gene; Default is NULL.
 #' 
 #' @param reference_gep a reference gene expression profile can be used to determine the cell type and/or estimate beta; Default is NULL.
 #' 
@@ -67,7 +67,7 @@
 #7. gene_subset_size:   number of genes randomly sampled for each block. Default is NULL.
 #8. block_number:       number of genes randomly sampled for each block. Default is 1.
 #9. cpu_number:         number of cpu cores that can be used for parellel computing; Default is NULL and CDSeq will detect the available number of cores on the device and use number of all cores - 1 for parallel computing.
-#10.gene_length:        a vector of the effective lenght (gene length - read length + 1) of each gene; Default is NULL.
+#10.gene_length:        a vector of the effective length (gene length - read length + 1) of each gene; Default is NULL.
 #11.reference_gep:      a reference gene expression profile can be used to determine the cell type and/or estimate beta; Default is NULL.
 
 

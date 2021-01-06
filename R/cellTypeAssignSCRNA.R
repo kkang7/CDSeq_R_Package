@@ -14,7 +14,7 @@
 #' @param seurat_npcs this parameter will be passed to npcs in Seurat function RunPCA.
 #' @param seurat_dims this parameter will be passed to dims in Seurat function FindNeighbors.
 #' @param seurat_reduction this parameter will be passed to reduction in Seurat function FindNeighbors.
-#' @param seurat_resolution ths parameter will be passed to resolution in Seurat function FindClusters.
+#' @param seurat_resolution this parameter will be passed to resolution in Seurat function FindClusters.
 #' @param seurat_find_marker this parameter controls if run seurat FindMarker function, default is FALSE.
 #' @param seurat_DE_test this parameter will be passed to test.use in Seurat function FindAllMarkers.
 #' @param seurat_DE_logfc this parameter will be passed to logfc.threshold in Seurat function FindAllMarkers.

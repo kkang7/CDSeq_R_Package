@@ -3,7 +3,7 @@
 #' @param estProp CDSeq-estimated cell type proportions.
 #' @param estGEP CDSeq-estimated cell-type-specific GEPs.
 #' @param mydata input bulk RNA-seq data.
-#' @param alpha hyperparamter for cell type proportion estimation.
+#' @param alpha hyperparameter for cell type proportion estimation.
 #' @param beta hyperparameter for cell-type-specific GEP estimation.
 #' @return logpost returns log posterior values.
 

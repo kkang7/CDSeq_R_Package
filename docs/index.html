@@ -58,6 +58,9 @@
     </li>
   </ul>
 </li>
+<li>
+  <a href="news/index.html">Changelog</a>
+</li>
       </ul>
 <ul class="nav navbar-nav navbar-right"></ul>
 </div>
@@ -71,49 +74,40 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="cdseq-r-package" class="section level1">
+<div id="cdseq" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#cdseq-r-package" class="anchor"></a>CDSeq R Package</h1></div>
-<p>CDSeq is a complete deconvolution method for dissecting bulk RNA-Seq data. The input of CDSeq is, ideally, bulk RNA-Seq read counts (for example HTSeq read counts), and CDSeq will estimate, simultaneously, the cell-type-specific gene expression profiles and the sample-specific cell-type proportions, no reference of pure cell line GEPs or scRNAseq reference is needed for running CDSeq.</p>
-<p>For example, if you have a bulk RNA-Seq data, <span class="math inline"><em>A</em><sub><em>G</em> × <em>M</em></sub></span>, which is a G by M matrix. G denotes the number of genes and M is the sample size, then CDSeq will output <span class="math inline"><em>B</em><sub><em>G</em> × <em>T</em></sub></span> and <span class="math inline"><em>C</em><sub><em>T</em> × <em>M</em></sub></span>, where T is the number of cell types, <span class="math inline"><em>B</em><sub><em>G</em> × <em>T</em></sub></span> is the estiamte of cell-type-specific GEPs and <span class="math inline"><em>C</em><sub><em>T</em> × <em>M</em></sub></span> is the estiamte of sample-specific cell-type proportions.</p>
+<a href="#cdseq" class="anchor"></a>CDSeq</h1></div>
+<!-- badges: start -->
+<!-- badges: end -->
+<p>CDSeq is a complete deconvolution method for dissecting bulk RNA-Seq data. The input of CDSeq is, ideally, bulk RNA-Seq read counts (similar to the input format required by DESeq2), and CDSeq will estimate, simultaneously, the cell-type-specific gene expression profiles and the sample-specific cell-type proportions, no reference of pure cell line GEPs or scRNAseq reference is needed for running CDSeq.</p>
+<p>For example, if you have a bulk RNA-Seq data, a G by M matrix <strong>A</strong>, which is a G by M matrix. G denotes the number of genes and M is the sample size, then CDSeq will output <strong>B</strong> (a G by T matrix) and <strong>C</strong> (a T by M matrix), where T is the number of cell types, <strong>B</strong> is the estiamte of cell-type-specific GEPs and <strong>C</strong> is the estiamte of sample-specific cell-type proportions.</p>
 <p>Importantly, you can ask CDSeq to estimate the number of cell types, i.e. T, by providing a vector of possible integer values for T. For example, if the user input for T is a vector, i.e. <span class="math inline"><em>T</em> = {2, 3, 4, 5, 6}</span>, then CDSeq will estimate the most likely number for T.</p>
-<div id="versioning" class="section level2">
-<h2 class="hasAnchor">
-<a href="#versioning" class="anchor"></a>Versioning</h2>
-<p>I follow the versioning scheme: <em>major</em>.<em>minor</em>.<em>patch</em>. In CDSeq package, <em>major</em>, <em>minor</em> and <em>patch</em> basically indicate the following types of changes:</p>
-<ol>
-<li>
-<em>major</em>: changes on the underlying probabilistic modeling</li>
-<li>
-<em>minor</em>: changes on the numerical procedures or coding structure</li>
-<li>
-<em>patch</em>: others</li>
-</ol>
-</div>
-<div id="version-108" class="section level2">
-<h2 class="hasAnchor">
-<a href="#version-108" class="anchor"></a>Version 1.0.8</h2>
-<p>Bug fix. Add vignette.</p>
-</div>
-<div id="version-107" class="section level2">
-<h2 class="hasAnchor">
-<a href="#version-107" class="anchor"></a>Version 1.0.7</h2>
-<p>Bug fix. Add more features to cellTypeAssignSCRNA function.</p>
-</div>
-<div id="version-106" class="section level2">
-<h2 class="hasAnchor">
-<a href="#version-106" class="anchor"></a>Version 1.0.6</h2>
-<p>Add cellTypeAssignSCRNA function. This function can be used for cell type assignment using user provided single cell RNAseq data (with annotations).</p>
-</div>
-<div id="version-105" class="section level2">
-<h2 class="hasAnchor">
-<a href="#version-105" class="anchor"></a>Version 1.0.5</h2>
-<p>Add cellTypeAssignMarkerGenes function. This function can be used for cell type assignment using user provided marker gene list.</p>
-</div>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
-<p>install_github(“kkang7/CDSeq_R_Package”)</p>
+<p>You can install the released version of CDSeq from <a href="https://CRAN.R-project.org">CRAN</a> with:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"CDSeq"</span><span class="op">)</span></code></pre></div>
+<p>And the development version from <a href="https://github.com/">GitHub</a> with:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># install.packages("devtools")</span>
+<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"kkang7/CDSeq_R_Package"</span><span class="op">)</span></code></pre></div>
+<p>build the vignette with</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># install.packages("devtools")</span>
+<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"kkang7/CDSeq_R_Package"</span>, build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+</div>
+<div id="example" class="section level2">
+<h2 class="hasAnchor">
+<a href="#example" class="anchor"></a>Example</h2>
+<p>This is a basic example:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">CDSeq</span><span class="op">)</span>
+<span class="co">## basic example code</span>
+<span class="va">result</span><span class="op">&lt;-</span><span class="fu"><a href="reference/CDSeq.html">CDSeq</a></span><span class="op">(</span>bulk_data <span class="op">=</span>  <span class="va">mixtureGEP</span>, 
+              cell_type_number <span class="op">=</span> <span class="fl">6</span>, 
+              mcmc_iterations <span class="op">=</span> <span class="fl">10</span>, 
+              cpu_number<span class="op">=</span><span class="fl">1</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="scrnaseq-data-for-cdseq-estimated-cell-type-annotations" class="section level2">
 <h2 class="hasAnchor">

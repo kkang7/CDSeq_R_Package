@@ -18,16 +18,12 @@ knitr::opts_chunk$set(
 ```
 
 
-```{r klippy, echo=FALSE, include=TRUE}
-klippy::klippy(position = c('top', 'right'), color = 'darkred', tooltip_message = 'Click to copy', tooltip_success = 'Done')
-```
-
 # Introduction
 CDSeq is a complete deconvolution method using sequencing data. Simply put, CDSeq takes bulk RNA-Seq read counts data as input and estimates the cell-type-specific gene expression profiles (csGEPs) and sample-specific cell-type proportions (SSP) simultaneously. 
 
 # Quick start
 The minimum inputs for CDSeq are: bulk RNAseq read counts, number of cell types in the mixtures (a [scalar](#scalar) or a [vector](#vector)), number of Markov chain Monte Carlo (MCMC) iterations. Set *cpu_number = 1* to avoid using more cpus in this simple example.
-```{r quick start, echo=TRUE, eval=FALSE,class.source='klippy'}
+```{r quick start, echo=TRUE, eval=FALSE}
 result<-CDSeq(bulk_data =  mixtureGEP, 
               cell_type_number = 6, 
               mcmc_iterations = 10, 
@@ -85,9 +81,9 @@ library(ggplot2)
 library(ggpubr)
 library(dplyr)
 ```
-The followig code runs **CDSeq** using synthetic mixtures comes with the R package. The *mixtureGEP* consists of 40 samples with 500 genes. These *in silico* mixtures are generated using six pure cell lines and random generated mixing proportions. **CDSeq** takes *mixtureGEP* as input and outputs the estimates of cell-type-specific gene expressions and sample-specific cell-type proportions. When *refGEP* is provided, CDSeq will assign the identities of those estimated cell types by comparing the GEP of estimated cell types with the GEP of *refGEP*. If *refGEP* is not provided, the estimated cell types will remain anonymous. [The other way to annotate CDSeq-estimated cell types is to use single cell RNAseq data](#scAnnotate).
+The following code runs **CDSeq** using synthetic mixtures comes with the R package. The *mixtureGEP* consists of 40 samples with 500 genes. These *in silico* mixtures are generated using six pure cell lines and random generated mixing proportions. **CDSeq** takes *mixtureGEP* as input and outputs the estimates of cell-type-specific gene expressions and sample-specific cell-type proportions. When *refGEP* is provided, CDSeq will assign the identities of those estimated cell types by comparing the GEP of estimated cell types with the GEP of *refGEP*. If *refGEP* is not provided, the estimated cell types will remain anonymous. [The other way to annotate CDSeq-estimated cell types is to use single cell RNAseq data](#scAnnotate).
 
-```{r example 1, echo=TRUE ,eval=FALSE, cache=FALSE, results='hide', class.source='klippy'} 
+```{r example 1, echo=TRUE ,eval=FALSE, cache=FALSE, results='hide'} 
               
 result1<-CDSeq(bulk_data =  mixtureGEP, 
                cell_type_number = 6, 
@@ -102,7 +98,7 @@ The output *result1* is a list containing multiple entities as listed in [Output
 ls(result1)
 ```
 We can compare the CDSeq-estimated cell-type-specific GEPs with the ground truth.
-```{r fig1, echo=TRUE,cache=FALSE,eval=TRUE,class.source='klippy', fig.width=7,fig.height=5,fig.align = 'center'}
+```{r fig1, echo=TRUE,cache=FALSE,eval=TRUE, fig.width=7,fig.height=5,fig.align = 'center'}
 trueGEP <- true_GEP_rpkm[,result1$cell_type_assignment]
 par(mar=c(4,4,1,1), mfrow=c(2,3),mai = c(.1, .01, 0.1, 0.1), mar=c(4,3,1,1), pty="s")
 for (i in 1:6) {
@@ -123,7 +119,7 @@ for (i in 1:6) {
 ```
 
 We then compare the CDSeq-estimated cell type proportions with group truth.
-```{r fig2, echo=TRUE,cache=FALSE,eval=TRUE,class.source='klippy',fig.width=7,fig.height=5,fig.align = 'center'}
+```{r fig2, echo=TRUE,cache=FALSE,eval=TRUE,fig.width=7,fig.height=5,fig.align = 'center'}
 trueProp <- true_prop_cell[result1$cell_type_assignment,]
 par(mar=c(4,4,1,1), mfrow=c(2,3),mai = c(.1, .01, 0.1, 0.1), mar=c(4,3,1,1), pty="s")
 for (i in 1:6) {
@@ -141,7 +137,7 @@ for (i in 1:6) {
 }
 ```
 
-For this dataset and given parameter setings, CDSeq took this much amount of time to finish:
+For this dataset and given parameter settings, CDSeq took this much amount of time to finish:
 ```{r time, echo=TRUE,cache=FALSE,eval=TRUE}
 result1$gibbsRunningTime
 ```
@@ -149,7 +145,7 @@ result1$gibbsRunningTime
 
 ## When the number of cell types is a vector {#vector}
 The *cell_type_number* can also be a vector which contains different integer values. CDSeq will perform estimation for each integer in the vector and estimate the number of cell types in the mixtures. For example, one can set *cell_type_number = 2:10* as follows, and CDSeq will estimate the most likely number of cell types from 2 to 10.
-```{r example 2, echo=TRUE ,eval=FALSE, cache=FALSE, results='hide',class.source='klippy'}
+```{r example 2, echo=TRUE ,eval=FALSE, cache=FALSE, results='hide'}
 result2<-CDSeq(bulk_data =  mixtureGEP, 
               cell_type_number = 2:10, 
               mcmc_iterations = 2000, 
@@ -165,7 +161,7 @@ result2<-CDSeq(bulk_data =  mixtureGEP,
 
 CDSeq will automatically estimate the number of cell types from the *cell_type_number* vector (2:10 in our example) and return the corresponding estimate in *estGEP* and *estProp* and it will keep all the estimations for the different values in *cell_type_number*  in *est_all*. Check out [output](#output) for details. 
 
-```{r fig3, echo=TRUE, eval=TRUE, class.source='klippy',fig.width=7,fig.height=5,fig.align = 'center'}
+```{r fig3, echo=TRUE, eval=TRUE, fig.width=7,fig.height=5,fig.align = 'center'}
 trueGEP <- true_GEP_gene[,result2$cell_type_assignment]
 par(mar=c(4,4,1,1), mfrow=c(2,3),mai = c(.1, .01, 0.1, 0.1), mar=c(4,3,1,1), pty="s")
 for (i in 1:6) {
@@ -186,7 +182,7 @@ for (i in 1:6) {
 
 Similarly, we can compare the CDSeq-estimated cell type proportions with ground truth.
 
-```{r fig4, echo=TRUE, eval=TRUE, class.source='klippy', fig.width=7,fig.height=5,fig.align = 'center'}
+```{r fig4, echo=TRUE, eval=TRUE, fig.width=7,fig.height=5,fig.align = 'center'}
 trueProp <- true_prop_cell[result2$cell_type_assignment,]
 par(mar=c(4,4,1,1), mfrow=c(2,3),mai = c(.1, .01, 0.1, 0.1), mar=c(4,3,1,1), pty="s")
 for (i in 1:6) {
@@ -206,7 +202,7 @@ for (i in 1:6) {
 
 CDSeq estimates the number of cell types in the bulk samples using log posterior values. You can plot the log posterior values as follows. In this example, the max log posterior value happens at 6, therefore, CDSeq will guess that the number of different cell types in the bulk samples is 6 (which is exactly the number of distinct cell types we used for generating this *in silico* mixtures). 
 
-```{r fig5,echo=TRUE, eval=TRUE, class.source='klippy', fig.width=7,fig.height=6,fig.align = 'center'}
+```{r fig5,echo=TRUE, eval=TRUE,  fig.width=7,fig.height=6,fig.align = 'center'}
 lgpst <- rep(0,9)
 for (i in 1:9) {
   lgpst[i] <- result2$est_all[[i]]$lgpst
@@ -239,7 +235,7 @@ result3<-CDSeq(bulk_data =  mixtureGEP,
 ```
 
 
-```{r fig6, echo=TRUE, eval=TRUE, class.source='klippy',fig.width=7,fig.height=5,fig.align = 'center'}
+```{r fig6, echo=TRUE, eval=TRUE, fig.width=7,fig.height=5,fig.align = 'center'}
 
 trueGEP <- true_GEP_rpkm[,result3$cell_type_assignment]
 par(mar=c(4,4,1,1), mfrow=c(2,3),mai = c(.1, .01, 0.1, 0.1), mar=c(4,3,1,1), pty="s")
@@ -260,7 +256,7 @@ for (i in 1:6) {
 ```
 
 
-```{r fig7, echo=TRUE, eval=TRUE, class.source='klippy',fig.width=7,fig.height=5,fig.align = 'center'}
+```{r fig7, echo=TRUE, eval=TRUE, fig.width=7,fig.height=5,fig.align = 'center'}
 
 trueProp <- true_prop_cell[result3$cell_type_assignment,]
 par(mar=c(4,4,1,1), mfrow=c(2,3),mai = c(.1, .01, 0.1, 0.1), mar=c(4,3,1,1), pty="s")
@@ -286,7 +282,7 @@ Another way to annotate CDSeq-estimated cell types is to use single cell RNAseq 
 
 We demonstrate this function using a set of 30 PBMC mixtures which is constructed using PBMC scRNAseq data. We set the *cell_type_number = c(3,6,9,12)* and investigate what the impacts of using different number of cell types could be. 
 
-```{r example 4, echo=TRUE, eval=FALSE, cache=FALSE, results='hide',class.source='klippy'}
+```{r example 4, echo=TRUE, eval=FALSE, cache=FALSE, results='hide'}
 cdseq.result <- CDSeq::CDSeq(bulk_data = pbmc_mix,
                              cell_type_number = seq(3,12,3),
                              beta = 0.5,
@@ -300,7 +296,7 @@ cdseq.result <- CDSeq::CDSeq(bulk_data = pbmc_mix,
 We then use *cellTypeAssignSCRNA* function to annotate CDSeq-estimated cell types for all the outputs.
 
 
-```{r fig8, echo=TRUE, eval=TRUE, class.source='klippy', results='hide',message=FALSE, warning=FALSE}
+```{r fig8, echo=TRUE, eval=TRUE, results='hide',message=FALSE, warning=FALSE}
 cdseq.result.celltypeassign <- vector(mode = "list", length = 4)
 
 for (i in 1:4) {
@@ -327,7 +323,7 @@ for (i in 1:4) {
 
 We now show the umap 2D embeddings of the CDSeq-estimated cell-type-specific GEPs and scRNAseq GEPs. In the following figures, the dots represent PBMC scRNAseq and the squares represent the CDSeq-estimated cell types. The different colors represent the distinct cell types.
 
-```{r show GEP vs scRNAseq, echo=TRUE, eval=TRUE, fig.width = 20, fig.height = 70, class.source='klippy',fig.align = 'center',out.width = "95%"}
+```{r show GEP vs scRNAseq, echo=TRUE, eval=TRUE, fig.width = 20, fig.height = 70, fig.align = 'center',out.width = "95%"}
 ggarrange(cdseq.result.celltypeassign[[1]]$cdseq_scRNA_umap, 
           cdseq.result.celltypeassign[[2]]$cdseq_scRNA_umap,
           cdseq.result.celltypeassign[[3]]$cdseq_scRNA_umap,
@@ -337,7 +333,7 @@ ggarrange(cdseq.result.celltypeassign[[1]]$cdseq_scRNA_umap,
 
 We next compare the CDSeq-estimated sample-specific cell-type proportions with the ground truth. We first prepare data frame for ggplot. 
 
-```{r prepare df for ggplot, echo=TRUE, eval=FALSE, class.source='klippy'}
+```{r prepare df for ggplot, echo=TRUE, eval=FALSE}
 for (i in 1:4) {
   if(i==1){
     rownames(cdseq.result.celltypeassign[[i]]$cdseq_prop_merged) <- rownames(true_prop)
@@ -360,7 +356,7 @@ for (i in 1:4) {
 
 Then, we can compare CDSeq estimated proportion with ground truth. Note that CDSeq will merge the estimated cell type proportion of the same type after cell type annotation.
 
-```{r compare GEP, echo=TRUE, eval=TRUE, class.source='klippy',results='hide', message=FALSE}
+```{r compare GEP, echo=TRUE, eval=TRUE, results='hide', message=FALSE}
 pbmc_ggplot <- vector(mode = "list", length = 4)
 for (i in 1:4) {
   B_plot<- merge_df %>% filter(celltype=="Bcell") %>% ggscatter(x = paste0("estprop_",i), y = "trueprop",

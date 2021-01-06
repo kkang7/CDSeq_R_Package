@@ -1,4 +1,4 @@
-#' ggplot figures of comparision between CDSeq-estimated cell type proportion and ground truth
+#' ggplot figures of comparison between CDSeq-estimated cell type proportion and ground truth
 #' @name pbmc_ggplot
 #' @docType data
 #' @usage data(SyntheticMixtureData)

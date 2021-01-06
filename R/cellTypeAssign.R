@@ -3,7 +3,7 @@
 #' @param corMat correlation matrix between CDSeq-estimated GEPs and reference GEPs.
 #' @param threshold only the correlations that are above threshold will be considered.
 #' @export
-#' @return cellTypeAssign returns a vector of cell type assignment to the referecen profile. 
+#' @return cellTypeAssign returns a vector of cell type assignment to the reference profile. 
 
 
 # cell type assignment using correlation matrix

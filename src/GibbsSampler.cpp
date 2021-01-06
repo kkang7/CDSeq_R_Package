@@ -21,7 +21,7 @@ using namespace Rcpp;
 //' @param BETA hyperparameter for cell-type-specific GEPs.
 //' @param mixtureSamples bulk RNA-seq data in form of read counts.
 //' @param T number of cell types.
-//' @param NN number of MCMC interations.
+//' @param NN number of MCMC iteration.
 //' @param OUTPUT MCMC progress output control.
 //' @param processID worker process ID when using parallel computing.
 //' @param data_block_idx index for data blocks from bulk RNA-seq input.

@@ -13,7 +13,7 @@ cellTypeAssign(corMat, threshold = 0.8)
 \item{threshold}{only the correlations that are above threshold will be considered.}
 }
 \value{
-cellTypeAssign returns a vector of cell type assignment to the referecen profile.
+cellTypeAssign returns a vector of cell type assignment to the reference profile.
 }
 \description{
 Assign cell types using correlation matrix computed using cell-type-specific GEPs and reference GEPs.

@@ -1,15 +1,15 @@
 Package: CDSeq
 Type: Package
-Title: CDSeq: Complete deconvolution using sequencing data
-Depends: R (>= 2.10)
+Title: CDSeq: Complete Deconvolution using Sequencing Data
+Depends: R (>= 3.6.0)
 Version: 1.0.8
 Date: 2021-01-05
 Author: Kai Kang, David Huang
 Maintainer: Kai Kang <kangkai0714@gmail.com>
-Description: Estimate cell-type-specific GEPs and sample-specific cell-type proportions simultaneously.
+Description: Estimate cell-type-specific gene expression profiles and sample-specific cell-type proportions simultaneously.
 License: GPL-3
 Imports: Rcpp (>= 1.0.3), 
-         RcppArmadillo, 
+         RcppArmadillo,
          MASS, 
          foreach, 
          doParallel, 
@@ -28,10 +28,10 @@ Imports: Rcpp (>= 1.0.3),
          dplyr,
          rlang,
          Matrix,
-         klippy,
          matrixStats,
          ggpubr
-LinkingTo: Rcpp, RcppArmadillo
+LinkingTo: Rcpp, 
+           RcppArmadillo, 
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1

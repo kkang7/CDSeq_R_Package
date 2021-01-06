@@ -14,7 +14,7 @@ logpost(estProp, estGEP, mydata, alpha, beta)
 
 \item{mydata}{input bulk RNA-seq data.}
 
-\item{alpha}{hyperparamter for cell type proportion estimation.}
+\item{alpha}{hyperparameter for cell type proportion estimation.}
 
 \item{beta}{hyperparameter for cell-type-specific GEP estimation.}
 }
