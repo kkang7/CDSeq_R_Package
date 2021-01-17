@@ -2,6 +2,7 @@ Package: CDSeq
 Type: Package
 Title: A Complete Deconvolution method using Sequencing Data
 Depends: R (>= 3.6.0)
+biocViews:
 Version: 1.0.8
 Date: 2021-01-05
 Author: Kai Kang, David Huang
