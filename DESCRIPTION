@@ -1,6 +1,6 @@
 Package: CDSeq
 Type: Package
-Title: A Complete Deconvolution method using Sequencing Data
+Title: A Complete Deconvolution Method using Sequencing Data
 Depends: R (>= 3.6.0)
 biocViews:
 Version: 1.0.8

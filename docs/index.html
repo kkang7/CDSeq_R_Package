@@ -5,14 +5,14 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CDSeq: Complete deconvolution using sequencing data • CDSeq</title>
+<title>A Complete Deconvolution Method using Sequencing Data • CDSeq</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
 <script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script><meta property="og:title" content="CDSeq: Complete deconvolution using sequencing data">
-<meta property="og:description" content="Estimate cell-type-specific GEPs and sample-specific cell-type proportions simultaneously.">
+<script src="pkgdown.js"></script><meta property="og:title" content="A Complete Deconvolution Method using Sequencing Data">
+<meta property="og:description" content="Estimate cell-type-specific gene expression profiles and sample-specific cell-type proportions simultaneously.">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -78,9 +78,9 @@
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#cdseq" class="anchor"></a>CDSeq</h1></div>
 <!-- badges: start -->
-<!-- badges: end -->
+
 <p>CDSeq is a complete deconvolution method for dissecting bulk RNA-Seq data. The input of CDSeq is, ideally, bulk RNA-Seq read counts (similar to the input format required by DESeq2), and CDSeq will estimate, simultaneously, the cell-type-specific gene expression profiles and the sample-specific cell-type proportions, no reference of pure cell line GEPs or scRNAseq reference is needed for running CDSeq.</p>
-<p>For example, if you have a bulk RNA-Seq data, a G by M matrix <strong>A</strong>, which is a G by M matrix. G denotes the number of genes and M is the sample size, then CDSeq will output <strong>B</strong> (a G by T matrix) and <strong>C</strong> (a T by M matrix), where T is the number of cell types, <strong>B</strong> is the estiamte of cell-type-specific GEPs and <strong>C</strong> is the estiamte of sample-specific cell-type proportions.</p>
+<p>For example, if you have a bulk RNA-Seq data, a G by M matrix <strong>A</strong>, which is a G by M matrix. G denotes the number of genes and M is the sample size, then CDSeq will output <strong>B</strong> (a G by T matrix) and <strong>C</strong> (a T by M matrix), where T is the number of cell types, <strong>B</strong> is the estimate of cell-type-specific GEPs and <strong>C</strong> is the estimate of sample-specific cell-type proportions.</p>
 <p>Importantly, you can ask CDSeq to estimate the number of cell types, i.e. T, by providing a vector of possible integer values for T. For example, if the user input for T is a vector, i.e. <span class="math inline"><em>T</em> = {2, 3, 4, 5, 6}</span>, then CDSeq will estimate the most likely number for T.</p>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
@@ -97,6 +97,11 @@
 <code class="sourceCode R"><span class="co"># install.packages("devtools")</span>
 <span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"kkang7/CDSeq_R_Package"</span>, build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 </div>
+<div id="known-issue-about-macos-installation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#known-issue-about-macos-installation" class="anchor"></a>Known issue about MacOS installation</h2>
+<p>It is possible for Mac users to run into some errors when install from source due to problems of Rcpp compiler tools. Follow the instruction here may help: <a href="https://thecoatlessprofessor.com/programming/cpp/r-compiler-tools-for-rcpp-on-macos/" class="uri">https://thecoatlessprofessor.com/programming/cpp/r-compiler-tools-for-rcpp-on-macos/</a></p>
+</div>
 <div id="example" class="section level2">
 <h2 class="hasAnchor">
 <a href="#example" class="anchor"></a>Example</h2>
@@ -106,18 +111,8 @@
 <span class="co">## basic example code</span>
 <span class="va">result</span><span class="op">&lt;-</span><span class="fu"><a href="reference/CDSeq.html">CDSeq</a></span><span class="op">(</span>bulk_data <span class="op">=</span>  <span class="va">mixtureGEP</span>, 
               cell_type_number <span class="op">=</span> <span class="fl">6</span>, 
-              mcmc_iterations <span class="op">=</span> <span class="fl">10</span>, 
+              mcmc_iterations <span class="op">=</span> <span class="fl">700</span>, 
               cpu_number<span class="op">=</span><span class="fl">1</span><span class="op">)</span></code></pre></div>
-</div>
-<div id="scrnaseq-data-for-cdseq-estimated-cell-type-annotations" class="section level2">
-<h2 class="hasAnchor">
-<a href="#scrnaseq-data-for-cdseq-estimated-cell-type-annotations" class="anchor"></a>scRNAseq data for CDSeq-estimated cell type annotations</h2>
-<p>We collected some public available scRNAseq data from <a href="https://www.nature.com/articles/s41586-020-2157-4" class="uri">https://www.nature.com/articles/s41586-020-2157-4</a> and put them in hdf5 format. The data are available upon request.</p>
-</div>
-<div id="known-issue-about-macos-installation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#known-issue-about-macos-installation" class="anchor"></a>Known issue about MacOS installation</h2>
-<p>It is possible for Mac users to run into some errors when install from source due to problems of Rcpp compiler tools. Follow the instruction here may help: <a href="https://thecoatlessprofessor.com/programming/cpp/r-compiler-tools-for-rcpp-on-macos/" class="uri">https://thecoatlessprofessor.com/programming/cpp/r-compiler-tools-for-rcpp-on-macos/</a></p>
 </div>
 <div id="contact" class="section level2">
 <h2 class="hasAnchor">
@@ -141,7 +136,13 @@
 </ul>
 </div>
 
-  </div>
+  <div class="dev-status">
+<h2>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://travis-ci.com/kkang7/CDSeq_R_Package"><img src="https://travis-ci.com/kkang7/CDSeq_R_Package.svg?branch=master" alt="Travis build status"></a></li>
+</ul>
+</div>
+</div>
 </div>
 
 

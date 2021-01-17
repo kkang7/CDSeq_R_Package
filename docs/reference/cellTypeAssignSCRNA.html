@@ -153,6 +153,7 @@
   plot_umap <span class='op'>=</span> <span class='fl'>1</span>,
   plot_tsne <span class='op'>=</span> <span class='fl'>1</span>,
   plot_per_sample <span class='op'>=</span> <span class='fl'>0</span>,
+  fig_save <span class='op'>=</span> <span class='fl'>0</span>,
   fig_path <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/getwd.html'>getwd</a></span><span class='op'>(</span><span class='op'>)</span>,
   fig_name <span class='op'>=</span> <span class='st'>"cellTypeAssignSCRNA"</span>,
   fig_format <span class='op'>=</span> <span class='st'>"pdf"</span>,
@@ -224,7 +225,7 @@
     </tr>
     <tr>
       <th>seurat_resolution</th>
-      <td><p>ths parameter will be passed to resolution in Seurat function FindClusters.</p></td>
+      <td><p>this parameter will be passed to resolution in Seurat function FindClusters.</p></td>
     </tr>
     <tr>
       <th>seurat_find_marker</th>
@@ -261,6 +262,10 @@
     <tr>
       <th>plot_per_sample</th>
       <td><p>currently disabled for debugging</p></td>
+    </tr>
+    <tr>
+      <th>fig_save</th>
+      <td><p>1 or 0. 1 means save figures to local and 0 means do not save figures to local.</p></td>
     </tr>
     <tr>
       <th>fig_path</th>

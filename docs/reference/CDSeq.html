@@ -40,7 +40,7 @@
 
 
 <meta property="og:title" content="Complete deconvolution using sequencing data. — CDSeq" />
-<meta property="og:description" content="CDSeq takes bulk RNA-seq data as input and simultaneously returns estimates of both cell-type-specific gene expression profiles and sample-specific cell-type proportions (versioin 1.0.6)." />
+<meta property="og:description" content="CDSeq takes bulk RNA-seq data as input and simultaneously returns estimates of both cell-type-specific gene expression profiles and sample-specific cell-type proportions." />
 
 
 
@@ -124,7 +124,7 @@
     </div>
 
     <div class="ref-description">
-    <p><code>CDSeq</code> takes bulk RNA-seq data as input and simultaneously returns estimates of both cell-type-specific gene expression profiles and sample-specific cell-type proportions (versioin 1.0.6).</p>
+    <p><code>CDSeq</code> takes bulk RNA-seq data as input and simultaneously returns estimates of both cell-type-specific gene expression profiles and sample-specific cell-type proportions.</p>
     </div>
 
     <pre class="usage"><span class='fu'>CDSeq</span><span class='op'>(</span>
@@ -180,12 +180,12 @@ e.g. cell_type_number &lt;- 2:30, then CDSeq will estimate the number of cell ty
     </tr>
     <tr>
       <th>cpu_number</th>
-      <td><p>number of cpu cores that can be used for parellel computing; 
+      <td><p>number of cpu cores that can be used for parallel computing; 
 Default is NULL and CDSeq will detect the available number of cores on the device and use number of all cores - 1 for parallel computing.</p></td>
     </tr>
     <tr>
       <th>gene_length</th>
-      <td><p>a vector of the effective lenght (gene length - read length + 1) of each gene; Default is NULL.</p></td>
+      <td><p>a vector of the effective length (gene length - read length + 1) of each gene; Default is NULL.</p></td>
     </tr>
     <tr>
       <th>reference_gep</th>
@@ -203,9 +203,9 @@ Default is NULL and CDSeq will detect the available number of cores on the devic
  and the log posterior values for different number of cell types.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>result</span><span class='op'>&lt;-</span><span class='fu'>CDSeq</span><span class='op'>(</span>bulk_data <span class='op'>=</span>  <span class='va'>mixtureGEP</span>, cell_type_number <span class='op'>=</span> <span class='fl'>6</span>, mcmc_iterations <span class='op'>=</span> <span class='fl'>10</span>, 
-       dilution_factor <span class='op'>=</span> <span class='fl'>1</span>, block_number <span class='op'>=</span> <span class='fl'>1</span>, gene_length <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/vector.html'>as.vector</a></span><span class='op'>(</span><span class='va'>gene_length</span><span class='op'>)</span>, 
-       reference_gep <span class='op'>=</span> <span class='va'>refGEP</span>, cpu_number<span class='op'>=</span><span class='fl'>1</span>, print_progress_msg_to_file<span class='op'>=</span><span class='fl'>1</span><span class='op'>)</span>
+    <pre class="examples"><div class='input'><span class='va'>result</span><span class='op'>&lt;-</span><span class='fu'>CDSeq</span><span class='op'>(</span>bulk_data <span class='op'>=</span>  <span class='va'>mixtureGEP</span>, cell_type_number <span class='op'>=</span> <span class='fl'>6</span>, mcmc_iterations <span class='op'>=</span> <span class='fl'>5</span>, 
+       dilution_factor <span class='op'>=</span> <span class='fl'>50</span>, block_number <span class='op'>=</span> <span class='fl'>1</span>, gene_length <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/vector.html'>as.vector</a></span><span class='op'>(</span><span class='va'>gene_length</span><span class='op'>)</span>, 
+       reference_gep <span class='op'>=</span> <span class='va'>refGEP</span>, cpu_number<span class='op'>=</span><span class='fl'>1</span>, print_progress_msg_to_file<span class='op'>=</span><span class='fl'>0</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 
 #&gt; ============================================ CDSeq R package version 1.0.8 ==================================================
 #&gt; |  Coders     : Kai Kang, David Huang                                                                                         |
@@ -214,21 +214,9 @@ Default is NULL and CDSeq will detect the available number of cores on the devic
 #&gt; |  Maintainer : kangkai0714@gmail.com                                                                                         |
 #&gt; ===============================================================================================================================
 #&gt; CDSeq is running in non Reduce-Recover mode. To use Reduce-Recover mode, assign a value to block_number that is greater than 1.
-#&gt; 0    of 10   MCMC runs (finished  0%, press esc at any time to terminate the MCMC iteration)10   of 10   MCMC runs (finished 100%, press esc at any time to terminate the MCMC iteration)10   of 10   MCMC runs (finished 100%)
+#&gt; 0    of 5    MCMC runs (finished  0%, press esc at any time to terminate the MCMC iteration)5    of 5    MCMC runs (finished 100%)
 #&gt; Gibbs sampler completed succefully
-#&gt; CDSeq completed successfully using 0.0036 hours</div><div class='input'>
-<span class='va'>result</span><span class='op'>&lt;-</span><span class='fu'>CDSeq</span><span class='op'>(</span>bulk_data <span class='op'>=</span>  <span class='va'>mixtureGEP</span>, cell_type_number<span class='op'>=</span><span class='fl'>2</span><span class='op'>:</span><span class='fl'>8</span>, mcmc_iterations <span class='op'>=</span> <span class='fl'>10</span>, 
-       dilution_factor <span class='op'>=</span> <span class='fl'>1</span>, block_number <span class='op'>=</span> <span class='fl'>1</span>, gene_length <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/vector.html'>as.vector</a></span><span class='op'>(</span><span class='va'>gene_length</span><span class='op'>)</span>, 
-       reference_gep <span class='op'>=</span> <span class='va'>refGEP</span>, cpu_number<span class='op'>=</span><span class='fl'>2</span>, print_progress_msg_to_file<span class='op'>=</span><span class='fl'>0</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; 
-#&gt; ============================================ CDSeq R package version 1.0.8 ==================================================
-#&gt; |  Coders     : Kai Kang, David Huang                                                                                         |
-#&gt; |  Reference 1: CDSeq: A novel complete deconvolution method for dissecting heterogeneous samples using gene expression data  |
-#&gt; |  Reference 2: CDSeq: An R package for fast complete deconvolution using gene expression data                                |
-#&gt; |  Maintainer : kangkai0714@gmail.com                                                                                         |
-#&gt; ===============================================================================================================================
-#&gt; CDSeq is running in non Reduce-Recover mode. To use Reduce-Recover mode, assign a value to block_number that is greater than 1.
-#&gt; CDSeq completed successfully using 0.0138 hours</div></pre>
+#&gt; CDSeq completed successfully using 0.0001 hours</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
