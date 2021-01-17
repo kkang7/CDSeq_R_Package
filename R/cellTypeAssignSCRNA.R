@@ -24,6 +24,7 @@
 #' @param plot_umap set 1 to plot umap figure of scRNAseq and CDSeq-estimated cell types, 0 otherwise.
 #' @param plot_tsne set 1 to plot tsne figure of scRNAseq and CDSeq-estimated cell types, 0 otherwise.
 #' @param plot_per_sample currently disabled for debugging
+#' @param fig_save 1 or 0. 1 means save figures to local and 0 means do not save figures to local.
 #' @param fig_path the location where the heatmap figure is saved. 
 #' @param fig_name the name of umap and tsne figures. Umap figure will have the name of fig_name_umap_date and tsne figure will be named fig_name_tsne_date.
 #' @param fig_format "pdf", "jpeg", or "png".
@@ -100,6 +101,7 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
                                 plot_umap = 1,
                                 plot_tsne = 1,
                                 plot_per_sample = 0,
+                                fig_save = 0,
                                 fig_path = getwd(),
                                 fig_name = "cellTypeAssignSCRNA",
                                 fig_format = "pdf",
@@ -466,13 +468,16 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
             legend.text = element_text(color = "blue", face = "bold", size = 30)) + 
       guides(color = guide_legend(override.aes = list(size=5)), fill = guide_legend(override.aes = list(shape=21,size=5)))
     
-    fig_tmp_name <- paste0(fig_path,fig_name,"_umap_",gsub("-|\\s|:","_",Sys.time()),".",fig_format)
-    cat("save umap at ",fig_tmp_name ,"...\n")
-    ggsave(filename = fig_tmp_name,#paste0(fig_path,fig_name,"_umap.",fig_format),
-           plot = cdseq_scRNA_umap,
-           width = 25,
-           height = 20,
-           dpi = fig_dpi)
+    if(fig_save){
+      fig_tmp_name <- paste0(fig_path,fig_name,"_umap_",gsub("-|\\s|:","_",Sys.time()),".",fig_format)
+      cat("save umap at ",fig_tmp_name ,"...\n")
+      ggsave(filename = fig_tmp_name,#paste0(fig_path,fig_name,"_umap.",fig_format),
+             plot = cdseq_scRNA_umap,
+             width = 25,
+             height = 20,
+             dpi = fig_dpi)
+    }
+    
     ##################################################################
     ##    plot CDSeq-estimated cell-type-specific gep per sample    ##
     ##################################################################
@@ -531,14 +536,15 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
               legend.title = element_text(color = "blue", face = "bold", size = 30),
               legend.text = element_text(color = "blue", face = "bold", size = 30)) + 
         guides(color = guide_legend(override.aes = list(size=5)), fill = guide_legend(override.aes = list(shape=21,size=5)))
-      
-      fig_tmp_name <- paste0(fig_path,fig_name,"_umap_per_sample_cts_",gsub("-|\\s|:","_",Sys.time()),".",fig_format)
-      cat("save umap at ",fig_tmp_name ,"...\n")
-      ggsave(filename = fig_tmp_name,#paste0(fig_path,fig_name,"_umap.",fig_format),
-             plot = cdseq_scRNA_umap_per_sample,
-             width = 25,
-             height = 20,
-             dpi = fig_dpi)
+      if(fig_save){
+        fig_tmp_name <- paste0(fig_path,fig_name,"_umap_per_sample_cts_",gsub("-|\\s|:","_",Sys.time()),".",fig_format)
+        cat("save umap at ",fig_tmp_name ,"...\n")
+        ggsave(filename = fig_tmp_name,#paste0(fig_path,fig_name,"_umap.",fig_format),
+               plot = cdseq_scRNA_umap_per_sample,
+               width = 25,
+               height = 20,
+               dpi = fig_dpi)
+      }
     }
     
     
@@ -592,13 +598,16 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
             legend.text = element_text(color = "blue", face = "bold", size = 30)) + 
       guides(color = guide_legend(override.aes = list(size=5)), fill = guide_legend(override.aes = list(shape=21,size=5)))
     
-    fig_tmp_name <- paste0(fig_path,fig_name,"_tsne_",gsub("-|\\s|:","_",Sys.time()),".",fig_format)
-    cat("save umap at ", fig_tmp_name ,"...\n")
-    ggsave(filename = fig_tmp_name,#paste0(fig_path,fig_name,"_tsne.",fig_format),
-           plot = cdseq_scRNA_tsne,
-           width = 25,
-           height = 20,
-           dpi = fig_dpi)
+    if(fig_save){
+      fig_tmp_name <- paste0(fig_path,fig_name,"_tsne_",gsub("-|\\s|:","_",Sys.time()),".",fig_format)
+      cat("save umap at ", fig_tmp_name ,"...\n")
+      ggsave(filename = fig_tmp_name,#paste0(fig_path,fig_name,"_tsne.",fig_format),
+             plot = cdseq_scRNA_tsne,
+             width = 25,
+             height = 20,
+             dpi = fig_dpi)
+    }
+
     
     ##################################################################
     ##    plot CDSeq-estimated cell-type-specific gep per sample    ##
@@ -649,13 +658,15 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
               legend.text = element_text(color = "blue", face = "bold", size = 30)) + 
         guides(color = guide_legend(override.aes = list(size=5)), fill = guide_legend(override.aes = list(shape=21,size=5)))
       
-      fig_tmp_name <- paste0(fig_path,fig_name,"_tsne_per_sample_cts_",gsub("-|\\s|:","_",Sys.time()),".",fig_format)
-      cat("save umap at ", fig_tmp_name ,"...\n")
-      ggsave(filename = fig_tmp_name,#paste0(fig_path,fig_name,"_tsne.",fig_format),
-             plot = cdseq_scRNA_tsne_persample,
-             width = 25,
-             height = 20,
-             dpi = fig_dpi)
+      if(fig_save){
+        fig_tmp_name <- paste0(fig_path,fig_name,"_tsne_per_sample_cts_",gsub("-|\\s|:","_",Sys.time()),".",fig_format)
+        cat("save umap at ", fig_tmp_name ,"...\n")
+        ggsave(filename = fig_tmp_name,#paste0(fig_path,fig_name,"_tsne.",fig_format),
+               plot = cdseq_scRNA_tsne_persample,
+               width = 25,
+               height = 20,
+               dpi = fig_dpi)
+      }
       
     }
     

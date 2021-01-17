@@ -12,7 +12,7 @@
 #' @section Partition on input bulk RNA-seq data:
 #' When block_number (number of partition on the bulk RNASeq data) is 1, whole bulk_data will be used. GEP is not from reduce-recovery.
 #' @docType package
-#' @import Rcpp RcppArmadillo MASS foreach doParallel dirmult RcppThread iterators parallel
+#' @import Rcpp MASS foreach doParallel dirmult RcppThread iterators parallel
 #' @importFrom Rcpp evalCpp
 #' @useDynLib CDSeq
 #' @name CDSeq-R-package

@@ -30,6 +30,7 @@ cellTypeAssignSCRNA(
   plot_umap = 1,
   plot_tsne = 1,
   plot_per_sample = 0,
+  fig_save = 0,
   fig_path = getwd(),
   fig_name = "cellTypeAssignSCRNA",
   fig_format = "pdf",
@@ -86,6 +87,8 @@ cellTypeAssignSCRNA(
 \item{plot_tsne}{set 1 to plot tsne figure of scRNAseq and CDSeq-estimated cell types, 0 otherwise.}
 
 \item{plot_per_sample}{currently disabled for debugging}
+
+\item{fig_save}{1 or 0. 1 means save figures to local and 0 means do not save figures to local.}
 
 \item{fig_path}{the location where the heatmap figure is saved.}
 

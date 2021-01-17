@@ -21,13 +21,13 @@
                 "file" : "/Users/kaikang/Dropbox/Public/MIT/CDSeq_R_package/CDSeq/src/GibbsSampler.cpp",
                 "kind" : 6,
                 "line" : 32,
-                "name" : "gibbsSampler(double, std::vector<double>, Rcpp::NumericMatrix, int, int, int, int, int, std::string, int)",
+                "name" : "gibbsSampler(double, int, Rcpp::NumericMatrix, int, int, int, int, int, std::string, int)",
                 "parent_name" : "",
-                "usr" : "c:@F@gibbsSampler#d#$@N@std@N@__1@S@vector>#d#$@N@std@N@__1@S@allocator>#d#$@N@Rcpp@S@Matrix>#VI14#@N@Rcpp@ST>1#T@PreserveStorage#I#I#I#I#I#$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#I#"
+                "usr" : "c:@F@gibbsSampler#d#I#$@N@Rcpp@S@Matrix>#VI14#@N@Rcpp@ST>1#T@PreserveStorage#I#I#I#I#I#$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#I#"
             }
         ],
         "file" : "/Users/kaikang/Dropbox/Public/MIT/CDSeq_R_package/CDSeq/src/GibbsSampler.cpp",
-        "file_last_write" : 1609832404.000000
+        "file_last_write" : 1610908770.000000
     },
     {
         "definitions" : [

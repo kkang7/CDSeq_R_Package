@@ -54,11 +54,7 @@ CDSeq returns estimates of both cell-type-specific gene expression profiles and 
 \code{CDSeq} takes bulk RNA-seq data as input and simultaneously returns estimates of both cell-type-specific gene expression profiles and sample-specific cell-type proportions.
 }
 \examples{
-result<-CDSeq(bulk_data =  mixtureGEP, cell_type_number = 6, mcmc_iterations = 10, 
-       dilution_factor = 1, block_number = 1, gene_length = as.vector(gene_length), 
-       reference_gep = refGEP, cpu_number=1, print_progress_msg_to_file=1)
-
-result<-CDSeq(bulk_data =  mixtureGEP, cell_type_number=2:8, mcmc_iterations = 10, 
-       dilution_factor = 1, block_number = 1, gene_length = as.vector(gene_length), 
-       reference_gep = refGEP, cpu_number=2, print_progress_msg_to_file=0)
+result<-CDSeq(bulk_data =  mixtureGEP, cell_type_number = 6, mcmc_iterations = 5, 
+       dilution_factor = 50, block_number = 1, gene_length = as.vector(gene_length), 
+       reference_gep = refGEP, cpu_number=1, print_progress_msg_to_file=0)
 }

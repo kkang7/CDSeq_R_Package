@@ -1,5 +1,5 @@
-# include <RcppArmadillo.h>
 // [[Rcpp::depends(RcppArmadillo)]]
+# include <RcppArmadillo.h>
 
 #include <Rcpp.h>
 #include <stdio.h>

@@ -5,6 +5,8 @@
 
 <!-- badges: start -->
 
+[![Travis build
+status](https://travis-ci.com/kkang7/CDSeq_R_Package.svg?branch=master)](https://travis-ci.com/kkang7/CDSeq_R_Package)
 <!-- badges: end -->
 
 CDSeq is a complete deconvolution method for dissecting bulk RNA-Seq
@@ -49,6 +51,13 @@ build the vignette with
 devtools::install_github("kkang7/CDSeq_R_Package", build_vignettes = TRUE)
 ```
 
+## Known issue about MacOS installation
+
+It is possible for Mac users to run into some errors when install from
+source due to problems of Rcpp compiler tools. Follow the instruction
+here may help:
+<https://thecoatlessprofessor.com/programming/cpp/r-compiler-tools-for-rcpp-on-macos/>
+
 ## Example
 
 This is a basic example:
@@ -58,22 +67,9 @@ library(CDSeq)
 ## basic example code
 result<-CDSeq(bulk_data =  mixtureGEP, 
               cell_type_number = 6, 
-              mcmc_iterations = 10, 
+              mcmc_iterations = 700, 
               cpu_number=1)
 ```
-
-## scRNAseq data for CDSeq-estimated cell type annotations
-
-We collected some public available scRNAseq data from
-<https://www.nature.com/articles/s41586-020-2157-4> and put them in hdf5
-format. The data are available upon request.
-
-## Known issue about MacOS installation
-
-It is possible for Mac users to run into some errors when install from
-source due to problems of Rcpp compiler tools. Follow the instruction
-here may help:
-<https://thecoatlessprofessor.com/programming/cpp/r-compiler-tools-for-rcpp-on-macos/>
 
 ## Contact
 

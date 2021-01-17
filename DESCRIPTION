@@ -1,6 +1,6 @@
 Package: CDSeq
 Type: Package
-Title: CDSeq: Complete Deconvolution using Sequencing Data
+Title: A Complete Deconvolution method using Sequencing Data
 Depends: R (>= 3.6.0)
 Version: 1.0.8
 Date: 2021-01-05
@@ -9,7 +9,6 @@ Maintainer: Kai Kang <kangkai0714@gmail.com>
 Description: Estimate cell-type-specific gene expression profiles and sample-specific cell-type proportions simultaneously.
 License: GPL-3
 Imports: Rcpp (>= 1.0.3), 
-         RcppArmadillo,
          MASS, 
          foreach, 
          doParallel, 

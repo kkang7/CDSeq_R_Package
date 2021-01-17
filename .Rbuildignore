@@ -4,3 +4,5 @@
 ^docs$
 ^pkgdown$
 ^README\.Rmd$
+^cran-comments\.md$
+^\.travis\.yml$

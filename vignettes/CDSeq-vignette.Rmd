@@ -26,7 +26,7 @@ The minimum inputs for CDSeq are: bulk RNAseq read counts, number of cell types 
 ```{r quick start, echo=TRUE, eval=FALSE}
 result<-CDSeq(bulk_data =  mixtureGEP, 
               cell_type_number = 6, 
-              mcmc_iterations = 10, 
+              mcmc_iterations = 1000, 
               cpu_number=1)
 ```
 
@@ -312,10 +312,7 @@ for (i in 1:4) {
                                                      seurat_npcs = 50,
                                                      seurat_dims=1:5,
                                                      plot_umap = 1,
-                                                     plot_tsne = 0,
-                                                     fig_path = "~/Downloads/",
-                                                     fig_format = 'jpeg',
-                                                     fig_dpi = 100)
+                                                     plot_tsne = 0)
   
   cdseq.result.celltypeassign[[i]]$cdseq_scRNA_umap
 }
