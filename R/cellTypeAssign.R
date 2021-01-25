@@ -2,7 +2,6 @@
 #' \code{cellTypeAssign} assigns CDSeq-identified cell types to reference profile.
 #' @param corMat correlation matrix between CDSeq-estimated GEPs and reference GEPs.
 #' @param threshold only the correlations that are above threshold will be considered.
-#' @export
 #' @return cellTypeAssign returns a vector of cell type assignment to the reference profile. 
 
 

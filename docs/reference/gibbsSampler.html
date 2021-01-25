@@ -107,7 +107,12 @@ GibbsSampler returns estimated GEPs and cell type proportions." />
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/kkang7/CDSeq_R_Package/">
+    <span class="fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -123,7 +128,7 @@ GibbsSampler returns estimated GEPs and cell type proportions." />
     <div class="page-header">
     <h1>This is the Gibbs sampler for CDSeq.
 <code>GibbsSampler</code> returns estimated GEPs and cell type proportions.</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/kkang7/CDSeq_R_Package/blob/master/R/RcppExports.R'><code>R/RcppExports.R</code></a></small>
     <div class="hidden name"><code>gibbsSampler.Rd</code></div>
     </div>
 
@@ -142,7 +147,8 @@ GibbsSampler returns estimated GEPs and cell type proportions." />
   <span class='va'>processID</span>,
   <span class='va'>data_block_idx</span>,
   <span class='va'>CDSeq_tmp_log</span>,
-  <span class='va'>write_2_file</span>
+  <span class='va'>write_2_file</span>,
+  <span class='va'>verbose</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -188,6 +194,10 @@ GibbsSampler returns estimated GEPs and cell type proportions." />
       <th>write_2_file</th>
       <td><p>print to progress msg to CDSeq_tmp_log if it is 1, not printing otherwise.</p></td>
     </tr>
+    <tr>
+      <th>verbose</th>
+      <td><p>if 1, then print working progress in console, otherwise do not print in console.</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -205,7 +215,7 @@ GibbsSampler returns estimated GEPs and cell type proportions." />
 
       <footer>
       <div class="copyright">
-  <p>Developed by Kai Kang.</p>
+  <p>Developed by Kai Kang, Caizhi Huang.</p>
 </div>
 
 <div class="pkgdown">

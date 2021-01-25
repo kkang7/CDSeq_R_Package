@@ -104,7 +104,12 @@
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/kkang7/CDSeq_R_Package/">
+    <span class="fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -119,7 +124,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Complete deconvolution using sequencing data.</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/kkang7/CDSeq_R_Package/blob/master/R/CDSeq.R'><code>R/CDSeq.R</code></a></small>
     <div class="hidden name"><code>CDSeq.Rd</code></div>
     </div>
 
@@ -139,6 +144,7 @@
   cpu_number <span class='op'>=</span> <span class='cn'>NULL</span>,
   gene_length <span class='op'>=</span> <span class='cn'>NULL</span>,
   reference_gep <span class='op'>=</span> <span class='cn'>NULL</span>,
+  verbose <span class='op'>=</span> <span class='cn'>FALSE</span>,
   print_progress_msg_to_file <span class='op'>=</span> <span class='fl'>0</span>
 <span class='op'>)</span></pre>
 
@@ -192,6 +198,10 @@ Default is NULL and CDSeq will detect the available number of cores on the devic
       <td><p>a reference gene expression profile can be used to determine the cell type and/or estimate beta; Default is NULL.</p></td>
     </tr>
     <tr>
+      <th>verbose</th>
+      <td><p>if TRUE, then print progress message to the console. Default is FALSE.</p></td>
+    </tr>
+    <tr>
       <th>print_progress_msg_to_file</th>
       <td><p>print progress message to a text file. Set 1 if need to print progress msg to a file and set 0 if no printing. Default is 0;</p></td>
     </tr>
@@ -206,17 +216,7 @@ Default is NULL and CDSeq will detect the available number of cores on the devic
     <pre class="examples"><div class='input'><span class='va'>result</span><span class='op'>&lt;-</span><span class='fu'>CDSeq</span><span class='op'>(</span>bulk_data <span class='op'>=</span>  <span class='va'>mixtureGEP</span>, cell_type_number <span class='op'>=</span> <span class='fl'>6</span>, mcmc_iterations <span class='op'>=</span> <span class='fl'>5</span>, 
        dilution_factor <span class='op'>=</span> <span class='fl'>50</span>, block_number <span class='op'>=</span> <span class='fl'>1</span>, gene_length <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/vector.html'>as.vector</a></span><span class='op'>(</span><span class='va'>gene_length</span><span class='op'>)</span>, 
        reference_gep <span class='op'>=</span> <span class='va'>refGEP</span>, cpu_number<span class='op'>=</span><span class='fl'>1</span>, print_progress_msg_to_file<span class='op'>=</span><span class='fl'>0</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; 
-#&gt; ============================================ CDSeq R package version 1.0.8 ==================================================
-#&gt; |  Coders     : Kai Kang, David Huang                                                                                         |
-#&gt; |  Reference 1: CDSeq: A novel complete deconvolution method for dissecting heterogeneous samples using gene expression data  |
-#&gt; |  Reference 2: CDSeq: An R package for fast complete deconvolution using gene expression data                                |
-#&gt; |  Maintainer : kangkai0714@gmail.com                                                                                         |
-#&gt; ===============================================================================================================================
-#&gt; CDSeq is running in non Reduce-Recover mode. To use Reduce-Recover mode, assign a value to block_number that is greater than 1.
-#&gt; 0    of 5    MCMC runs (finished  0%, press esc at any time to terminate the MCMC iteration)5    of 5    MCMC runs (finished 100%)
-#&gt; Gibbs sampler completed succefully
-#&gt; CDSeq completed successfully using 0.0001 hours</div></pre>
+</div><div class='output co'>#&gt; <span class='message'>CDSeq is running in non Reduce-Recover mode. To use Reduce-Recover mode, assign a value to block_number that is greater than 1.</span></div><div class='output co'>#&gt; <span class='message'>CDSeq completed successfully using 0.0001 hours</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -228,7 +228,7 @@ Default is NULL and CDSeq will detect the available number of cores on the devic
 
       <footer>
       <div class="copyright">
-  <p>Developed by Kai Kang.</p>
+  <p>Developed by Kai Kang, Caizhi Huang.</p>
 </div>
 
 <div class="pkgdown">

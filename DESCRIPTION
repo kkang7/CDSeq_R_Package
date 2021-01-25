@@ -4,10 +4,11 @@ Title: A Complete Deconvolution Method using Sequencing Data
 Depends: R (>= 3.6.0)
 biocViews:
 Version: 1.0.8
-Date: 2021-01-05
-Author: Kai Kang, David Huang
+Date: 2021-01-23
+Authors@R: c(person("Kai", "Kang", email = "kangkai0714@gmail.com", role = c("aut", "cre","cph")),
+             person("Caizhi", "Huang", email = "chuang19@ncsu.edu", role = "aut"))
 Maintainer: Kai Kang <kangkai0714@gmail.com>
-Description: Estimate cell-type-specific gene expression profiles and sample-specific cell-type proportions simultaneously.
+Description: Estimate cell-type-specific gene expression profiles and sample-specific cell-type proportions simultaneously using bulk sequencing data. Kang et al. (2019) <doi:10.1371/journal.pcbi.1007510>. 
 License: GPL-3
 Imports: Rcpp (>= 1.0.3), 
          MASS, 
@@ -37,5 +38,9 @@ LazyData: true
 RoxygenNote: 7.1.1
 Suggests: 
     knitr,
-    rmarkdown
+    rmarkdown,
+    testthat (>= 3.0.0)
 VignetteBuilder: knitr
+URL: https://github.com/kkang7/CDSeq_R_Package, https://doi.org/10.1371/journal.pcbi.1007510 
+BugReports: https://github.com/kkang7/CDSeq_R_Package/issues
+Config/testthat/edition: 3

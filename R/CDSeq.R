@@ -26,12 +26,14 @@
 #' 
 #' @param reference_gep a reference gene expression profile can be used to determine the cell type and/or estimate beta; Default is NULL.
 #' 
+#' @param verbose if TRUE, then print progress message to the console. Default is FALSE.
+#' 
 #' @param print_progress_msg_to_file print progress message to a text file. Set 1 if need to print progress msg to a file and set 0 if no printing. Default is 0;
 #' 
 #' @importFrom stats cor
 #' 
 #' @examples 
-#' result<-CDSeq(bulk_data =  mixtureGEP, cell_type_number = 6, mcmc_iterations = 5, 
+#' result1<-CDSeq(bulk_data =  mixtureGEP, cell_type_number = 6, mcmc_iterations = 5, 
 #'        dilution_factor = 50, block_number = 1, gene_length = as.vector(gene_length), 
 #'        reference_gep = refGEP, cpu_number=1, print_progress_msg_to_file=0)
 #' @export
@@ -80,15 +82,9 @@ CDSeq <- function( bulk_data,
                    cpu_number = NULL,
                    gene_length = NULL,
                    reference_gep = NULL,
+                   verbose = FALSE,
                    print_progress_msg_to_file = 0) {
-  
-  cat("\n============================================ CDSeq R package version 1.0.8 ==================================================\n")
-  cat("|  Coders     : Kai Kang, David Huang                                                                                         |\n")
-  cat("|  Reference 1: CDSeq: A novel complete deconvolution method for dissecting heterogeneous samples using gene expression data  |\n")
-  cat("|  Reference 2: CDSeq: An R package for fast complete deconvolution using gene expression data                                |\n")
-  cat("|  Maintainer : kangkai0714@gmail.com                                                                                         |\n")
-  cat("===============================================================================================================================\n")
-  
+
   start_time <- Sys.time()
   ########################
   # check input arguments
@@ -105,8 +101,8 @@ CDSeq <- function( bulk_data,
   if(is.null(block_number)){block_number<-1;warning("block_number is NULL. CDSeq assigned block_number to be 1.")}
   if(block_number < 1){stop("block_number has to be greater than or equal to 1.")}
   if(block_number%%1!=0){block_number<-ceiling(block_number);warning("block_number has to be an integer. CDSeq has rounded it up to an integer.")}
-  if(block_number>1){cat("CDSeq is running in Reduce-Recover mode which breaks up the whole data into blocks. To run CDSeq on the whole data, please set block_number = 1.\n")
-    }else{cat("CDSeq is running in non Reduce-Recover mode. To use Reduce-Recover mode, assign a value to block_number that is greater than 1.\n")}
+  if(block_number>1){message("CDSeq is running in Reduce-Recover mode which breaks up the whole data into blocks. To run CDSeq on the whole data, please set block_number = 1.\n")
+    }else{message("CDSeq is running in non Reduce-Recover mode. To use Reduce-Recover mode, assign a value to block_number that is greater than 1.\n")}
   
   #check gene_subset_size and bulk_data
   if(is.null(gene_subset_size) & block_number>1){stop("gene_subset_size is null. Please assign a positive value to gene_subset_size, e.g. gene_subset_size = 1000, or set block_number to be 1")}
@@ -282,7 +278,7 @@ CDSeq <- function( bulk_data,
     }
     registerDoParallel(cpu_number)
   }
-  
+  if(verbose){verbose_int=1}else{verbose_int=0}
   celltype_assignment <- NULL
   cellTypeAssignSplit <- NULL
   # keep track of the worker process ID for parallel progress printing
@@ -302,8 +298,8 @@ CDSeq <- function( bulk_data,
     }
     
     if(block_number>1){
-      if(print_progress_msg_to_file==1){cat(sprintf("CDSeq is running in parallel, it may take some time...\n(Progress is being printed to %s. You may delete the file if will not use it.)\n",CDSeq_tmp_log))}
-      else{cat("CDSeq is running in parallel, it may take some time...\n")}
+      if(print_progress_msg_to_file==1){message(sprintf("CDSeq is running in parallel, it may take some time...\n(Progress is being printed to %s. You may delete the file if will not use it.)\n",CDSeq_tmp_log))}
+      else{message("CDSeq is running in parallel, it may take some time...\n")}
       printout <- 0}
     else{printout <- 1}
     
@@ -315,7 +311,7 @@ CDSeq <- function( bulk_data,
           
           if(!is.null(beta_est)){beta <- beta_est[i,]}
 
-          result <- gibbsSampler(alpha,beta,bulk_data_blocks[[i]],cell_type_number,mcmc_iterations, printout, Sys.getpid(), i, CDSeq_tmp_log, print_progress_msg_to_file)
+          result <- gibbsSampler(alpha,beta,bulk_data_blocks[[i]],cell_type_number,mcmc_iterations, printout, Sys.getpid(), i, CDSeq_tmp_log, print_progress_msg_to_file, verbose_int)
           
           #outputs are two vectors. estGEP_vec is gene x cell type; estSSp_vec is sample x cell type
           estGEP_vec<-result$csGEP_vec
@@ -451,7 +447,7 @@ CDSeq <- function( bulk_data,
     }
     end_time <- Sys.time()
     CDSeq_running_time <- as.numeric( end_time - start_time, units = "hours")
-    cat(sprintf("CDSeq completed successfully using %.4f hours\n",CDSeq_running_time))
+    message(sprintf("CDSeq completed successfully using %.4f hours\n",CDSeq_running_time))
     return(CDSeq_result)
   }
   
@@ -463,14 +459,14 @@ CDSeq <- function( bulk_data,
     printout=0
     CDSeq_tmp_log <- tempfile(pattern = "CDSeq_tmp_log_",fileext = ".txt")
     if(print_progress_msg_to_file==1){
-      cat(sprintf("CDSeq is running in parallel, it may take some time...\n(Progress is being printed to %s. You may delete the file if will not use it.)\n",CDSeq_tmp_log))
+      message(sprintf("CDSeq is running in parallel, it may take some time...\n(Progress is being printed to %s. You may delete the file if will not use it.)\n",CDSeq_tmp_log))
     }
     #cat("CDSeq is running in parallel, it may take some time...\n(Progress is being printed to CDSeq_logfile.txt in working directory. You may delete the file if will not use it.)\n")
     est_all<-foreach(j=1:length(cell_type_number), .combine = 'rbind') %:% 
       foreach(i=1:block_number, .combine = 'c') %dopar% {
       if(!is.null(beta_est)){beta <- beta_est[i,]}
       processIDs[j,i] <- Sys.getpid()
-      result <- gibbsSampler(alpha,beta,bulk_data_blocks[[i]],cell_type_number[j],mcmc_iterations, printout, processIDs[j,i], i, CDSeq_tmp_log, print_progress_msg_to_file)
+      result <- gibbsSampler(alpha,beta,bulk_data_blocks[[i]],cell_type_number[j],mcmc_iterations, printout, processIDs[j,i], i, CDSeq_tmp_log, print_progress_msg_to_file, verbose_int)
 
       #output two vectors. estGEP_vec is gene x cell type; estSSp_vec is sample x cell type
       estGEP_vec<-result$csGEP_vec
@@ -633,7 +629,7 @@ CDSeq <- function( bulk_data,
     rownames(CDSeq_result_max$estProp)<-cell_types
     colnames(CDSeq_result_max$estProp)<-sample_names
   }else{
-    if(is.null(celltype_assignment)){cat("\n no cell type assignment\n")}
+    if(is.null(celltype_assignment)){message("\n no cell type assignment\n")}
     refcol<-ncol(reference_gep)
     if(is.null(cell_types)){cell_types<-paste("ref_cell_type",1:refcol,sep = "_")}
     if(refcol>=CDSeq_result_max$estT){cell_types_tmp<-cell_types[celltype_assignment]}
@@ -655,7 +651,7 @@ CDSeq <- function( bulk_data,
   end_time <- Sys.time()
   CDSeq_running_time <- as.numeric( end_time - start_time, units = "hours")
   #if(CDSeq_running_time<1){CDSeq_running_time < - as.numeric( end_time - start_time, units = "mins")}
-  cat(sprintf("CDSeq completed successfully using %.4f hours\n",CDSeq_running_time))
+  message(sprintf("CDSeq completed successfully using %.4f hours\n",CDSeq_running_time))
   return(CDSeq_result_max)
   }#end for cell_type_number is a vector
   

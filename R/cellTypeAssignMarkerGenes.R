@@ -9,7 +9,6 @@
 #' @importFrom gplots heatmap.2 bluered
 #' @importFrom clue solve_LSAP
 #' @importFrom Biobase rowMax
-#' @export
 #' @return cellTypeAssignMarkerGenes returns a list containing: 
 #' GEP_markerSum (a A by B matrix where A is nrow(marker_gene_list), B is ncol(cell_gep)), 
 #' 

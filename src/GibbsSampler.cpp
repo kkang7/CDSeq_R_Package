@@ -27,9 +27,10 @@ using namespace Rcpp;
 //' @param data_block_idx index for data blocks from bulk RNA-seq input.
 //' @param CDSeq_tmp_log temporary log file recording the workers' jobs.
 //' @param write_2_file print to progress msg to CDSeq_tmp_log if it is 1, not printing otherwise.
+//' @param verbose if greater than or euqal to 1, then print working progress in console, otherwise do not print in console.
 //' @return random integers  uniformly distributed in 0..(2^32 - 1).
 // [[Rcpp::export]]
-List gibbsSampler(double ALPHA, std::vector<double> BETA, NumericMatrix mixtureSamples, int T, int NN, int OUTPUT, int processID, int data_block_idx, std::string CDSeq_tmp_log, int write_2_file)
+List gibbsSampler(double ALPHA, std::vector<double> BETA, NumericMatrix mixtureSamples, int T, int NN, int OUTPUT, int processID, int data_block_idx, std::string CDSeq_tmp_log, int write_2_file, int verbose)
 {
   //clock_t start,finish; 
   //start=clock();
@@ -97,7 +98,7 @@ List gibbsSampler(double ALPHA, std::vector<double> BETA, NumericMatrix mixtureS
   for (iter = 0; iter <= NN; iter ++) 
   {
     Rcpp::checkUserInterrupt();
-    if (OUTPUT >= 1) {
+    if (OUTPUT >= 1 && verbose>=1) {
       if ((iter % 10) == 0) Rprintf( "%-4d of %-4d MCMC runs (finished %2d%%, press esc at any time to terminate the MCMC iteration)\r" , iter , NN , 100*iter/NN);
       if (iter == NN) Rprintf( "%-4d of %-4d MCMC runs (finished %2d%%)\nGibbs sampler completed succefully\n" , iter , NN, 100*iter/NN );
     }

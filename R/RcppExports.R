@@ -13,9 +13,10 @@
 #' @param data_block_idx index for data blocks from bulk RNA-seq input.
 #' @param CDSeq_tmp_log temporary log file recording the workers' jobs.
 #' @param write_2_file print to progress msg to CDSeq_tmp_log if it is 1, not printing otherwise.
+#' @param verbose if greater than or euqal to 1, then print working progress in console, otherwise do not print in console.
 #' @return random integers  uniformly distributed in 0..(2^32 - 1).
-gibbsSampler <- function(ALPHA, BETA, mixtureSamples, T, NN, OUTPUT, processID, data_block_idx, CDSeq_tmp_log, write_2_file) {
-    .Call('_CDSeq_gibbsSampler', PACKAGE = 'CDSeq', ALPHA, BETA, mixtureSamples, T, NN, OUTPUT, processID, data_block_idx, CDSeq_tmp_log, write_2_file)
+gibbsSampler <- function(ALPHA, BETA, mixtureSamples, T, NN, OUTPUT, processID, data_block_idx, CDSeq_tmp_log, write_2_file, verbose) {
+    .Call('_CDSeq_gibbsSampler', PACKAGE = 'CDSeq', ALPHA, BETA, mixtureSamples, T, NN, OUTPUT, processID, data_block_idx, CDSeq_tmp_log, write_2_file, verbose)
 }
 
 #' This is the Mersenne Twister random number generator.

@@ -16,6 +16,7 @@ CDSeq(
   cpu_number = NULL,
   gene_length = NULL,
   reference_gep = NULL,
+  verbose = FALSE,
   print_progress_msg_to_file = 0
 )
 }
@@ -44,6 +45,8 @@ Default is NULL and CDSeq will detect the available number of cores on the devic
 
 \item{reference_gep}{a reference gene expression profile can be used to determine the cell type and/or estimate beta; Default is NULL.}
 
+\item{verbose}{if TRUE, then print progress message to the console. Default is FALSE.}
+
 \item{print_progress_msg_to_file}{print progress message to a text file. Set 1 if need to print progress msg to a file and set 0 if no printing. Default is 0;}
 }
 \value{
@@ -54,7 +57,7 @@ CDSeq returns estimates of both cell-type-specific gene expression profiles and 
 \code{CDSeq} takes bulk RNA-seq data as input and simultaneously returns estimates of both cell-type-specific gene expression profiles and sample-specific cell-type proportions.
 }
 \examples{
-result<-CDSeq(bulk_data =  mixtureGEP, cell_type_number = 6, mcmc_iterations = 5, 
+result1<-CDSeq(bulk_data =  mixtureGEP, cell_type_number = 6, mcmc_iterations = 5, 
        dilution_factor = 50, block_number = 1, gene_length = as.vector(gene_length), 
        reference_gep = refGEP, cpu_number=1, print_progress_msg_to_file=0)
 }

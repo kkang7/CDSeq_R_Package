@@ -100,7 +100,8 @@ ls(result1)
 We can compare the CDSeq-estimated cell-type-specific GEPs with the ground truth.
 ```{r fig1, echo=TRUE,cache=FALSE,eval=TRUE, fig.width=7,fig.height=5,fig.align = 'center'}
 trueGEP <- true_GEP_rpkm[,result1$cell_type_assignment]
-par(mar=c(4,4,1,1), mfrow=c(2,3),mai = c(.1, .01, 0.1, 0.1), mar=c(4,3,1,1), pty="s")
+.pardefault <- par()
+par(mar=c(4,3,1,1), mfrow=c(2,3),mai = c(.1, .01, 0.1, 0.1), pty="s")
 for (i in 1:6) {
   max_v <- max(c(result1$estGEP[,i], trueGEP[,i]))
   plot(result1$estGEP[,i],
@@ -115,13 +116,15 @@ for (i in 1:6) {
        main = paste0("cell type ",i))
   lines(c(0,max_v),c(0,max_v), type = "l")
 }
+par(mar = .pardefault$mar, mfrow = .pardefault$mfrow, mai=.pardefault$mai, pty=.pardefault$pty)
 
 ```
 
 We then compare the CDSeq-estimated cell type proportions with group truth.
 ```{r fig2, echo=TRUE,cache=FALSE,eval=TRUE,fig.width=7,fig.height=5,fig.align = 'center'}
 trueProp <- true_prop_cell[result1$cell_type_assignment,]
-par(mar=c(4,4,1,1), mfrow=c(2,3),mai = c(.1, .01, 0.1, 0.1), mar=c(4,3,1,1), pty="s")
+.pardefault <- par()
+par(mar=c(4,3,1,1), mfrow=c(2,3),mai = c(.1, .01, 0.1, 0.1), pty="s")
 for (i in 1:6) {
     plot(result1$estProp[i,],
          trueProp[i,],
@@ -135,6 +138,8 @@ for (i in 1:6) {
          main = paste0("cell type ",i))
     lines(c(0,1),c(0,1), type = "l")
 }
+par(mar = .pardefault$mar, mfrow = .pardefault$mfrow, mai=.pardefault$mai, pty=.pardefault$pty)
+
 ```
 
 For this dataset and given parameter settings, CDSeq took this much amount of time to finish:
@@ -163,7 +168,8 @@ CDSeq will automatically estimate the number of cell types from the *cell_type_n
 
 ```{r fig3, echo=TRUE, eval=TRUE, fig.width=7,fig.height=5,fig.align = 'center'}
 trueGEP <- true_GEP_gene[,result2$cell_type_assignment]
-par(mar=c(4,4,1,1), mfrow=c(2,3),mai = c(.1, .01, 0.1, 0.1), mar=c(4,3,1,1), pty="s")
+.pardefault <- par()
+par(mar=c(4,3,1,1), mfrow=c(2,3),mai = c(.1, .01, 0.1, 0.1),  pty="s")
 for (i in 1:6) {
   max_v <- max(c(result2$estGEP[,i], trueGEP[,i]))
   plot(result2$estGEP[,i],
@@ -178,13 +184,16 @@ for (i in 1:6) {
        main = paste0("cell type ",i))
   lines(c(0,max_v),c(0,max_v), type = "l")
 }
+par(mar = .pardefault$mar, mfrow = .pardefault$mfrow, mai=.pardefault$mai, pty=.pardefault$pty)
+
 ```
 
 Similarly, we can compare the CDSeq-estimated cell type proportions with ground truth.
 
 ```{r fig4, echo=TRUE, eval=TRUE, fig.width=7,fig.height=5,fig.align = 'center'}
 trueProp <- true_prop_cell[result2$cell_type_assignment,]
-par(mar=c(4,4,1,1), mfrow=c(2,3),mai = c(.1, .01, 0.1, 0.1), mar=c(4,3,1,1), pty="s")
+.pardefault <- par()
+par(mar=c(4,3,1,1), mfrow=c(2,3),mai = c(.1, .01, 0.1, 0.1),  pty="s")
 for (i in 1:6) {
     plot(result2$estProp[i,],
          trueProp[i,],
@@ -198,6 +207,8 @@ for (i in 1:6) {
          main = paste0("cell type ",i))
     lines(c(0,1),c(0,1), type = "l")
 }
+par(mar = .pardefault$mar, mfrow = .pardefault$mfrow, mai=.pardefault$mai, pty=.pardefault$pty)
+
 ```
 
 CDSeq estimates the number of cell types in the bulk samples using log posterior values. You can plot the log posterior values as follows. In this example, the max log posterior value happens at 6, therefore, CDSeq will guess that the number of different cell types in the bulk samples is 6 (which is exactly the number of distinct cell types we used for generating this *in silico* mixtures). 
@@ -238,7 +249,8 @@ result3<-CDSeq(bulk_data =  mixtureGEP,
 ```{r fig6, echo=TRUE, eval=TRUE, fig.width=7,fig.height=5,fig.align = 'center'}
 
 trueGEP <- true_GEP_rpkm[,result3$cell_type_assignment]
-par(mar=c(4,4,1,1), mfrow=c(2,3),mai = c(.1, .01, 0.1, 0.1), mar=c(4,3,1,1), pty="s")
+.pardefault <- par()
+par(mar=c(4,3,1,1), mfrow=c(2,3),mai = c(.1, .01, 0.1, 0.1),  pty="s")
 for (i in 1:6) {
   max_v <- max(c(result3$estGEP[,i], trueGEP[,i]))
   plot(result3$estGEP[,i],
@@ -253,13 +265,16 @@ for (i in 1:6) {
        main = paste0("cell type ",i))
   lines(c(0,max_v),c(0,max_v), type = "l")
 }
+par(mar = .pardefault$mar, mfrow = .pardefault$mfrow, mai=.pardefault$mai, pty=.pardefault$pty)
+
 ```
 
 
 ```{r fig7, echo=TRUE, eval=TRUE, fig.width=7,fig.height=5,fig.align = 'center'}
 
 trueProp <- true_prop_cell[result3$cell_type_assignment,]
-par(mar=c(4,4,1,1), mfrow=c(2,3),mai = c(.1, .01, 0.1, 0.1), mar=c(4,3,1,1), pty="s")
+.pardefault <- par()
+par(mar=c(4,3,1,1), mfrow=c(2,3),mai = c(.1, .01, 0.1, 0.1),  pty="s")
 for (i in 1:6) {
     plot(result3$estProp[i,],
          trueProp[i,],
@@ -273,6 +288,8 @@ for (i in 1:6) {
          main = paste0("cell type ",i))
     lines(c(0,1),c(0,1), type = "l")
 }
+par(mar = .pardefault$mar, mfrow = .pardefault$mfrow, mai=.pardefault$mai, pty=.pardefault$pty)
+
 ```
 
 

@@ -15,7 +15,8 @@ gibbsSampler(
   processID,
   data_block_idx,
   CDSeq_tmp_log,
-  write_2_file
+  write_2_file,
+  verbose
 )
 }
 \arguments{
@@ -38,6 +39,8 @@ gibbsSampler(
 \item{CDSeq_tmp_log}{temporary log file recording the workers' jobs.}
 
 \item{write_2_file}{print to progress msg to CDSeq_tmp_log if it is 1, not printing otherwise.}
+
+\item{verbose}{if greater than or euqal to 1, then print working progress in console, otherwise do not print in console.}
 }
 \value{
 random integers  uniformly distributed in 0..(2^32 - 1).

@@ -186,17 +186,17 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
   # filter cells
   cdseq_synth_scRNA_seurat <- subset(cdseq_synth_scRNA_seurat, subset = nCount_RNA > seurat_count_threshold )#nFeature_RNA > 20 & nFeature_RNA < 2500)
   # normalize
-  cdseq_synth_scRNA_seurat <- Seurat::NormalizeData(cdseq_synth_scRNA_seurat, normalization.method = seurat_norm_method , scale.factor = seurat_scale_factor)
+  cdseq_synth_scRNA_seurat <- Seurat::NormalizeData(cdseq_synth_scRNA_seurat, normalization.method = seurat_norm_method , scale.factor = seurat_scale_factor, verbose = FALSE)
   # select genes
-  cdseq_synth_scRNA_seurat <- Seurat::FindVariableFeatures(cdseq_synth_scRNA_seurat, selection.method = seurat_select_method, nfeatures = seurat_nfeatures)
+  cdseq_synth_scRNA_seurat <- Seurat::FindVariableFeatures(cdseq_synth_scRNA_seurat, selection.method = seurat_select_method, nfeatures = seurat_nfeatures, verbose = FALSE)
 
-  cdseq_synth_scRNA_seurat <- Seurat::ScaleData(cdseq_synth_scRNA_seurat)
+  cdseq_synth_scRNA_seurat <- Seurat::ScaleData(cdseq_synth_scRNA_seurat,verbose = FALSE)
   
-  cdseq_synth_scRNA_seurat <- Seurat::RunPCA(cdseq_synth_scRNA_seurat, npcs = seurat_npcs) #features = VariableFeatures(object = cdseq_synth_scRNA_seurat), 
+  cdseq_synth_scRNA_seurat <- Seurat::RunPCA(cdseq_synth_scRNA_seurat, npcs = seurat_npcs,verbose = FALSE) #features = VariableFeatures(object = cdseq_synth_scRNA_seurat), 
   
-  cdseq_synth_scRNA_seurat <- Seurat::FindNeighbors(cdseq_synth_scRNA_seurat, dims = seurat_dims, reduction = seurat_reduction)
+  cdseq_synth_scRNA_seurat <- Seurat::FindNeighbors(cdseq_synth_scRNA_seurat, dims = seurat_dims, reduction = seurat_reduction, verbose = FALSE)
   
-  cdseq_synth_scRNA_seurat <- Seurat::FindClusters(cdseq_synth_scRNA_seurat, resolution = seurat_resolution)
+  cdseq_synth_scRNA_seurat <- Seurat::FindClusters(cdseq_synth_scRNA_seurat, resolution = seurat_resolution, verbose = FALSE)
   
   ##################################################################
   ##               use seurat cluster and DE genes                ##
@@ -204,7 +204,7 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
   ##################################################################
   # find makers
   if(seurat_find_marker){
-    cdseq_synth_scRNA_seurat_markers <- Seurat::FindAllMarkers(cdseq_synth_scRNA_seurat, min.pct = 0.25, logfc.threshold = seurat_DE_logfc, test.use = seurat_DE_test)
+    cdseq_synth_scRNA_seurat_markers <- Seurat::FindAllMarkers(cdseq_synth_scRNA_seurat, min.pct = 0.25, logfc.threshold = seurat_DE_logfc, test.use = seurat_DE_test,verbose = FALSE)
     cdseq_synth_scRNA_seurat_markers %>% dplyr::group_by(cluster) %>% dplyr::top_n(n = 2, wt = avg_logFC)
     seurat_top_markers <- cdseq_synth_scRNA_seurat_markers %>% dplyr::group_by(cluster) %>% dplyr::top_n(n = seurat_top_n_markers, wt = avg_logFC)
   }else{
@@ -336,19 +336,19 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
       cat("Calling Seurat pipeline: per-sample-cell-type-specific ... \n")
       cdseq_synth_scRNA_seurat_persample <- Seurat::CreateSeuratObject(counts = cdseq_persample_sc_comb, project = "cdseq_synth_scRNAseq_per_sample")
       # filter cells
-      cdseq_synth_scRNA_seurat_persample <- subset(cdseq_synth_scRNA_seurat_persample, subset = nCount_RNA > seurat_count_threshold )#nFeature_RNA > 20 & nFeature_RNA < 2500)
+      cdseq_synth_scRNA_seurat_persample <- subset(cdseq_synth_scRNA_seurat_persample, subset = nCount_RNA > seurat_count_threshold,verbose = FALSE )#nFeature_RNA > 20 & nFeature_RNA < 2500)
       # normalize
-      cdseq_synth_scRNA_seurat_persample <- Seurat::NormalizeData(cdseq_synth_scRNA_seurat_persample, normalization.method = seurat_norm_method , scale.factor = seurat_scale_factor)
+      cdseq_synth_scRNA_seurat_persample <- Seurat::NormalizeData(cdseq_synth_scRNA_seurat_persample, normalization.method = seurat_norm_method , scale.factor = seurat_scale_factor,verbose = FALSE)
       # select genes
-      cdseq_synth_scRNA_seurat_persample <- Seurat::FindVariableFeatures(cdseq_synth_scRNA_seurat_persample, selection.method = seurat_select_method, nfeatures = seurat_nfeatures)
+      cdseq_synth_scRNA_seurat_persample <- Seurat::FindVariableFeatures(cdseq_synth_scRNA_seurat_persample, selection.method = seurat_select_method, nfeatures = seurat_nfeatures,verbose = FALSE)
       
-      cdseq_synth_scRNA_seurat_persample <- Seurat::ScaleData(cdseq_synth_scRNA_seurat_persample)
+      cdseq_synth_scRNA_seurat_persample <- Seurat::ScaleData(cdseq_synth_scRNA_seurat_persample,verbose = FALSE)
       
-      cdseq_synth_scRNA_seurat_persample <- Seurat::RunPCA(cdseq_synth_scRNA_seurat_persample, npcs = seurat_npcs) #features = VariableFeatures(object = cdseq_synth_scRNA_seurat), 
+      cdseq_synth_scRNA_seurat_persample <- Seurat::RunPCA(cdseq_synth_scRNA_seurat_persample, npcs = seurat_npcs,verbose = FALSE) #features = VariableFeatures(object = cdseq_synth_scRNA_seurat), 
       
-      cdseq_synth_scRNA_seurat_persample <- Seurat::FindNeighbors(cdseq_synth_scRNA_seurat_persample, dims = seurat_dims, reduction = seurat_reduction)
+      cdseq_synth_scRNA_seurat_persample <- Seurat::FindNeighbors(cdseq_synth_scRNA_seurat_persample, dims = seurat_dims, reduction = seurat_reduction,verbose = FALSE)
       
-      cdseq_synth_scRNA_seurat_persample <- Seurat::FindClusters(cdseq_synth_scRNA_seurat_persample, resolution = seurat_resolution)
+      cdseq_synth_scRNA_seurat_persample <- Seurat::FindClusters(cdseq_synth_scRNA_seurat_persample, resolution = seurat_resolution,verbose = FALSE)
       
       ##################################################################
       ##   CDSeq-estimated per-sample-cell-type-specific annotation   ##
@@ -423,7 +423,7 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
     #################################################################
     ##                plot synthetic CDSeq-scRNAseq                ##
     #################################################################
-    cdseq_synth_scRNA_seurat <- RunUMAP(cdseq_synth_scRNA_seurat, dims = seurat_dims)
+    cdseq_synth_scRNA_seurat <- Seurat::RunUMAP(cdseq_synth_scRNA_seurat, dims = seurat_dims,verbose = FALSE)
     
     # plot scRNAseq and cdseq estimates
     if(is.null(sc_annotation)){
@@ -485,7 +485,7 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
       warning("plot_per_sample option is not working properly. I'm working on it.")
       cat("Running UMAP: plot CDSeq-estimated cell-type-specific gep per sample ... \n")
       
-      cdseq_synth_scRNA_seurat_persample <- RunUMAP(cdseq_synth_scRNA_seurat_persample, dims = seurat_dims)
+      cdseq_synth_scRNA_seurat_persample <- Seurat::RunUMAP(cdseq_synth_scRNA_seurat_persample, dims = seurat_dims,verbose = FALSE)
       
       # plot scRNAseq and cdseq estimates
       if(is.null(sc_annotation)){
@@ -555,7 +555,7 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
   ##################################################################
   if(plot_tsne){
     cat("Running TSNE: synthetic CDSeq-estimated cell types ... \n")
-    cdseq_synth_scRNA_seurat <- RunTSNE(cdseq_synth_scRNA_seurat, dims = seurat_dims, check_duplicates = FALSE)
+    cdseq_synth_scRNA_seurat <- Seurat::RunTSNE(cdseq_synth_scRNA_seurat, dims = seurat_dims, check_duplicates = FALSE, verbose = FALSE)
     
     # plot scRNAseq and cdseq estimates
     if(is.null(sc_annotation)){
@@ -615,7 +615,7 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
     if(plot_per_sample){
       warning("plot_per_sample option is not working properly. I'm working on it.")
       cat("Running TSNE: per sample CDSeq-estimated cell types ... \n")
-      cdseq_synth_scRNA_seurat_persample <- RunTSNE(cdseq_synth_scRNA_seurat_persample, dims = seurat_dims, check_duplicates = FALSE)
+      cdseq_synth_scRNA_seurat_persample <- Seurat::RunTSNE(cdseq_synth_scRNA_seurat_persample, dims = seurat_dims, check_duplicates = FALSE,verbose = FALSE)
       
       # plot scRNAseq and cdseq estimates
       if(is.null(sc_annotation)){

@@ -51,18 +51,64 @@ It is possible for Mac users to run into some errors when install from source du
  
 
 ## Example
-
-This is a basic example:
-
-```{r example, eval=FALSE}
+Load package
+```{r, echo=TRUE, eval=TRUE}
 library(CDSeq)
-## basic example code
-result<-CDSeq(bulk_data =  mixtureGEP, 
-              cell_type_number = 6, 
-              mcmc_iterations = 700, 
-              cpu_number=1)
 ```
 
+### When the number of cell types is a scalar
+```{r  example 1, echo=TRUE ,eval=FALSE, cache=FALSE, results='hide'}
+## basic example code
+result1<-CDSeq(bulk_data =  mixtureGEP, 
+               cell_type_number = 6, 
+               mcmc_iterations = 5, # increase the mcmc_iterations to 700 or above
+               gene_length = as.vector(gene_length), 
+               reference_gep = refGEP,  # gene expression profile of pure cell lines
+               cpu_number = 1)
+```
+
+
+### When the number of cell types is a vector
+The *cell_type_number* can also be a vector which contains different integer values. CDSeq will perform estimation for each integer in the vector and estimate the number of cell types in the mixtures. For example, one can set *cell_type_number = 2:10* as follows, and CDSeq will estimate the most likely number of cell types from 2 to 10.
+
+```{r example 2, echo=TRUE ,eval=FALSE, cache=FALSE, results='hide'}
+result2<-CDSeq(bulk_data =  mixtureGEP, 
+              cell_type_number = 2:10, 
+              mcmc_iterations = 5, 
+              dilution_factor = 1, 
+              block_number = 1, 
+              gene_length = as.vector(gene_length), 
+              reference_gep = refGEP, # gene expression profile of pure cell lines
+              cpu_number = 1, # use multiple cores to save time. Set the cpu_number = length(cell_type_number) if there is enough cores.
+              print_progress_msg_to_file = 0)
+
+```
+
+
+### Use single cell to annotate CDSeq-estimated cell types
+```{r example 4, echo=TRUE, eval=FALSE, cache=FALSE, results='hide'}
+cdseq.result <- CDSeq::CDSeq(bulk_data = pbmc_mix,
+                             cell_type_number = seq(3,12,3),
+                             beta = 0.5,
+                             alpha = 5,
+                             mcmc_iterations = 700,
+                             cpu_number = 4,
+                             dilution_factor = 10)
+
+cdseq.result.celltypeassign <- cellTypeAssignSCRNA(cdseq_gep = cdseq.result$estGEP, # CDSeq-estimated cell-type-specific GEPs
+                                                   cdseq_prop = cdseq.result$estProp, # CDSeq-estimated cell type proportions
+                                                   sc_gep = sc_gep,         # PBMC single cell data
+                                                   sc_annotation = sc_annotation,# PBMC single data annotations
+                                                   sc_pt_size = 3,
+                                                   cdseq_pt_size = 6,
+                                                   seurat_nfeatures = 100,
+                                                   seurat_npcs = 50,
+                                                   seurat_dims=1:5,
+                                                   plot_umap = 1,
+                                                   plot_tsne = 0)
+```
+
+Check vignette for more details and examples: *browseVignettes("CDSeq")*.
 
 ## Contact 
 email: kangkai0714@gmail.com
