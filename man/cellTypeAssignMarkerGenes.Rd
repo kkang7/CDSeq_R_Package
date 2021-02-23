@@ -9,8 +9,17 @@ cellTypeAssignMarkerGenes(
   marker_gene_list = NULL,
   threshold = 2,
   fig_path = getwd(),
+  rowlabelsize = 1,
+  collabelsize = 1,
+  margins = c(3, 0),
+  fig_width = 100,
+  fig_height = 100,
+  keysize = 1,
+  srtcol = 45,
+  keypar = c(3.5, 0, 3, 0),
   heatmap_name = "cellTypeAssign_heatmap.pdf",
-  heatmap_name_fuzzy_assign = "cellTypeAssign_heatmap_fuzzy.pdf"
+  heatmap_name_fuzzy_assign = "cellTypeAssign_heatmap_fuzzy.pdf",
+  verbose = FALSE
 )
 }
 \arguments{
@@ -22,9 +31,27 @@ cellTypeAssignMarkerGenes(
 
 \item{fig_path}{the location where the heatmap figure is saved.}
 
+\item{rowlabelsize}{row label size}
+
+\item{collabelsize}{column label size}
+
+\item{margins}{a vector of length 2 indicates row and column label margins}
+
+\item{fig_width}{figure width for pdf figure}
+
+\item{fig_height}{figure height for pdf figure}
+
+\item{keysize}{color key size for heatmap}
+
+\item{srtcol}{column label angle}
+
+\item{keypar}{color key layout}
+
 \item{heatmap_name}{the name of heatmap figure of one-to-one assignment.}
 
 \item{heatmap_name_fuzzy_assign}{the name of heatmap figure of fuzzy assignment.}
+
+\item{verbose}{if TRUE, some information will be printed.}
 }
 \value{
 cellTypeAssignMarkerGenes returns a list containing: 

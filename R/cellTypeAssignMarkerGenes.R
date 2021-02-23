@@ -3,8 +3,17 @@
 #' @param marker_gene_list a G (genes) by C (cell types with known identities) matrix or dataframe that contains the marker genes for each cell type. Column names must be CellType and GeneName.
 #' @param threshold a numeric value that provides the threshold of whether a known cell type in the marker gene list can be identified. 
 #' @param fig_path the location where the heatmap figure is saved. 
+#' @param rowlabelsize row label size
+#' @param collabelsize column label size
+#' @param margins a vector of length 2 indicates row and column label margins
+#' @param fig_width figure width for pdf figure
+#' @param fig_height figure height for pdf figure
+#' @param keysize color key size for heatmap
+#' @param srtcol column label angle
+#' @param keypar color key layout
 #' @param heatmap_name the name of heatmap figure of one-to-one assignment.
 #' @param heatmap_name_fuzzy_assign the name of heatmap figure of fuzzy assignment. 
+#' @param verbose if TRUE, some information will be printed.
 #' @importFrom grDevices pdf dev.off 
 #' @importFrom gplots heatmap.2 bluered
 #' @importFrom clue solve_LSAP
@@ -28,10 +37,22 @@ cellTypeAssignMarkerGenes <- function(cell_gep = NULL,
                                      marker_gene_list = NULL,
                                      threshold = 2,
                                      fig_path = getwd(),
+                                     rowlabelsize = 1,
+                                     collabelsize = 1,
+                                     margins = c(3,0),
+                                     fig_width = 100,
+                                     fig_height = 100,
+                                     keysize = 1,
+                                     srtcol = 45,
+                                     keypar = c(3.5,0,3,0),
                                      heatmap_name = "cellTypeAssign_heatmap.pdf",# may remove .pdf extension  heatmap_name_twoway = NULL
-                                     heatmap_name_fuzzy_assign = "cellTypeAssign_heatmap_fuzzy.pdf"){
-  cat("-----------------in cell_type_assign_heatmap-----------------\n")
-  cat("ncol(cell_gep) = ", ncol(cell_gep)," nrow = (cell_gep) = ", nrow(cell_gep),"\n")
+                                     heatmap_name_fuzzy_assign = "cellTypeAssign_heatmap_fuzzy.pdf",
+                                     verbose=FALSE){
+  if(verbose){
+    cat("-----------------in cell_type_assign_heatmap-----------------\n")
+    cat("ncol(cell_gep) = ", ncol(cell_gep)," nrow = (cell_gep) = ", nrow(cell_gep),"\n")
+  }
+  
   # check input data
   if(is.null(rownames(cell_gep))){stop("cell_gep has no row name. row name should be gene names.")}
   
@@ -82,7 +103,9 @@ cellTypeAssignMarkerGenes <- function(cell_gep = NULL,
   # this is saying if the max value of that row is greater than threshold
   # then we consider there is a match of that cell type
   cell_type_matched_idx <- which(Biobase::rowMax(GEP_markerSum_zscore) > threshold) 
-  cat("length(cell_type_matched_idx) = ", length(cell_type_matched_idx), "threshold = ",threshold,"\n")
+  if(verbose){
+    cat("length(cell_type_matched_idx) = ", length(cell_type_matched_idx), "threshold = ",threshold,"\n")
+  }
   if(length(cell_type_matched_idx)==0){stop("no cell type assigned. all z scores are smaller than the threshold. Try lower the threshold value.")}
   cell_type_matched <- celltypes[cell_type_matched_idx]
   GEP_markerSum_zscore_matched <- GEP_markerSum_zscore[cell_type_matched_idx,]
@@ -97,20 +120,21 @@ cellTypeAssignMarkerGenes <- function(cell_gep = NULL,
                                              cell.type.in.cell.gep = colnames(GEP_markerSum_zscore_matched[marker_idx,])))
     
     filename <- paste0(fig_path,heatmap_name)
-    pdf(file = filename)
+    pdf(file = filename, width = fig_width, height = fig_height)
     heatmap.2(GEP_markerSum_zscore_matched[marker_idx,],
               col = bluered(100),
               dendrogram='none',
               Rowv=FALSE, 
               Colv=FALSE,
-              cexRow = 0.7, 
-              cexCol=0.8,
+              cexRow = rowlabelsize,#0.7, 
+              cexCol=collabelsize,#0.8,
               trace = "none",
               density.info = "none",
               labRow = cell_type_matched,
-              margins=c(3,0), 
-              keysize=1,
-              key.par=list(mar=c(3.5,0,3,0)),
+              margins=margins,#c(3,0), 
+              keysize=keysize,
+              key.par=list(mar=keypar),
+              srtCol=srtcol,
               lmat=rbind(c(5, 4, 2), c(6, 1, 3)), lhei=c(1, 5), lwid=c(1, 10, 1))
     dev.off()
   }else{
@@ -125,20 +149,21 @@ cellTypeAssignMarkerGenes <- function(cell_gep = NULL,
                                              cell.type.in.cell.gep = colnames(GEP_markerSum_zscore_matched[,cell_type_idx])))
     
     filename <- paste0(fig_path,heatmap_name)
-    pdf(file = filename)
+    pdf(file = filename, width = fig_width, height = fig_height)
     heatmap.2(GEP_markerSum_zscore_matched[,cell_type_idx],
               col = bluered(100),
               dendrogram='none',
               Rowv=FALSE, 
               Colv=FALSE,
-              cexRow = 0.7, 
-              cexCol=0.8,
+              cexRow = rowlabelsize,#0.7, 
+              cexCol=collabelsize,#0.8,
               trace = "none",
               density.info = "none",
               labRow = cell_type_matched,
-              margins=c(3,0), 
-              keysize=1,
-              key.par=list(mar=c(3.5,0,3,0)),
+              margins=margins,#c(3,0), 
+              keysize=keysize,
+              key.par=list(mar=keypar),
+              srtCol=srtcol,
               lmat=rbind(c(5, 4, 2), c(6, 1, 3)), lhei=c(1, 5), lwid=c(1, 10, 1))
     dev.off()
     
@@ -171,9 +196,12 @@ cellTypeAssignMarkerGenes <- function(cell_gep = NULL,
       
       # run Munkres recursively
       while (any( colSums(cell_type_matched_fuzzy)==0 )) {
-        cat("ncol(tmp_mat) = ",ncol(tmp_mat)," nrow(tmp_mat) = ", nrow(tmp_mat),"length(unassigned_idx) = ",length(unassigned_idx),"\n")
+        if(verbose){
+          cat("ncol(tmp_mat) = ",ncol(tmp_mat)," nrow(tmp_mat) = ", nrow(tmp_mat),"length(unassigned_idx) = ",length(unassigned_idx),"\n")
+        }
         if(ncol(tmp_mat)>=nrow(tmp_mat)){
-          cat("in if...\n")
+          if(verbose){cat("in if...\n")}
+          
           # case 1: number of un-assigned CDSeq estGEP is greater than cell types in marker gene list
           cell_assign <- solve_LSAP(exp(tmp_mat),maximum = TRUE)
           tmp_idx <- cell_assign[1:length(cell_assign)]
@@ -185,7 +213,7 @@ cellTypeAssignMarkerGenes <- function(cell_gep = NULL,
             cell_type_matched_fuzzy[i,newly_assigned[i]] <- 1
           }
         }else{
-          cat("in else...\n")
+          if(verbose) {cat("in else...\n")}
           # case 2: number of un-assigned CDSeq estGEP is smaller than cell types in marker gene list
           if(length(unassigned_idx)>0){
             cell_assign <- solve_LSAP(exp(t(tmp_mat)),maximum = TRUE)
@@ -194,7 +222,7 @@ cellTypeAssignMarkerGenes <- function(cell_gep = NULL,
             #unassigned_idx <- unassigned_idx[-tmp_idx]
             for (i in 1:length(marker_idx)) {
               cell_type_matched_fuzzy[marker_idx[i],unassigned_idx[i]] <- 1
-              cat("marker_idx[i]=",marker_idx[i],"unassigned_idx[i]=",unassigned_idx[i],"\n")
+              if(verbose){cat("marker_idx[i]=",marker_idx[i],"unassigned_idx[i]=",unassigned_idx[i],"\n")}
             }
           }
           # if(length(unassigned_idx)>0){
@@ -218,7 +246,7 @@ cellTypeAssignMarkerGenes <- function(cell_gep = NULL,
       
       if(sum(cell_type_matched_fuzzy)!=ncol(cell_type_matched_fuzzy)){warning("something wrong with fuzzy assignment.no figure plotted for fuzzy assign--1")}
       filename <- paste0(fig_path,heatmap_name_fuzzy_assign)
-      pdf(file = filename)
+      pdf(file = filename, width = fig_width, height = fig_height)
       cell_type_assing_fuzzy_idx <- numeric(0)
       for (i in 1:nrow(cell_type_matched_fuzzy)) {
         cell_type_assing_fuzzy_idx <- c(cell_type_assing_fuzzy_idx, which(cell_type_matched_fuzzy[i,] == 1))
@@ -229,14 +257,15 @@ cellTypeAssignMarkerGenes <- function(cell_gep = NULL,
                 dendrogram='none',
                 Rowv=FALSE, 
                 Colv=FALSE,
-                cexRow = 0.7, 
-                cexCol=0.8,
+                cexRow = rowlabelsize,#0.7, 
+                cexCol=collabelsize,#0.8,
                 trace = "none",
                 density.info = "none",
                 labRow = cell_type_matched,
-                margins=c(3,0), 
-                keysize=1,
-                key.par=list(mar=c(3.5,0,3,0)),
+                margins=margins,#c(3,0), 
+                keysize=keysize,
+                key.par=list(mar=keypar),
+                srtCol=srtcol,
                 lmat=rbind(c(5, 4, 2), c(6, 1, 3)), lhei=c(1, 5), lwid=c(1, 10, 1))
       dev.off()
     }
@@ -271,6 +300,7 @@ cellTypeAssignMarkerGenes <- function(cell_gep = NULL,
   output$GEP_markerSum_zscore_matched <- GEP_markerSum_zscore_matched
   output$GEP_matched <- GEP_matched
   output$cell_type_matched_idx <- cell_type_idx
+  output$cell_type_matched_fuzzy_idx <- cell_type_assing_fuzzy_idx
   output$cell_type_matched <- cell_type_matched
   output$cell_type_assign_fuzzy <- cell_type_matched_fuzzy
   output$cell_type_assignment_fuzzy <- cell_type_assignment_fuzzy

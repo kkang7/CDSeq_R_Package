@@ -27,13 +27,23 @@ This is a resubmission. In this version I have:
 
 * Added a few more examples in the Rd-files and enabled automatic tesing using usethis::use_testthat().
 
-* Added option to suppress printing message to console.
+* Added option to suppress printing message to console, i.e. setting verbose = FALSE.
 
 * Added Authors@R field.
 
 * Reset par() option to default after plotting.
 
 * Ensured examples do not use more than 2 cores.
+
+## Resubmission
+* Added all authors, contributors and copyright holders in the Authors@R field with the appropriate roles.
+
+## Resubmission 2020-02-05
+* Added verbose parameter to prevent from writing to console.
+
+* Makoto Matsumoto and Takuji Nishimura are NOT part of the R package or method development. I used the Mersenne Twister random number generator developed by Makoto Matsumoto and Takuji Nishimura. The Mersenne Twister random number generator code is in cokus.cpp and I quote the writer of the cokus.cpp file: "This version is a recode by Shawn Cokus (Cokus@math.washington.edu) on March 8, 1998 of a version by Takuji Nishimura (who had suggestions from Topher Cooper and Marc Rieffel in July-August 1997)."
+
+
 
 
 

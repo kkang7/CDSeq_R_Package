@@ -29,6 +29,7 @@
 #' @param fig_name the name of umap and tsne figures. Umap figure will have the name of fig_name_umap_date and tsne figure will be named fig_name_tsne_date.
 #' @param fig_format "pdf", "jpeg", or "png".
 #' @param fig_dpi figure dpi
+#' @param verbose if TRUE, some calculation information will be print.
 #' @importFrom grDevices rainbow
 #' @importFrom stats rmultinom rnbinom
 #' @importFrom Seurat CreateSeuratObject NormalizeData FindVariableFeatures ScaleData FindNeighbors FindClusters FindAllMarkers RunUMAP RunTSNE RunPCA 
@@ -87,9 +88,9 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
                                 seurat_scale_factor = 10000,
                                 seurat_norm_method = "LogNormalize",
                                 seurat_select_method = 'vst',
-                                seurat_nfeatures = 100,
-                                seurat_npcs = 50,
-                                seurat_dims = 1:10,
+                                seurat_nfeatures = 1000,
+                                seurat_npcs = 30,
+                                seurat_dims = 1:30,
                                 seurat_reduction = 'pca',
                                 seurat_resolution = 0.8,
                                 seurat_find_marker = FALSE,
@@ -105,12 +106,13 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
                                 fig_path = getwd(),
                                 fig_name = "cellTypeAssignSCRNA",
                                 fig_format = "pdf",
-                                fig_dpi = 300){
+                                fig_dpi = 100,
+                                verbose=FALSE){
   #################################################################
   ##                         check input                         ##
   #################################################################
   #cat("CDSeq version 1.0.7\n")
-  cat("checking input ... \n")
+  if(verbose){cat("checking input ... \n")}
   # check dimension
   nr_cdseq <- nrow(cdseq_gep)
   nc_cdseq <- ncol(cdseq_gep)
@@ -158,7 +160,7 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
   ##  Generate synthetic scRNAseq data from CDSeq estimated GEPs   ##
   ##                 and combine with scRNAseq data                ##
   ###################################################################
-  cat("generating synthetic scRNAseq data using CDSeq estimated GEPs ...\n")
+  if(verbose){cat("generating synthetic scRNAseq data using CDSeq estimated GEPs ...\n")}
   # generate synthetic scRNAseq 
   ncell <-  1
   cdseq_synth_scRNA <- matrix(0,nrow = nr_cdseq, ncol = nc_cdseq*ncell)
@@ -181,7 +183,7 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
   ##################################################################
   ##                          Run seurat                          ##
   ##################################################################
-  cat("Calling Seurat pipeline ... \n")
+  if(verbose){cat("Calling Seurat pipeline ... \n")}
   cdseq_synth_scRNA_seurat <- Seurat::CreateSeuratObject(counts = cdseq_sc_comb, project = "cdseq_synth_scRNAseq")
   # filter cells
   cdseq_synth_scRNA_seurat <- subset(cdseq_synth_scRNA_seurat, subset = nCount_RNA > seurat_count_threshold )#nFeature_RNA > 20 & nFeature_RNA < 2500)
@@ -329,11 +331,11 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
                                                         rep(dimnames(cdseq_gep_sample_specific)[[3]],each=length(dimnames(cdseq_gep_sample_specific)[[2]])))
       cdseq_gep_sample_specific_mat_sample_ids <- rep(dimnames(cdseq_gep_sample_specific)[[2]], each = length(dimnames(cdseq_gep_sample_specific)[[3]]) )
       cdseq_persample_sc_comb <- cbind(sc_gep,cdseq_gep_sample_specific_mat)
-      cat("colnames(cdseq_persample_sc_comb)[ncol(sc_gep) + 1] = ", colnames(cdseq_persample_sc_comb)[ncol(sc_gep) + 1],"\n")
+      if(verbose){cat("colnames(cdseq_persample_sc_comb)[ncol(sc_gep) + 1] = ", colnames(cdseq_persample_sc_comb)[ncol(sc_gep) + 1],"\n")}
       ##################################################################
       ##                          Run seurat                          ##
       ##################################################################
-      cat("Calling Seurat pipeline: per-sample-cell-type-specific ... \n")
+      if(verbose){cat("Calling Seurat pipeline: per-sample-cell-type-specific ... \n")}
       cdseq_synth_scRNA_seurat_persample <- Seurat::CreateSeuratObject(counts = cdseq_persample_sc_comb, project = "cdseq_synth_scRNAseq_per_sample")
       # filter cells
       cdseq_synth_scRNA_seurat_persample <- subset(cdseq_synth_scRNA_seurat_persample, subset = nCount_RNA > seurat_count_threshold,verbose = FALSE )#nFeature_RNA > 20 & nFeature_RNA < 2500)
@@ -356,7 +358,7 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
       # grep single cell id in seurat output
       scRNAseq_cell_gene_name <- cdseq_synth_scRNA_seurat_persample@assays$RNA@counts@Dimnames[[1]]
       scRNAseq_cell_id_seurat <- cdseq_synth_scRNA_seurat_persample@assays$RNA@counts@Dimnames[[2]]
-      cat("length(scRNAseq_cell_id_seurat) = ", length(scRNAseq_cell_id_seurat),"\n" )
+      if(verbose){cat("length(scRNAseq_cell_id_seurat) = ", length(scRNAseq_cell_id_seurat),"\n" )}
       
       # construct gold standard cluster label using sc_annotation
       scRNA_seurat_comm_cell <- intersection(list(scRNAseq_cell_id_seurat,sc_annotation$cell_id),order = 'stable')
@@ -378,9 +380,11 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
       cdseq_cell_seurat_cluster_id <- cdseq_synth_scRNA_seurat_persample@meta.data$seurat_clusters[cdseq_cell_idx]
       cdseq_cell_id <- scRNAseq_cell_id_seurat[cdseq_cell_idx]
       
-      cat("length(cdseq_cell_id) = ", length(cdseq_cell_id),
-          " length(cdseq_gep_sample_specific_mat_sample_ids) = ",length(cdseq_gep_sample_specific_mat_sample_ids),
-          " length(cdseq_cell_seurat_cluster_id) = ",length(cdseq_cell_seurat_cluster_id),"\n")
+      if(verbose){
+        cat("length(cdseq_cell_id) = ", length(cdseq_cell_id),
+            " length(cdseq_gep_sample_specific_mat_sample_ids) = ",length(cdseq_gep_sample_specific_mat_sample_ids),
+            " length(cdseq_cell_seurat_cluster_id) = ",length(cdseq_cell_seurat_cluster_id),"\n")
+      }
       
       CDSeq_cell_type_assignment_df_persample <- data.frame(cdseq_cell_id = cdseq_cell_id, 
                                                             #sample_id = cdseq_gep_sample_specific_mat_sample_ids, 
@@ -419,7 +423,7 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
   ##                             UMAP                             ##
   ##################################################################
   if(plot_umap){
-    cat("Running UMAP: plot synthetic CDSeq-scRNAseq ... \n")
+    if(verbose){cat("Running UMAP: plot synthetic CDSeq-scRNAseq ... \n")}
     #################################################################
     ##                plot synthetic CDSeq-scRNAseq                ##
     #################################################################
@@ -470,7 +474,7 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
     
     if(fig_save){
       fig_tmp_name <- paste0(fig_path,fig_name,"_umap_",gsub("-|\\s|:","_",Sys.time()),".",fig_format)
-      cat("save umap at ",fig_tmp_name ,"...\n")
+      if(verbose){cat("save umap at ",fig_tmp_name ,"...\n")}
       ggsave(filename = fig_tmp_name,#paste0(fig_path,fig_name,"_umap.",fig_format),
              plot = cdseq_scRNA_umap,
              width = 25,
@@ -483,7 +487,7 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
     ##################################################################
     if(plot_per_sample){
       warning("plot_per_sample option is not working properly. I'm working on it.")
-      cat("Running UMAP: plot CDSeq-estimated cell-type-specific gep per sample ... \n")
+      if(verbose){cat("Running UMAP: plot CDSeq-estimated cell-type-specific gep per sample ... \n")}
       
       cdseq_synth_scRNA_seurat_persample <- Seurat::RunUMAP(cdseq_synth_scRNA_seurat_persample, dims = seurat_dims,verbose = FALSE)
       
@@ -506,12 +510,14 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
       CDSeq_idx <- grep("CDSeq",rownames(cdseq_sc_comb_umap))
       scRNA_idx <- umap_tot[-CDSeq_idx]
       
-      cat("length(CDSeq_idx) = ", length(CDSeq_idx), 
-          " length(scRNA_idx) = ", length(scRNA_idx),
-          " length(cell_sources) = ",length(cell_sources),
-          " length(cluster_label) = ",length(cluster_label),
-          " nrow(cdseq_sc_comb_umap) = ",nrow(cdseq_sc_comb_umap),
-          " ncol(cdseq_sc_comb_umap) = ",ncol(cdseq_sc_comb_umap),"\n")
+      if(verbose){
+        cat("length(CDSeq_idx) = ", length(CDSeq_idx), 
+            " length(scRNA_idx) = ", length(scRNA_idx),
+            " length(cell_sources) = ",length(cell_sources),
+            " length(cluster_label) = ",length(cluster_label),
+            " nrow(cdseq_sc_comb_umap) = ",nrow(cdseq_sc_comb_umap),
+            " ncol(cdseq_sc_comb_umap) = ",ncol(cdseq_sc_comb_umap),"\n")
+      }
       
       cell_sources[CDSeq_idx] <- "CDSeq"
       cell_sources[scRNA_idx] <- "scRNA"
@@ -519,8 +525,9 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
       #cell_sources <- factor(c(rep('scRNA',length(scRNA_idx)), rep('CDSeq',length(CDSeq_idx))), levels = c('scRNA','CDSeq'))
       cdseq_sc_comb_umap_per_sample_df <- data.frame(V1 = cdseq_sc_comb_umap[,1], V2 = cdseq_sc_comb_umap[,2], cell_sources= cell_sources , cluster_label = cluster_label)
       point_stroke <- c(rep(0,length(scRNA_idx)), rep(2,length(CDSeq_idx)))
-      
-      cat("nrow(cdseq_sc_comb_umap_per_sample_df) = ", nrow(cdseq_sc_comb_umap_per_sample_df), "length(point_stroke) = ", length(point_stroke),"...\n")
+      if(verbose){
+        cat("nrow(cdseq_sc_comb_umap_per_sample_df) = ", nrow(cdseq_sc_comb_umap_per_sample_df), "length(point_stroke) = ", length(point_stroke),"...\n")
+      }
       
       cdseq_scRNA_umap_per_sample<- ggplot(cdseq_sc_comb_umap_per_sample_df,aes(x=.data$V1, y=.data$V2, colour=as.factor(cell_sources), size=as.factor(cell_sources), shape=as.factor(cell_sources), fill=as.factor(cluster_label), stroke=point_stroke)) + 
         ggtitle(paste0('CDSeq estimated per-sample-cell-type-specific GEP and scRNAseq')) + 
@@ -538,7 +545,7 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
         guides(color = guide_legend(override.aes = list(size=5)), fill = guide_legend(override.aes = list(shape=21,size=5)))
       if(fig_save){
         fig_tmp_name <- paste0(fig_path,fig_name,"_umap_per_sample_cts_",gsub("-|\\s|:","_",Sys.time()),".",fig_format)
-        cat("save umap at ",fig_tmp_name ,"...\n")
+        if(verbose){cat("save umap at ",fig_tmp_name ,"...\n")}
         ggsave(filename = fig_tmp_name,#paste0(fig_path,fig_name,"_umap.",fig_format),
                plot = cdseq_scRNA_umap_per_sample,
                width = 25,
@@ -554,7 +561,7 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
   ##                             TSNE                             ##
   ##################################################################
   if(plot_tsne){
-    cat("Running TSNE: synthetic CDSeq-estimated cell types ... \n")
+    if(verbose){cat("Running TSNE: synthetic CDSeq-estimated cell types ... \n")}
     cdseq_synth_scRNA_seurat <- Seurat::RunTSNE(cdseq_synth_scRNA_seurat, dims = seurat_dims, check_duplicates = FALSE, verbose = FALSE)
     
     # plot scRNAseq and cdseq estimates
@@ -600,7 +607,7 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
     
     if(fig_save){
       fig_tmp_name <- paste0(fig_path,fig_name,"_tsne_",gsub("-|\\s|:","_",Sys.time()),".",fig_format)
-      cat("save umap at ", fig_tmp_name ,"...\n")
+      if(verbose){cat("save umap at ", fig_tmp_name ,"...\n")}
       ggsave(filename = fig_tmp_name,#paste0(fig_path,fig_name,"_tsne.",fig_format),
              plot = cdseq_scRNA_tsne,
              width = 25,
@@ -614,7 +621,7 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
     ##################################################################
     if(plot_per_sample){
       warning("plot_per_sample option is not working properly. I'm working on it.")
-      cat("Running TSNE: per sample CDSeq-estimated cell types ... \n")
+      if(verbose){cat("Running TSNE: per sample CDSeq-estimated cell types ... \n")}
       cdseq_synth_scRNA_seurat_persample <- Seurat::RunTSNE(cdseq_synth_scRNA_seurat_persample, dims = seurat_dims, check_duplicates = FALSE,verbose = FALSE)
       
       # plot scRNAseq and cdseq estimates
@@ -660,7 +667,7 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
       
       if(fig_save){
         fig_tmp_name <- paste0(fig_path,fig_name,"_tsne_per_sample_cts_",gsub("-|\\s|:","_",Sys.time()),".",fig_format)
-        cat("save umap at ", fig_tmp_name ,"...\n")
+        if(verbose){cat("save umap at ", fig_tmp_name ,"...\n")}
         ggsave(filename = fig_tmp_name,#paste0(fig_path,fig_name,"_tsne.",fig_format),
                plot = cdseq_scRNA_tsne_persample,
                width = 25,

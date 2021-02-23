@@ -34,7 +34,8 @@ cellTypeAssignSCRNA(
   fig_path = getwd(),
   fig_name = "cellTypeAssignSCRNA",
   fig_format = "pdf",
-  fig_dpi = 300
+  fig_dpi = 300,
+  verbose = FALSE
 )
 }
 \arguments{
@@ -97,6 +98,8 @@ cellTypeAssignSCRNA(
 \item{fig_format}{"pdf", "jpeg", or "png".}
 
 \item{fig_dpi}{figure dpi}
+
+\item{verbose}{if TRUE, some calculation information will be print.}
 }
 \value{
 cellTypeAssignSCRNA returns a list containing following fields: 
