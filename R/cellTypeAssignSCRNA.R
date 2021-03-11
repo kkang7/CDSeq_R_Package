@@ -39,13 +39,15 @@
 #' @param fig_dpi figure dpi
 #' @param verbose if TRUE, some calculation information will be print.
 #' @importFrom grDevices rainbow
-#' @importFrom stats rmultinom rnbinom
+#' @importFrom stats rmultinom rnbinom var
 #' @importFrom Seurat CreateSeuratObject NormalizeData FindVariableFeatures ScaleData FindNeighbors FindClusters FindAllMarkers RunUMAP RunTSNE RunPCA 
 #' @importFrom ggplot2 guide_legend guides aes scale_size_manual scale_shape_manual scale_fill_manual xlab ylab theme ggsave ggplot ggtitle geom_point element_text scale_colour_manual 
 #' @importFrom dplyr top_n group_by 
+#' @importFrom pheatmap pheatmap
 #' @importFrom magrittr %>%
 #' @importFrom rlang .data
 #' @importFrom Matrix colSums
+#' @importFrom harmony RunHarmony
 #' @export
 #' @return cellTypeAssignSCRNA returns a list containing following fields: 
 #' fig_path: same as the input fig_path
@@ -326,7 +328,7 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
   if(!is.null(sc_gep) && is.null(nb_mu) && is.null(nb_size)){
     #nb_mu <- max(Matrix::colSums(sc_gep)); nb_size <- nb_mu^2
     nb_mu <- mean(Matrix::colSums(sc_gep))# mean
-    nb_size <- nb_mu^2/( var(Matrix::colSums(sc_gep)) - nb_mu) # dispersion
+    nb_size <- nb_mu^2/( stats::var(Matrix::colSums(sc_gep)) - nb_mu) # dispersion
   }
   
   if(is.null(sc_gep) && is.null(nb_mu) && is.null(nb_size)){

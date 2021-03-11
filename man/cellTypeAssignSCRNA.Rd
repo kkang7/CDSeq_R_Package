@@ -10,15 +10,22 @@ cellTypeAssignSCRNA(
   cdseq_gep_sample_specific = NULL,
   sc_gep = NULL,
   sc_annotation = NULL,
+  sc_batch = NULL,
+  batch_correction = 1,
+  harmony_iter = 10,
+  harmony_cluster = 20,
   nb_size = NULL,
   nb_mu = NULL,
-  seurat_count_threshold = 100,
+  corr_threshold = 0,
+  breaksList = seq(0, 1, 0.01),
+  pseudo_cell_count = 1,
+  seurat_count_threshold = 0,
   seurat_scale_factor = 10000,
   seurat_norm_method = "LogNormalize",
   seurat_select_method = "vst",
-  seurat_nfeatures = 100,
-  seurat_npcs = 50,
-  seurat_dims = 1:10,
+  seurat_nfeatures = 1000,
+  seurat_npcs = 30,
+  seurat_dims = 1:30,
   seurat_reduction = "pca",
   seurat_resolution = 0.8,
   seurat_find_marker = FALSE,
@@ -32,10 +39,11 @@ cellTypeAssignSCRNA(
   plot_per_sample = 0,
   fig_save = 0,
   fig_path = getwd(),
-  fig_name = "cellTypeAssignSCRNA",
-  fig_format = "pdf",
-  fig_dpi = 300,
-  verbose = FALSE
+  fig_name = "CDSeqCellTypeAssignSCRNA",
+  fig_format = "jpeg",
+  fig_dpi = 100,
+  corr_heatmap_fontsize = 10,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -49,9 +57,23 @@ cellTypeAssignSCRNA(
 
 \item{sc_annotation}{a dataframe contains two columns "cell_id"  and "cell_type". cell_id needs to match with the cell_id in sc_gep but not required to have the same size. cell_type is the cell type annotation for the single cells.}
 
+\item{sc_batch}{a vector contains batch information of single cell data, i.e. sc_gep, and length(sc_batch) = ncol(sc_gep).}
+
+\item{batch_correction}{perform Harmony batch correction if it is 1.}
+
+\item{harmony_iter}{Maximum number of rounds to run Harmony. One round of Harmony involves one clustering and one correction step.}
+
+\item{harmony_cluster}{Maximum number of rounds to run clustering at each round of Harmony.}
+
 \item{nb_size}{size parameter for negative binomial distribution, check rnbinom for details.}
 
 \item{nb_mu}{mu parameter for negative binomial distribution, check rnbinom for details.}
+
+\item{corr_threshold}{if the correlation between CDSeq-estimated GEPs and the scRNAseq GEP is below this value, then it is considered the two cell types are not matching.}
+
+\item{breaksList}{parameter for pheatmap controling the color scale. See pheatmap function for details.}
+
+\item{pseudo_cell_count}{an integer indicating how many pseudo cells will be generated from CDSeq-estimated cell-type-specific gene expression profiles. Default values is 1.}
 
 \item{seurat_count_threshold}{this parameter will be passed to Seurat subset function (subset = nCount_RNA > seurat_count_threshold) for filtering out single cells whose total counts is less this threshold.}
 
@@ -99,6 +121,8 @@ cellTypeAssignSCRNA(
 
 \item{fig_dpi}{figure dpi}
 
+\item{corr_heatmap_fontsize}{font size of the correlation heatmap between scRNAseq GEP and CDSeq-estimated GEPs.}
+
 \item{verbose}{if TRUE, some calculation information will be print.}
 }
 \value{
@@ -129,7 +153,11 @@ seurat_top_markers: Top seurat_top_n_markers DE genes for each Seurat cluster.
 
 CDSeq_cell_type_assignment_df: cell type assignment for CDSeq-estimated cell types.
 
-cdseq_prop_merged: CDSeq-estimated cell type proportions with cell type annotations.
+CDSeq_cell_type_assignment_confidence: cell type assignment confidence matrix, only available when pseudo_cell_count > 1.
+
+CDSeq_cell_type_assignment_df_all: cell type assignment for CDSeq-estimated cell types, only available when pseudo_cell_count > 1.
+
+cdseq_prop_merged: CDSeq-estimated cell type proportions with cell type annotations (annotated using clustering with scRNAseq).
 
 cdseq_gep_sample_specific_merged: sample-specific cell-type read counts. It is a 3d array with dimensions: gene, sample, cell type. 
 
@@ -138,6 +166,12 @@ input_list: values for input parameters
 cdseq_sc_comb_umap_df: dataframe for umap plot
 
 cdseq_sc_comb_tsne_df: dataframe for tsne plot
+
+cdseq_prop_merged_byCorr: CDSeq-estimated cell type proportions with cell type annotations (annotated using correlation with scRNAseq).
+
+cdseq_gep_merged_byCorr: CDSeq-estimated cell-type-specific GEPs with cell type annotations (annotated using correlation with scRNAseq).
+
+cdseq_annotation_byCorr: CDSeq-estimated cell type annotations (annotated using correlation with scRNAseq)
 }
 \description{
 \code{cellTypeAssignSCRNA} assigns CDSeq-identified cell types using single cell RNAseq data.
