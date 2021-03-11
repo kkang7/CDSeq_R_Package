@@ -6,3 +6,8 @@ src/*.o
 src/*.so
 src/*.dll
 inst/doc
+# RStudio files
+.Rproj.user/
+# knitr and R markdown default cache directories
+*_cache/
+/cache/
