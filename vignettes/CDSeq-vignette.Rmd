@@ -414,4 +414,30 @@ ggarrange(pbmc_ggplot[[1]],
           nrow = 4, ncol = 1)
 ```
 
+# Annotate CDSeq-estimated cell types using scRNASeq: A second example {#scAnnotate_brain}
+In this example, we demonstrate three ways of annotating CDSeq-identified cell types:
+1. compare with scRNAseq using correlation (requires scRNAseq with cell type annotation from same tissue)
+2. compare with scRNAseq using clustering (requires scRNAseq with cell type annotation from same tissue)
+3. examing marker genes of CDSeq-identified cell types (do NOT require any external data)
+
+First, load the data.
+```{r load brain data, echo=TRUE, eval=TRUE}
+load("~/Dropbox/Public/MIT/CDSeq_R_package/BMC_Bioinformatics_R1/resutls/result_celltype2to20_RR800_10_dilu1_mcmc1000_ad.Rdata")
+load("~/Dropbox/Public/MIT/CDSeq_R_package/BMC_Bioinformatics_R1/resutls/train_test_ann_ad.Rdata")
+load("~/Dropbox/Public/MIT/CDSeq_R_package/BMC_Bioinformatics_R1/resutls/readyData_ad.Rdata")
+```
+
+
+## When single cell data is available 
+
+```{r}
+
+```
+
+
+### Using correlation for cell type annotation
+
+### Using clustering for cell type annotation
+
+## When single data is NOT available
 
