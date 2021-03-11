@@ -1,7 +1,0 @@
-CDSeq="/home/kai/R/x86_64-pc-linux-gnu-library/3.6/CDSeq"
-datasets="/usr/lib/R/library/datasets"
-grDevices="/usr/lib/R/library/grDevices"
-graphics="/usr/lib/R/library/graphics"
-methods="/usr/lib/R/library/methods"
-stats="/usr/lib/R/library/stats"
-utils="/usr/lib/R/library/utils"
