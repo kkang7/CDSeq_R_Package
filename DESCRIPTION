@@ -3,8 +3,8 @@ Type: Package
 Title: A Complete Deconvolution Method using Sequencing Data
 Depends: R (>= 3.6.0)
 biocViews:
-Version: 1.0.8
-Date: 2021-01-29
+Version: 1.0.9
+Date: 2021-03-12
 Authors@R: c(person("Kai", "Kang", email = "kangkai0714@gmail.com", role = c("aut", "cre","cph")),
              person("Caizhi", "Huang", email = "chuang19@ncsu.edu", role = "aut"),
              person("Qian","Meng", role="ctb"), 
@@ -17,27 +17,31 @@ Authors@R: c(person("Kai", "Kang", email = "kangkai0714@gmail.com", role = c("au
 Maintainer: Kai Kang <kangkai0714@gmail.com>
 Description: Estimate cell-type-specific gene expression profiles and sample-specific cell-type proportions simultaneously using bulk sequencing data. Kang et al. (2019) <doi:10.1371/journal.pcbi.1007510>. 
 License: GPL-3
-Imports: Rcpp (>= 1.0.3), 
-         MASS, 
-         foreach, 
-         doParallel, 
-         dirmult, 
-         RcppThread,
-         iterators,
-         parallel,
-         qlcMatrix,
-         gplots,
-         grDevices,
-         clue,
-         Biobase,
-         Seurat,
-         ggplot2,
-         magrittr,
-         dplyr,
-         rlang,
-         Matrix,
-         matrixStats,
-         ggpubr
+Imports: 
+    Rcpp (>= 1.0.3),
+    MASS,
+    foreach,
+    doParallel,
+    dirmult,
+    RcppThread,
+    iterators,
+    parallel,
+    qlcMatrix,
+    gplots,
+    grDevices,
+    clue,
+    Biobase,
+    Seurat,
+    ggplot2,
+    magrittr,
+    dplyr,
+    rlang,
+    Matrix,
+    matrixStats,
+    ggpubr,
+    pheatmap,
+    harmony
+Remotes: github::immunogenomics/harmony
 LinkingTo: Rcpp, 
            RcppArmadillo, 
 Encoding: UTF-8
