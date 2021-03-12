@@ -1,3 +1,6 @@
+# CDSeq 1.0.9
+Added more features in cellTypeAssignSCRNA function.
+
 # CDSeq 1.0.8
 Bug fix. Add vignette.
 
