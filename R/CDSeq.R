@@ -423,10 +423,11 @@ CDSeq <- function( bulk_data,
       rownames(CDSeq_result$estProp)<-cell_types
       colnames(CDSeq_result$estProp)<-sample_names
       
-      dimnames(CDSeq_result$cellTypeAssignSplit)[[1]] <- gene_names
-      dimnames(CDSeq_result$cellTypeAssignSplit)[[2]] <- sample_names
-      dimnames(CDSeq_result$cellTypeAssignSplit)[[3]] <- cell_types
-      
+      if(block_number==1){
+        dimnames(CDSeq_result$cellTypeAssignSplit)[[1]] <- gene_names
+        dimnames(CDSeq_result$cellTypeAssignSplit)[[2]] <- sample_names
+        dimnames(CDSeq_result$cellTypeAssignSplit)[[3]] <- cell_types
+      }
     }else{
       refcol<-ncol(reference_gep)
       if(is.null(cell_types)){cell_types<-paste("ref_cell_type",1:refcol,sep = "_")}
@@ -571,9 +572,11 @@ CDSeq <- function( bulk_data,
         rownames(averestprop)<-cell_types
         colnames(averestprop)<-sample_names
         
-        dimnames(cellTypeAssignSplit)[[1]] <- gene_names
-        dimnames(cellTypeAssignSplit)[[2]] <- sample_names
-        dimnames(cellTypeAssignSplit)[[3]] <- cell_types
+        if(block_number==1){
+          dimnames(cellTypeAssignSplit)[[1]] <- gene_names
+          dimnames(cellTypeAssignSplit)[[2]] <- sample_names
+          dimnames(cellTypeAssignSplit)[[3]] <- cell_types
+        }
         
         CDseq_all[[j]]<-list(estProp=averestprop,estGEP=estGEP,lgpst=mlgpst, cell_type_assignment = celltype_assignment, cellTypeAssignSplit = cellTypeAssignSplit)
       }
