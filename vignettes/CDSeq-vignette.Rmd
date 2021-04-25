@@ -1,7 +1,6 @@
 ---
 title: "CDSeq: a complete deconvolution method using sequencing data"
-#output: rmarkdown::html_vignette
-output: pdf_document
+output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{CDSeq: a complete deconvolution method using sequencing data}
   %\VignetteEngine{knitr::rmarkdown}
