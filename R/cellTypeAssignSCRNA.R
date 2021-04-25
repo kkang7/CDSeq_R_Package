@@ -42,9 +42,8 @@
 #' @importFrom stats rmultinom rnbinom var
 #' @importFrom Seurat CreateSeuratObject NormalizeData FindVariableFeatures ScaleData FindNeighbors FindClusters FindAllMarkers RunUMAP RunTSNE RunPCA 
 #' @importFrom ggplot2 guide_legend guides aes scale_size_manual scale_shape_manual scale_fill_manual xlab ylab theme ggsave ggplot ggtitle geom_point element_text scale_colour_manual 
-#' @importFrom dplyr top_n group_by 
+#' @importFrom dplyr top_n group_by %>%
 #' @importFrom pheatmap pheatmap
-#' @importFrom magrittr %>%
 #' @importFrom rlang .data
 #' @importFrom Matrix colSums
 #' @importFrom harmony RunHarmony

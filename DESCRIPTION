@@ -26,11 +26,7 @@ Imports:
     RcppThread,
     iterators,
     parallel,
-    qlcMatrix,
-    gplots,
     grDevices,
-    clue,
-    Biobase,
     Seurat,
     ggplot2,
     magrittr,
@@ -48,6 +44,10 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
 Suggests: 
+    gplots,
+    clue,
+    Biobase,
+    qlcMatrix,
     knitr,
     rmarkdown,
     testthat (>= 3.0.0)
