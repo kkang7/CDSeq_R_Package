@@ -42,7 +42,7 @@
 #' @importFrom stats rmultinom rnbinom var
 #' @importFrom Seurat CreateSeuratObject NormalizeData FindVariableFeatures ScaleData FindNeighbors FindClusters FindAllMarkers RunUMAP RunTSNE RunPCA 
 #' @importFrom ggplot2 guide_legend guides aes scale_size_manual scale_shape_manual scale_fill_manual xlab ylab theme ggsave ggplot ggtitle geom_point element_text scale_colour_manual 
-#' @importFrom dplyr top_n group_by %>%
+#' @importFrom dplyr slice_max group_by %>%
 #' @importFrom pheatmap pheatmap
 #' @importFrom rlang .data
 #' @importFrom Matrix colSums
@@ -315,7 +315,7 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
   ##                 and combine with scRNAseq data                ##
   ###################################################################
   # declare variable to avoid R CMD check notes for no visible binding for global variable
-  avg_logFC <- cluster <- nCount_RNA <- NULL
+  avg_log2FC <- cluster <- nCount_RNA <- NULL
   
   if(verbose){cat("generating synthetic scRNAseq data using CDSeq estimated GEPs ...\n")}
   # generate synthetic scRNAseq 
@@ -397,8 +397,9 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
   if(seurat_find_marker){
     if(verbose){cat("Finding markers for clusters...\n")}
     cdseq_synth_scRNA_seurat_markers <- Seurat::FindAllMarkers(cdseq_synth_scRNA_seurat, logfc.threshold = seurat_DE_logfc, test.use = seurat_DE_test,verbose = FALSE)
-    #cdseq_synth_scRNA_seurat_markers %>% dplyr::group_by(cluster) %>% dplyr::top_n(n = 2, wt = avg_logFC)
-    seurat_top_markers <- cdseq_synth_scRNA_seurat_markers %>% dplyr::group_by(cluster) %>% dplyr::top_n(n = seurat_top_n_markers, wt = avg_logFC)
+    #cdseq_synth_scRNA_seurat_markers %>% dplyr::group_by(cluster) %>% dplyr::top_n(n = 2, wt = avg_log2FC)
+    #seurat_top_markers <- cdseq_synth_scRNA_seurat_markers %>% dplyr::group_by(cluster) %>% dplyr::top_n(n = seurat_top_n_markers, wt = avg_log2FC)
+    seurat_top_markers <- cdseq_synth_scRNA_seurat_markers %>% dplyr::group_by(cluster) %>% dplyr::slice_max(n = seurat_top_n_markers, order_by = avg_log2FC)
   }else{
     cdseq_synth_scRNA_seurat_markers <- NULL
     seurat_top_markers <- NULL
@@ -535,7 +536,8 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
     }
     
     if(seurat_find_marker){
-      seurat_top_markers_df <- cdseq_synth_scRNA_seurat_markers_df %>% dplyr::group_by(cluster) %>% dplyr::top_n(n = seurat_top_n_markers, wt = avg_logFC)
+      #seurat_top_markers_df <- cdseq_synth_scRNA_seurat_markers_df %>% dplyr::group_by(cluster) %>% dplyr::top_n(n = seurat_top_n_markers, wt = avg_log2FC)
+      seurat_top_markers_df <- cdseq_synth_scRNA_seurat_markers_df %>% dplyr::group_by(cluster) %>% dplyr::slice_max(n = seurat_top_n_markers, order_by = avg_log2FC)
     }else{
       seurat_top_markers_df <- NULL
     }
