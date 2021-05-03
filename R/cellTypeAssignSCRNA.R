@@ -293,14 +293,16 @@ cellTypeAssignSCRNA <- function(cdseq_gep = NULL,
     colnames(cdseq_gep_merged_byCorr) <- paste0("CDSeq_",colnames(cdseq_gep_merged_byCorr))
     
     #breaksList <- seq(0,1,0.01)
-    pheatmap(cor(cdseq_gep_merged_byCorr, sc_merge),
-             fontsize = corr_heatmap_fontsize,
-             cluster_rows = FALSE,
-             cluster_cols = FALSE,
-             breaks = breaksList,
-             filename = file.path(fig_path,fig_name_corr) )
-    if(verbose){cat("Heatmap of correlation between CDSeq-estimated GEP and scRNAseq GEP is saved to ", file.path(fig_path,fig_name_corr),"\n")}
-    
+    if(fig_save){
+      pheatmap(cor(cdseq_gep_merged_byCorr, sc_merge),
+               fontsize = corr_heatmap_fontsize,
+               cluster_rows = FALSE,
+               cluster_cols = FALSE,
+               breaks = breaksList,
+               filename = file.path(fig_path,fig_name_corr) )
+      
+      if(verbose){cat("Heatmap of correlation between CDSeq-estimated GEP and scRNAseq GEP is saved to ", file.path(fig_path,fig_name_corr),"\n")}
+    }
     #======================= merge proportion ====================
     cdseq_prop_tmp <- cdseq_prop
     rownames(cdseq_prop_tmp) <- cdseq_annotation_byCorr

@@ -69,6 +69,17 @@ You could install CDSeq from Github by running the following
 install_github("kkang7/CDSeq_R_Package")
 ```
 
+# Setting recommendations
+We provide recommendations for parameter settings. Note that these recommendations are merely emperical and there is no theoretical justifications yet. User is encouraged to tune the parameters based on specific applications and domain knowledges. 
+
+Parameters      Recommended setting
+--------------- ----------------------
+beta            0.5
+alpha           5
+mcmc_iteration   700-2000
+dilution_factor   2-10
+gene_subset_size  200-500
+block_number      >5
 
 
 # Examples
