@@ -227,6 +227,43 @@
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">install_github</span><span class="op">(</span><span class="st">"kkang7/CDSeq_R_Package"</span><span class="op">)</span></code></pre></div>
 </div>
+<div id="setting-recommendations" class="section level1">
+<h1 class="hasAnchor">
+<a href="#setting-recommendations" class="anchor"></a>Setting recommendations</h1>
+<p>We provide recommendations for parameter settings. Note that these recommendations are merely emperical and there is no theoretical justifications yet. User is encouraged to tune the parameters based on specific applications and domain knowledges.</p>
+<table class="table">
+<thead><tr class="header">
+<th align="left">Parameters</th>
+<th align="left">Recommended setting</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">beta</td>
+<td align="left">0.5</td>
+</tr>
+<tr class="even">
+<td align="left">alpha</td>
+<td align="left">5</td>
+</tr>
+<tr class="odd">
+<td align="left">mcmc_iteration</td>
+<td align="left">700-2000</td>
+</tr>
+<tr class="even">
+<td align="left">dilution_factor</td>
+<td align="left">2-10</td>
+</tr>
+<tr class="odd">
+<td align="left">gene_subset_size</td>
+<td align="left">200-500</td>
+</tr>
+<tr class="even">
+<td align="left">block_number</td>
+<td align="left">&gt;5</td>
+</tr>
+</tbody>
+</table>
+</div>
 <div id="examples" class="section level1">
 <h1 class="hasAnchor">
 <a href="#examples" class="anchor"></a>Examples</h1>
