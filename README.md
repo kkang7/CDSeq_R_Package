@@ -122,6 +122,22 @@ cdseq.result.celltypeassign <- cellTypeAssignSCRNA(cdseq_gep = cdseq.result$estG
                                                    plot_tsne = 0)
 ```
 
+## Setting recommendations
+
+We provide recommendations for parameter settings. Note that these
+recommendations are merely emperical and there is no theoretical
+justifications yet. User can tune the parameters based on specific
+applications and domain knowledges.
+
+| Parameters         | Recommended setting |
+| :----------------- | :------------------ |
+| beta               | 0.5                 |
+| alpha              | 5                   |
+| mcmc\_iteration    | 700-2000            |
+| dilution\_factor   | 2-10                |
+| gene\_subset\_size | 200-500             |
+| block\_number      | \>5                 |
+
 Check vignette for more details and examples:
 *browseVignettes(“CDSeq”)*.
 
