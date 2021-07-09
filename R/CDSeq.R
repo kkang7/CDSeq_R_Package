@@ -117,22 +117,25 @@ CDSeq <- function( bulk_data,
   if(is.null(beta)){
     if(is.null(reference_gep)){stop("Please provide a value for beta. beta can be a scalar or a vector of length equals to the number of genes. Alternatively, provide a reference_gep if beta is null.")}}
   else{
-    if(!is.numeric(beta) | is.matrix(beta) | is.data.frame(beta) ){stop("beta has to be a real number or a vector of real numbers.")}
+    if(!is.numeric(beta) | !is.matrix(beta) | is.data.frame(beta) ){stop("beta has to be a real number or a vector/matrix of real numbers.")}
     #if(length(cell_type_number)>1 & is.null(beta)){stop("cell_type_number should be a scalar if beta is Null")}
-    if(length(beta)>1 & block_number==1 & length(beta)!=nrow(bulk_data)){stop("Length of beta should be equal to total number of genes if beta is a vector")}
-    if(length(beta)>1 & block_number>1 & !is.null(gene_subset_size)){ if(length(beta)!=gene_subset_size) stop("When block_number is greater than 1, beta should be either a scalar or a vector of length gene_subset_size.")}
-    if(length(beta)==1){
-      if(block_number>1){
-        beta <- rep(beta,gene_subset_size)
-      }else if(block_number==1){
-        if(!is.null(gene_subset_size)){
-          if(gene_subset_size<=nrow(bulk_data)) { beta <- rep(beta,gene_subset_size) }
-        }else{
-          beta <- rep(beta,nrow(bulk_data))
-        }
-      }else{stop("block_number has to be a positive integer.")}
-      
-    } # Gibbs sampler requires beta to be a vector for computation
+    if(!is.matrix(beta)){
+      if(length(beta)>1 & block_number==1 & length(beta)!=nrow(bulk_data)){stop("Length of beta should be equal to total number of genes if beta is a vector")}
+      if(length(beta)>1 & block_number>1 & !is.null(gene_subset_size)){ if(length(beta)!=gene_subset_size) stop("When block_number is greater than 1, beta should be either a scalar or a vector of length gene_subset_size.")}
+      if(length(beta)==1){
+        if(block_number>1){
+          beta <- rep(beta,gene_subset_size)
+        }else if(block_number==1){
+          if(!is.null(gene_subset_size)){
+            if(gene_subset_size<=nrow(bulk_data)) { beta <- rep(beta,gene_subset_size) }
+          }else{
+            beta <- rep(beta,nrow(bulk_data))
+          }
+        }else{stop("block_number has to be a positive integer.")}
+        
+      }
+    }
+    # Gibbs sampler requires beta to be a vector for computation
   }
   
   #check alpha
@@ -324,7 +327,7 @@ CDSeq <- function( bulk_data,
           
           #estimated proportions and GEPs using bulk_data blocks
           estProp<-t(t(estSSp_mat+alpha)/colSums(estSSp_mat+alpha))  #cell_type by sample_size
-          estGEP_read<-t(t(estGEP_mat+beta)/colSums(estGEP_mat+beta))#gene by cell_type
+          estGEP_read<-t(t(estGEP_mat+ t(beta))/colSums(estGEP_mat+ t(beta)))#gene by cell_type
           
           if(block_number==1){
             if(gl==1){estGEP<-read2gene(estGEP_read,gene_length)}else{estGEP<-estGEP_read} # read to gene
@@ -481,7 +484,7 @@ CDSeq <- function( bulk_data,
       
       #estimated proportions and GEPs on reduced data set
       estProp<-t(t(estSSp_mat+alpha)/colSums(estSSp_mat+alpha))#  cell_type by sample_size
-      estGEP_read<-t(t(estGEP_mat+beta)/colSums(estGEP_mat+beta))# gene by cell_type
+      estGEP_read<-t(t(estGEP_mat+ t(beta))/colSums(estGEP_mat+ t(beta)))# gene by cell_type
       
       #calculate logposterior 
       lgpst<-logpost(estProp, estGEP_read, bulk_data_blocks[[i]], alpha ,beta)

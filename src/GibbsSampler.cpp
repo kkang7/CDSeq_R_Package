@@ -30,8 +30,8 @@ using namespace Rcpp;
 //' @param verbose if greater than or euqal to 1, then print working progress in console, otherwise do not print in console.
 //' @return random integers  uniformly distributed in 0..(2^32 - 1).
 // [[Rcpp::export]]
-List gibbsSampler(double ALPHA, std::vector<double> BETA, NumericMatrix mixtureSamples, int T, int NN, int OUTPUT, int processID, int data_block_idx, std::string CDSeq_tmp_log, int write_2_file, int verbose)
-{
+List gibbsSampler(double ALPHA, NumericMatrix BETA, NumericMatrix mixtureSamples, int T, int NN, int OUTPUT, int processID, int data_block_idx, std::string CDSeq_tmp_log, int write_2_file, int verbose)
+  {
   //clock_t start,finish; 
   //start=clock();
   /*
@@ -58,16 +58,19 @@ List gibbsSampler(double ALPHA, std::vector<double> BETA, NumericMatrix mixtureS
   vector<double> probs(T);
   vector<unsigned int> order(n), cellTypeBag(n);// unsigned int for saving space
   
+  vector<double> WBETA(T);
+  
   // this matrix stores reads-cell-type-assignment for each sample
   // use RcppArmadillo cube data structure as 3D matrix container
   arma::cube cellTypeAssignSplit(genes,samples,T);
   cellTypeAssignSplit.fill(0);// initialize with zeros
   
   int wi,di,i,ii,j,cellType, rp, iter, wioffset, dioffset;
-  double totprob, WBETA, r, max;
+  double totprob, r, max;
   ofstream logfile (CDSeq_tmp_log, std::ios_base::app);
   auto time_now = std::chrono::system_clock::now();
   std::time_t cdseq_time = std::chrono::system_clock::to_time_t(time_now);
+  
   // seeding
   int SEED = 3;
   seedMT( 1 + SEED * 2 ); // seeding only works on uneven numbers
@@ -83,9 +86,11 @@ List gibbsSampler(double ALPHA, std::vector<double> BETA, NumericMatrix mixtureS
       SSP_vec[di*T + cellType]++;
       cellTypeTot[cellType]++; // increment cellTypeTot matrix
       cellTypeAssignSplit(wi,di,cellType)++;
+      order[i]=i;
     }
-  for (i = 0; i < n; i ++) order[i]=i; // fill with increasing series
+  //for (i = 0; i < n; i ++) order[i]=i; // fill with increasing series
   
+  // Fisher-Yates Shuffle Algorithm
   for (i = 0; i < (n-1); i ++) {
     // pick a random integer between i and nw
     rp = i + (int) ((double) (n-i) * (double) randomMT() / (double) (4294967296.0 + 1.0));
@@ -93,8 +98,14 @@ List gibbsSampler(double ALPHA, std::vector<double> BETA, NumericMatrix mixtureS
     // switch contents on position i and position rp
     swap(order[rp], order[i]);
   }
+
+  //WBETA = (double) (accumulate(BETA.begin(), BETA.end(), 0));
   
-  WBETA = (double) (accumulate(BETA.begin(), BETA.end(), 0));
+  for(i=0; i<T; i++){
+    NumericVector x = BETA( i, _ ); //copy the i th row
+    WBETA[i] = (double) (accumulate(x.begin(), x.end(), 0));
+  }
+  
   for (iter = 0; iter <= NN; iter ++) 
   {
     Rcpp::checkUserInterrupt();
@@ -130,7 +141,7 @@ List gibbsSampler(double ALPHA, std::vector<double> BETA, NumericMatrix mixtureS
       
       totprob = (double) 0;
       for (j = 0; j < T; j++) {
-        probs[j] = ((double) csGEP_vec[wioffset + j] + (double) BETA[wi])/( (double) cellTypeTot[j]+ (double) WBETA)*( (double) SSP_vec[dioffset+ j] + (double) ALPHA);
+        probs[j] = ((double) csGEP_vec[wioffset + j] + (double) BETA(j,wi))/( (double) cellTypeTot[j]+ (double) WBETA[j])*( (double) SSP_vec[dioffset+ j] + (double) ALPHA);
         totprob += probs[j];
       }
       // sample a cell type from the distribution
