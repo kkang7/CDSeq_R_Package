@@ -37,7 +37,7 @@ Imports:
     ggpubr,
     pheatmap,
     harmony
-Remotes: github::immunogenomics/harmony
+Remotes: github::PelzKo/harmony
 LinkingTo: Rcpp, 
            RcppArmadillo, 
 Encoding: UTF-8
