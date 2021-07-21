@@ -117,7 +117,7 @@ CDSeq <- function( bulk_data,
   if(is.null(beta)){
     if(is.null(reference_gep)){stop("Please provide a value for beta. beta can be a scalar or a vector of length equals to the number of genes. Alternatively, provide a reference_gep if beta is null.")}}
   else{
-    if(!is.numeric(beta) | !is.matrix(beta) | is.data.frame(beta) ){stop("beta has to be a real number or a vector/matrix of real numbers.")}
+    if(!is.numeric(beta) | is.data.frame(beta) ){stop("beta has to be a real number or a vector/matrix of real numbers.")}
     #if(length(cell_type_number)>1 & is.null(beta)){stop("cell_type_number should be a scalar if beta is Null")}
     if(!is.matrix(beta)){
       if(length(beta)>1 & block_number==1 & length(beta)!=nrow(bulk_data)){stop("Length of beta should be equal to total number of genes if beta is a vector")}
@@ -135,7 +135,10 @@ CDSeq <- function( bulk_data,
         
       }
     }
-    # Gibbs sampler requires beta to be a vector for computation
+    # # Gibbs sampler requires beta to be a vector for computation
+    # if(is.null(dim(beta))){
+    #   beta = matrix(beta,nrow = cell_type_number,ncol = nrow(bulk_data))
+    # }
   }
   
   #check alpha
@@ -312,7 +315,12 @@ CDSeq <- function( bulk_data,
         
         allresult <- foreach(i=1:block_number, .inorder = FALSE) %dopar% {
           
-          if(!is.null(beta_est)){beta <- beta_est[i,]}
+          if(!is.null(beta_est)){beta <- beta_est[i,]}else{
+            # Gibbs sampler requires beta to be a vector for computation
+            if(is.null(dim(beta))){
+              beta = matrix(beta,nrow = cell_type_number,ncol = nrow(bulk_data))
+            }
+          }
 
           result <- gibbsSampler(alpha,beta,bulk_data_blocks[[i]],cell_type_number,mcmc_iterations, printout, Sys.getpid(), i, CDSeq_tmp_log, print_progress_msg_to_file, verbose_int)
           
@@ -329,6 +337,9 @@ CDSeq <- function( bulk_data,
           estProp<-t(t(estSSp_mat+alpha)/colSums(estSSp_mat+alpha))  #cell_type by sample_size
           estGEP_read<-t(t(estGEP_mat+ t(beta))/colSums(estGEP_mat+ t(beta)))#gene by cell_type
           
+          lgpst<-logpost(estProp, estGEP_read, bulk_data_blocks[[i]], alpha ,beta)
+          lglike <- loglikelihood(estProp, estGEP_read, bulk_data_blocks[[i]], alpha ,beta)
+          
           if(block_number==1){
             if(gl==1){estGEP<-read2gene(estGEP_read,gene_length)}else{estGEP<-estGEP_read} # read to gene
             if(ref==1){
@@ -344,7 +355,7 @@ CDSeq <- function( bulk_data,
               if(rawcount==1){estProp <- RNA2Cell(colSums(refGEPlist[[i]][,celltype_assignment]),estProp)}
               if(rpkm==1){estGEP <- gene2rpkm(estGEP,gene_length,refGEPlist[[i]][,celltype_assignment])}
             }
-            return(list(estProp = estProp, estGEP = estGEP, celltype_assignment = celltype_assignment,cellTypeAssignSplit = result$cellTypeAssignSplit, processID = Sys.getpid()))
+            return(list(estProp = estProp, estGEP = estGEP, lgpst = lgpst,lglike = lglike ,celltype_assignment = celltype_assignment,cellTypeAssignSplit = result$cellTypeAssignSplit, processID = Sys.getpid()))
           }else{
             #return(estProp)
             return(list(estProp = estProp, processID = Sys.getpid()))
@@ -399,6 +410,8 @@ CDSeq <- function( bulk_data,
     }else{#for block_number=1
       estProp <- allresult[[1]]$estProp
       estGEP <- allresult[[1]]$estGEP
+      lgpst <- allresult[[1]]$lgpst
+      lglike <- allresult[[1]]$lglike
       celltype_assignment<-allresult[[1]]$celltype_assignment
       cellTypeAssignSplit <- allresult[[1]]$cellTypeAssignSplit
       processIDs[1] <-allresult[[1]]$processID
@@ -416,7 +429,7 @@ CDSeq <- function( bulk_data,
                         reference_gep = reference_gep,
                         print_progress_msg_to_file = print_progress_msg_to_file)
     #Final output
-    CDSeq_result<-list(estProp=estProp,estGEP=estGEP,gibbsRunningTime = gibbsRunningTime, cell_type_assignment = celltype_assignment, cellTypeAssignSplit = cellTypeAssignSplit,processIDs = processIDs, parameters = parameters)
+    CDSeq_result<-list(estProp=estProp, estGEP=estGEP,logpost = lgpst,loglikelihood = lglike,gibbsRunningTime = gibbsRunningTime, cell_type_assignment = celltype_assignment, cellTypeAssignSplit = cellTypeAssignSplit,processIDs = processIDs, parameters = parameters)
     
     if(ref==0){
       cell_types<-paste("CDSeq_estimated_cell_type",1:cell_type_number,sep = "_")
@@ -470,6 +483,12 @@ CDSeq <- function( bulk_data,
       foreach(i=1:block_number, .combine = 'c') %dopar% {
       if(!is.null(beta_est)){beta <- beta_est[i,]}
       processIDs[j,i] <- Sys.getpid()
+      
+      # Gibbs sampler requires beta to be a vector for computation
+      if(is.null(dim(beta))){
+        beta = matrix(beta,nrow = cell_type_number[j],ncol = nrow(bulk_data))
+      }
+      
       result <- gibbsSampler(alpha,beta,bulk_data_blocks[[i]],cell_type_number[j],mcmc_iterations, printout, processIDs[j,i], i, CDSeq_tmp_log, print_progress_msg_to_file, verbose_int)
 
       #output two vectors. estGEP_vec is gene x cell type; estSSp_vec is sample x cell type
@@ -488,6 +507,8 @@ CDSeq <- function( bulk_data,
       
       #calculate logposterior 
       lgpst<-logpost(estProp, estGEP_read, bulk_data_blocks[[i]], alpha ,beta)
+      lglike <- loglikelihood(estProp, estGEP_read, bulk_data_blocks[[i]], alpha ,beta)
+      
       
       if ( block_number == 1){
         if ( gl==1 ){estGEP<-read2gene(estGEP_read,gene_length)}else{estGEP<-estGEP_read} # read to gene
@@ -504,7 +525,7 @@ CDSeq <- function( bulk_data,
           if(rpkm==1){estGEP <- gene2rpkm(estGEP,gene_length,refGEPlist[[i]][,celltype_assignment])}
         }
       }# save cellTypeAssignSplit only when block number is 1, since for block number greater than 1, cellTypeAssignSplit info is not useful. 
-      if(block_number>1){return(list(estProp,lgpst))}else{return(list(estProp,estGEP,lgpst,celltype_assignment, cellTypeAssignSplit))}
+      if(block_number>1){return(list(estProp,lgpst))}else{return(list(estProp,estGEP,lgpst,lglike,celltype_assignment, cellTypeAssignSplit))}
     }#foreach loop end
     
     #stop parallel

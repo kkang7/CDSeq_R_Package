@@ -14,8 +14,15 @@ logpost <- function(estProp, estGEP, mydata, alpha, beta){
   #if(class(alpha)!="numeric" || length(alpha)>1){stop("CDSeq: in function logpost, alpha is a positive scalar")}
   #if(class(beta)!="numeric" || length(beta)>1){stop("beta is a positive scalar")}
   if(class(alpha)!="numeric"){stop("CDSeq: in function logpost, alpha should be a numeric value")}
-  if(class(beta)!="numeric"){stop("CDSeq: in function logpost, beta should be a numeric value")}
+  if(class(beta)!="numeric" && !("matrix" %in% class(beta))){stop("CDSeq: in function logpost, beta should be a numeric value")}
   mu<-1e8
-  value <- sum(log(mu*estGEP)*(beta - 1)) + sum(log(estProp)*(alpha - 1)) + sum((log(mu*estGEP %*% estProp  )) * mydata)
+  delta <- 1e-15
+  value <- sum(log(mu* (estGEP+delta))*(t(beta) - 1)) + sum(log(estProp)*(alpha - 1)) + sum((log(mu*(estGEP+delta) %*% estProp  )) * mydata)
+  
+  # value <- sum(log(mu*estGEP)*(t(beta) - 1)) + sum(log(estProp)*(alpha - 1)) + sum((log(mu*estGEP %*% estProp  )) * mydata)
+  # if(is.infinite(value)){
+  #   value <- sum(log(mu* (estGEP+delta))*(t(beta) - 1)) + sum(log(estProp)*(alpha - 1)) + sum((log(mu*(estGEP+delta) %*% estProp  )) * mydata)
+  # }
+  
   return(value)
 }
