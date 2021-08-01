@@ -85,6 +85,7 @@ CDSeq <- function( bulk_data,
                    verbose = FALSE,
                    print_progress_msg_to_file = 0) {
 
+  cat("CDSeq - informative Beta testing \n")
   start_time <- Sys.time()
   ########################
   # check input arguments
