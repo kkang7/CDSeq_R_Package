@@ -433,7 +433,10 @@ CDSeq <- function( bulk_data,
     CDSeq_result<-list(estProp=estProp, estGEP=estGEP,logpost = lgpst,loglikelihood = lglike,gibbsRunningTime = gibbsRunningTime, cell_type_assignment = celltype_assignment, cellTypeAssignSplit = cellTypeAssignSplit,processIDs = processIDs, parameters = parameters)
     
     if(ref==0){
-      cell_types<-paste("CDSeq_estimated_cell_type",1:cell_type_number,sep = "_")
+      #cell_types<-paste("CDSeq_estimated_cell_type",1:cell_type_number,sep = "_")
+      
+      cell_types = rownames(beta)
+      
       rownames(CDSeq_result$estGEP)<-gene_names
       colnames(CDSeq_result$estGEP)<-cell_types
       
