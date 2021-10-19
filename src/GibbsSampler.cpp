@@ -30,7 +30,7 @@ using namespace Rcpp;
 //' @param verbose if greater than or euqal to 1, then print working progress in console, otherwise do not print in console.
 //' @return random integers  uniformly distributed in 0..(2^32 - 1).
 // [[Rcpp::export]]
-List gibbsSampler(double ALPHA, NumericMatrix BETA, NumericMatrix mixtureSamples, int T, int NN, int OUTPUT, int processID, int data_block_idx, std::string CDSeq_tmp_log, int write_2_file, int verbose)
+List gibbsSampler(NumericVector ALPHA, NumericMatrix BETA, NumericMatrix mixtureSamples, int T, int NN, int OUTPUT, int processID, int data_block_idx, std::string CDSeq_tmp_log, int write_2_file, int verbose)
   {
   //clock_t start,finish; 
   //start=clock();
@@ -141,7 +141,7 @@ List gibbsSampler(double ALPHA, NumericMatrix BETA, NumericMatrix mixtureSamples
       
       totprob = (double) 0;
       for (j = 0; j < T; j++) {
-        probs[j] = ((double) csGEP_vec[wioffset + j] + (double) BETA(j,wi))/( (double) cellTypeTot[j]+ (double) WBETA[j])*( (double) SSP_vec[dioffset+ j] + (double) ALPHA);
+        probs[j] = ((double) csGEP_vec[wioffset + j] + (double) BETA(j,wi))/( (double) cellTypeTot[j]+ (double) WBETA[j])*( (double) SSP_vec[dioffset+ j] + (double) ALPHA(j));
         totprob += probs[j];
       }
       // sample a cell type from the distribution

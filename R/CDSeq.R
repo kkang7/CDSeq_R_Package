@@ -144,7 +144,7 @@ CDSeq <- function( bulk_data,
   
   #check alpha
   if(is.null(alpha)){stop(" Input alpha is missing. alpha should be a positive real number.")}
-  if(length(alpha)>1){stop(" alpha should be a positive real number, not a vector.")}
+  #if(length(alpha)>1 & length(alpha)!=cell_type_number){stop(" length(alpha) should be equal to cell_type_number.")}
   
   #Check cell_type_number
   if(is.null(cell_type_number)){stop(" cell_type_number, the number of cell types, is missing. cell_type_number can be a scalar value or a vector.")}
@@ -295,6 +295,10 @@ CDSeq <- function( bulk_data,
   #=====================================================================================================
   
   if(length(cell_type_number)==1){
+    # test for informative_beta
+    #if(length(alpha)>1 & length(alpha)!=cell_type_number){stop(" length(alpha) should be equal to cell_type_number.")}
+    if(length(alpha)==1){alpha = rep(alpha,cell_type_number)}
+    
     CDSeq_tmp_log <- tempfile(pattern = "CDSeq_tmp_log_",fileext = ".txt")
     #Check if rpkm normalization should be performed
     # if the reference profile is not read counts data, then RPKM will not be performed
@@ -493,6 +497,9 @@ CDSeq <- function( bulk_data,
         beta = matrix(beta,nrow = cell_type_number[j],ncol = nrow(bulk_data))
       }
       
+      if(length(alpha)==1){alpha = rep(alpha,cell_type_number[j])}
+      
+      
       result <- gibbsSampler(alpha,beta,bulk_data_blocks[[i]],cell_type_number[j],mcmc_iterations, printout, processIDs[j,i], i, CDSeq_tmp_log, print_progress_msg_to_file, verbose_int)
 
       #output two vectors. estGEP_vec is gene x cell type; estSSp_vec is sample x cell type
@@ -584,8 +591,9 @@ CDSeq <- function( bulk_data,
       estPropall <- est_all[,1]
       estGEPall <- est_all[,2]
       lgpstall <- est_all[,3]
-      celltype_assignment_all<-est_all[,4]
-      cellTypeAssignSplit_all <- est_all[,5]
+      lglikeall = est_all[,4]
+      celltype_assignment_all<-est_all[,5]
+      cellTypeAssignSplit_all <- est_all[,6]
       for(j in 1:length(cell_type_number)){
         averestprop <- estPropall[[j]]
         estGEP <- estGEPall[[j]]
