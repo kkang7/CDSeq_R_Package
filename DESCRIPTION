@@ -36,8 +36,7 @@ Imports:
     matrixStats,
     ggpubr,
     pheatmap,
-    harmony
-Remotes: github::PelzKo/harmony
+Remotes: github::omnideconv/harmony
 LinkingTo: Rcpp, 
            RcppArmadillo
 Encoding: UTF-8
