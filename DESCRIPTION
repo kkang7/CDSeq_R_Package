@@ -36,6 +36,7 @@ Imports:
     matrixStats,
     ggpubr,
     pheatmap,
+    harmony
 Remotes: 
     omnideconv/harmony
 LinkingTo: Rcpp, 
